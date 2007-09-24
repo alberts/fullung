@@ -28,6 +28,7 @@
 	<classpathentry exported="true" kind="lib" path="gridgain-1.5.1.jar" sourcepath=""/>
 	<classpathentry kind="lib" path="libs/xbean-spring-3.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/spring-2.0.jar"/>
+	<classpathentry kind="lib" path="libs/jna.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="eclipse-classes"/>
 </classpath>

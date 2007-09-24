@@ -30,6 +30,21 @@
   </util:map>
   <bean id="grid" class="org.gridgain.grid.GridConfigurationAdapter" scope="singleton" depends-on="broker">
     <property name="peerClassLoadingEnabled" value="true" />
+    <property name="executorService">
+      <bean class="java.util.concurrent.ThreadPoolExecutor">
+        <constructor-arg type="int" value="2" />
+        <constructor-arg type="int" value="2" />
+        <constructor-arg type="long">
+          <util:constant static-field="java.lang.Long.MAX_VALUE" />
+        </constructor-arg>
+        <constructor-arg type="java.util.concurrent.TimeUnit">
+          <util:constant static-field="java.util.concurrent.TimeUnit.SECONDS" />
+        </constructor-arg>
+        <constructor-arg type="java.util.concurrent.BlockingQueue">
+          <bean class="java.util.concurrent.LinkedBlockingQueue" />
+        </constructor-arg>
+      </bean>
+    </property>
     <property name="communicationSpi">
       <bean class="org.gridgain.grid.spi.communication.jms.GridJmsCommunicationSpi">
         <property name="connectionFactoryName" value="connectionFactory" />
