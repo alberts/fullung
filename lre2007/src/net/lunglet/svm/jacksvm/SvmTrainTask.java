@@ -1,9 +1,13 @@
 package net.lunglet.svm.jacksvm;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.zip.GZIPOutputStream;
 
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
@@ -15,9 +19,10 @@ public final class SvmTrainTask extends GridTaskAdapter<SvmTrainJob> {
     private static final long serialVersionUID = 1L;
 
     private final Random rng = new Random();
-    
+
     @Override
-    public Map<? extends GridJob, GridNode> map(final List<GridNode> subgrid, final SvmTrainJob job) throws GridException {
+    public Map<? extends GridJob, GridNode> map(final List<GridNode> subgrid, final SvmTrainJob job)
+            throws GridException {
         if (subgrid == null || subgrid.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -34,8 +39,17 @@ public final class SvmTrainTask extends GridTaskAdapter<SvmTrainJob> {
                 continue;
             }
             Object[] data = (Object[]) result.getData();
-            String modelname = (String) data[0];
+            String modelName = (String) data[0];
             JackSVM2 svm = (JackSVM2) data[1];
+            try {
+                String fileName = modelName + ".dat.gz";
+                ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(fileName)));
+                oos.writeObject(svm);
+                oos.close();
+            } catch (IOException e) {
+                throw new GridException(null, e);
+            }
+            System.out.println("training of " + modelName + " is done");
         }
         return null;
     }

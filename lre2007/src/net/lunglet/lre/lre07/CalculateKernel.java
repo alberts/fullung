@@ -37,6 +37,7 @@ public final class CalculateKernel {
                 names.add(name);
                 line = reader.readLine();
             }
+            reader.close();
         }
         return names;
     }

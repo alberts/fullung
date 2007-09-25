@@ -74,8 +74,10 @@ public final class SvmTrainJob implements GridJob {
         H5File kernelh5 = null;
         final H5KernelReader2 kernelReader;
         try {
+            System.out.println("reading kernel");
             kernelh5 = new H5File("G:/ngrams_kernel.h5", H5File.H5F_ACC_RDONLY);
             kernelReader = new H5KernelReader2(kernelh5);
+            System.out.println("read kernel");
         } finally {
             if (kernelh5 != null) {
                 kernelh5.close();

@@ -55,6 +55,7 @@ public final class CalculateGram {
                 ids.add(id);
                 line = reader.readLine();
             }
+            reader.close();
         }
         return ids;
     }

@@ -50,7 +50,7 @@ public final class JackSVM2Test {
         int[] order = ds.getIntArrayAttribute("order");
         HDFReader reader = new HDFReader(kernelh5);
         FloatPackedMatrix kernel = FloatPackedMatrix.createSymmetric(order.length, Storage.DIRECT);
-        reader.read(kernel, "/kernel");
+        reader.read("/kernel", kernel);
         for (int i = 0; i < order.length; i++) {
             FloatDenseVector x = vecs.get(order[i]).read();
             for (int j = i; j < order.length; j++) {
@@ -82,7 +82,7 @@ public final class JackSVM2Test {
             int labelIndex = rng.nextInt(classes);
             FloatMatrixUtils.fillGaussian(x, labelIndex, 0.01, rng);
             final String name = "/foo/data" + i;
-            dataWriter.write(x, name);
+            dataWriter.write(name, x);
             DataSet ds = dataRoot.openDataSet(name);
             final String label = "label" + labelIndex;
             ds.createAttribute("label", label);

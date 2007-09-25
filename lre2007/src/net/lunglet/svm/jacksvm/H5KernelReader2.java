@@ -27,8 +27,9 @@ public final class H5KernelReader2 implements KernelReader {
         for (int i = 0; i < order.length; i++) {
             orderLut.put(order[i], i);
         }
+        // use heap storage to avoid large direct memory allocations
         this.kernel = FloatPackedMatrix.createSymmetric(order.length, Storage.HEAP);
-        new HDFReader(kernelh5).read(kernel, "/kernel");
+        new HDFReader(kernelh5).read("/kernel", kernel);
         kernelds.close();
     }
 
