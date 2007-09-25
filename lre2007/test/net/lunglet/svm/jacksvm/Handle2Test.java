@@ -1,4 +1,4 @@
-package net.lunglet.lre.lre07;
+package net.lunglet.svm.jacksvm;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

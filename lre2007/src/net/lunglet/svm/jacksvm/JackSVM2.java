@@ -30,7 +30,12 @@ public final class JackSVM2 implements Serializable {
 
     private final transient KernelReader kernelReader;
 
-    private final Log log = LogFactory.getLog(JackSVM.class);
+    // XXX this logger is transient, so with the code as-is, it's not going to
+    // get restored when a JackSVM2 is deserialized. Need to look into a way of
+    // dealing with this problem in general. Maybe having classes that need to
+    // contain a logger and also be serializable are symptomatic of a bad design
+    // though...
+    private final transient Log log = LogFactory.getLog(JackSVM.class);
 
     private FloatDenseVector rhos;
 
@@ -128,6 +133,7 @@ public final class JackSVM2 implements Serializable {
             }
             supportVectors.setRow(i, sv);
             rhos.set(i, svm.getRho());
+            break;
         }
         originalSvms = null;
     }
@@ -173,6 +179,7 @@ public final class JackSVM2 implements Serializable {
             String targetLabel = labelsList.get(i);
             originalSvms[i] = train(targetLabel, trainData, kernel);
             targetLabels.add(targetLabel);
+            break;
         }
     }
 }

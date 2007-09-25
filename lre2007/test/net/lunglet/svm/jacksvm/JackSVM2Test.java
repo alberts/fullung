@@ -68,8 +68,8 @@ public final class JackSVM2Test {
         int datasets = 30;
         int classes = 3;
         Random rng = new Random();
-//        Random rng = new Random(1234);
-        // Random rng = new Random(-1231429939);
+        //Random rng = new Random(1234);
+        //Random rng = new Random(-1231429939);
         int dataColumns = 10;
         List<FloatDenseMatrix> dataList = new ArrayList<FloatDenseMatrix>();
         int dataRows = 0;

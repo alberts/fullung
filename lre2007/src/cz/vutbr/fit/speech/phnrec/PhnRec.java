@@ -38,13 +38,15 @@ public final class PhnRec {
 
     static {
         try {
-            String phnRecTmpDir = System.getProperty("phnrec.tmpdir", null);
+            // using java.io.tmpdir as the default here ensures that we get a
+            // path on Windows that doesn't contain spaces
+            String phnRecTmpDir = System.getProperty("phnrec.tmpdir", System.getProperty("java.io.tmpdir"));
             File baseTempDir = phnRecTmpDir != null ? new File(phnRecTmpDir) : null;
-            TEMP_PCM_FILE = File.createTempFile("pcm", ".snd", baseTempDir).getCanonicalFile();
+            TEMP_PCM_FILE = File.createTempFile("pcm", ".snd", baseTempDir);
             TEMP_PCM_FILE.deleteOnExit();
-            TEMP_POSTERIORS_FILE = File.createTempFile("post", ".htk", baseTempDir).getCanonicalFile();
+            TEMP_POSTERIORS_FILE = File.createTempFile("post", ".htk", baseTempDir);
             TEMP_POSTERIORS_FILE.deleteOnExit();
-            TEMP_STRINGS_FILE = File.createTempFile("mlf", ".txt", baseTempDir).getCanonicalFile();
+            TEMP_STRINGS_FILE = File.createTempFile("mlf", ".txt", baseTempDir);
             TEMP_STRINGS_FILE.deleteOnExit();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -52,7 +54,7 @@ public final class PhnRec {
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        File inputDirectory = new File("F:/test");
+        File inputDirectory = new File("G:/MIT/data/30s/new09222007");
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         File[] inputFiles = FileUtils.listFiles(inputDirectory, filter, true);
         for (File inputFile : inputFiles) {
