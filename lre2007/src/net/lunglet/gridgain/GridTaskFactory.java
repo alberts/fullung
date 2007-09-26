@@ -1,4 +1,4 @@
-package net.lunglet.svm.jacksvm;
+package net.lunglet.gridgain;
 
 public interface GridTaskFactory<T> extends Iterable<T> {
 

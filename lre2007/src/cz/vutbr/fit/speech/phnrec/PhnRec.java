@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.List;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -22,39 +20,25 @@ import net.lunglet.sound.sampled.RawAudioFileWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.googlecode.array4j.dense.FloatDenseMatrix;
+import cz.vutbr.fit.speech.phnrec.PhnRecSystem.PhnRecSystemId;
 
 public final class PhnRec {
     private static final Log LOG = LogFactory.getLog(PhnRec.class);
 
-    public static final PhnRecSystem[] PHNREC_SYSTEMS = {new PhnRecSystem("PHN_CZ_SPDAT_LCRC_N1500", "cz"),
-            new PhnRecSystem("PHN_HU_SPDAT_LCRC_N1500", "hu"), new PhnRecSystem("PHN_RU_SPDAT_LCRC_N1500", "ru")};
-
-    private static final File TEMP_PCM_FILE;
-
-    private static final File TEMP_POSTERIORS_FILE;
-
-    private static final File TEMP_STRINGS_FILE;
+    private static final PhnRecSystem[] PHNREC_SYSTEMS;
 
     static {
         try {
-            // using java.io.tmpdir as the default here ensures that we get a
-            // path on Windows that doesn't contain spaces
-            String phnRecTmpDir = System.getProperty("phnrec.tmpdir", System.getProperty("java.io.tmpdir"));
-            File baseTempDir = phnRecTmpDir != null ? new File(phnRecTmpDir) : null;
-            TEMP_PCM_FILE = File.createTempFile("pcm", ".snd", baseTempDir);
-            TEMP_PCM_FILE.deleteOnExit();
-            TEMP_POSTERIORS_FILE = File.createTempFile("post", ".htk", baseTempDir);
-            TEMP_POSTERIORS_FILE.deleteOnExit();
-            TEMP_STRINGS_FILE = File.createTempFile("mlf", ".txt", baseTempDir);
-            TEMP_STRINGS_FILE.deleteOnExit();
+            PHNREC_SYSTEMS = new PhnRecSystem[]{new PhnRecSystem(PhnRecSystemId.PHN_CZ_SPDAT_LCRC_N1500),
+                    new PhnRecSystem(PhnRecSystemId.PHN_HU_SPDAT_LCRC_N1500),
+                    new PhnRecSystem(PhnRecSystemId.PHN_RU_SPDAT_LCRC_N1500)};
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        File inputDirectory = new File("G:/MIT/data/30s/new09222007");
+        File inputDirectory = new File("G:/temp");
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         File[] inputFiles = FileUtils.listFiles(inputDirectory, filter, true);
         for (File inputFile : inputFiles) {
@@ -62,64 +46,47 @@ public final class PhnRec {
         }
     }
 
-    public static void processChannel(final byte[] channelData, final PhnRecSystem system, final ZipOutputStream out)
-            throws IOException {
-        FileOutputStream fos = new FileOutputStream(TEMP_PCM_FILE);
-        fos.write(channelData);
-        fos.close();
-        system.waveformToPosteriors(TEMP_PCM_FILE, TEMP_POSTERIORS_FILE);
-        FloatDenseMatrix posteriors = system.readPosteriors(TEMP_POSTERIORS_FILE);
-        LOG.info("posteriors size = [" + posteriors.rows() + ", " + posteriors.columns() + "]");
-        system.posteriorsToStrings(TEMP_POSTERIORS_FILE, TEMP_STRINGS_FILE);
-        List<MasterLabel> labels = system.readStrings(TEMP_STRINGS_FILE);
-        PosteriorsConverter postConv = new PosteriorsConverter(posteriors, labels);
-        out.putNextEntry(new ZipEntry(system.getShortName() + ".mlf"));
-        postConv.writeMasterLabels(out);
-        out.closeEntry();
-        out.putNextEntry(new ZipEntry(system.getShortName() + ".post"));
-        postConv.writePhonemePosteriors(out);
-        out.closeEntry();
-    }
-
     private static void processFile(final File inputFile) throws IOException, UnsupportedAudioFileException {
         LOG.info("processing " + inputFile.getCanonicalPath());
         AudioFileFormat format = AudioSystem.getAudioFileFormat(inputFile);
-        boolean outputDone = true;
+        boolean outputDone = false;
         for (int i = 0; i < format.getFormat().getChannels(); i++) {
             File outputFile = new File(inputFile.getCanonicalFile() + "_" + i + ".phnrec.zip");
-            if (!outputFile.exists()) {
-                outputDone = false;
+            if (outputFile.exists()) {
+                outputDone = true;
                 break;
             }
         }
-        if (outputDone) {
-            LOG.info("skipping " + inputFile.getCanonicalPath() + " entirely");
-            return;
-        }
+//        if (outputDone) {
+//            LOG.info("skipping " + inputFile.getCanonicalPath() + " entirely");
+//            return;
+//        }
         AudioInputStream sourceStream = AudioSystem.getAudioInputStream(inputFile);
         AudioInputStream targetStream = AudioSystem.getAudioInputStream(Encoding.PCM_SIGNED, sourceStream);
         byte[][] channelsData = splitChannels(targetStream);
         targetStream.close();
         for (int i = 0; i < channelsData.length; i++) {
             File outputFile = new File(inputFile.getCanonicalFile() + "_" + i + ".phnrec.zip");
-            if (outputFile.isFile()) {
-                LOG.info("skipping " + outputFile.getCanonicalPath());
-                continue;
-            }
+//            if (outputFile.isFile()) {
+//                LOG.info("skipping " + outputFile.getCanonicalPath());
+//                continue;
+//            }
             File tempOutputFile = File.createTempFile("phnrec", ".zip");
             tempOutputFile.deleteOnExit();
             LOG.info("Temporary output file = " + tempOutputFile.getCanonicalPath());
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tempOutputFile));
             out.setLevel(9);
             for (PhnRecSystem system : PHNREC_SYSTEMS) {
-                LOG.info("processing channel " + i + " with system " + system.getShortName());
-                processChannel(channelsData[i], system, out);
+                LOG.info("processing channel " + i + " with system " + system);
+                system.processChannel(channelsData[i], out);
             }
             out.close();
+            LOG.info("moving output file to " + outputFile.getCanonicalPath());
+            outputFile.delete();
             if (!tempOutputFile.renameTo(outputFile)) {
                 throw new RuntimeException();
             }
-            LOG.info("moved output to file = " + outputFile.getCanonicalPath());
+            LOG.info("moved output file");
         }
     }
 

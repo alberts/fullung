@@ -1,4 +1,4 @@
-package net.lunglet.svm.jacksvm;
+package net.lunglet.gridgain;
 
 import java.util.ArrayList;
 import java.util.Iterator;

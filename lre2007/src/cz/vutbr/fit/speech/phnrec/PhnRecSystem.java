@@ -2,14 +2,23 @@ package cz.vutbr.fit.speech.phnrec;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import net.lunglet.io.FileUtils;
+import net.lunglet.util.zip.ZipUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +27,17 @@ import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseUtils;
 
 public final class PhnRecSystem {
+    // TODO get rid of short names at some point
+    public enum PhnRecSystemId {
+        PHN_CZ_SPDAT_LCRC_N1500("cz"), PHN_HU_SPDAT_LCRC_N1500("hu"), PHN_RU_SPDAT_LCRC_N1500("ru");
+
+        private final String shortName;
+
+        PhnRecSystemId(final String shortName) {
+            this.shortName = shortName;
+        }
+    }
+
     private static String join(final Collection<? extends String> strs, final String separator) {
         StringBuilder builder = new StringBuilder();
         for (String str : strs) {
@@ -27,39 +47,52 @@ public final class PhnRecSystem {
         return builder.toString();
     }
 
+    private final PhnRecSystemId systemId;
+
     private Log log = LogFactory.getLog(PhnRecSystem.class);
 
     private final File phnRecExe;
 
     private final Set<String> phonemes;
 
-    private final String shortName;
+    private final File workingDir;
 
-    private final File systemConfigDir;
-
-    public PhnRecSystem(final String name, final String shortName) {
-        this.shortName = shortName;
-        String phnRecDir = System.getProperty("phnrec.dir", "C:/phnrec_v2_14");
-        this.systemConfigDir = new File(phnRecDir, name);
-        try {
-            log.info("phnrec system dir = " + systemConfigDir.getCanonicalPath());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        if (!systemConfigDir.isDirectory()) {
+    public PhnRecSystem(final PhnRecSystemId systemId) throws IOException {
+        this.systemId = systemId;
+        File baseDir = new File(System.getProperty("java.io.tmpdir"));
+        this.workingDir = FileUtils.createTempDirectory("phnrec", null, baseDir);
+        workingDir.deleteOnExit();
+        if (!workingDir.isDirectory()) {
             throw new RuntimeException();
         }
-        this.phnRecExe = new File(phnRecDir, System.getProperty("phnrec.exe", "phnrec.exe"));
-        try {
-            log.info("phnrec exe = " + phnRecExe.getCanonicalPath());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        log.info("Working directory: " + workingDir);
+        InputStream stream = getClass().getResourceAsStream("phnrec.zip");
+        if (stream == null) {
+            throw new RuntimeException("phnrec.zip not in classpath");
         }
+        ZipInputStream zis = new ZipInputStream(stream);
+        List<File> tempFiles = new ArrayList<File>();
+        Collections.addAll(tempFiles, ZipUtils.extractAll(zis, workingDir));
+        zis.close();
+        String modelZip = systemId.name() + ".zip";
+        stream = getClass().getResourceAsStream(modelZip);
+        if (stream == null) {
+            throw new RuntimeException(modelZip + " not in classpath");
+        }
+        zis = new ZipInputStream(stream);
+        Collections.addAll(tempFiles, ZipUtils.extractAll(zis, workingDir));
+        zis.close();
+        for (File tempFile : tempFiles) {
+            tempFile.deleteOnExit();
+        }
+        this.phnRecExe = new File(workingDir, System.getProperty("phnrec.exe", "phnrec.exe"));
+        phnRecExe.setExecutable(true);
+        log.info("phnrec executable: " + phnRecExe);
         if (!phnRecExe.isFile()) {
             throw new RuntimeException();
         }
         this.phonemes = new HashSet<String>();
-        File dictsDir = new File(systemConfigDir, "dicts");
+        File dictsDir = new File(workingDir, "dicts");
         File phonemesFile = new File(dictsDir, "phonemes");
         try {
             BufferedReader reader = new BufferedReader(new FileReader(phonemesFile));
@@ -77,8 +110,34 @@ public final class PhnRecSystem {
         }
     }
 
-    public String getShortName() {
-        return shortName;
+    public void processChannel(final byte[] channelData, final ZipOutputStream out) throws IOException {
+        File tempPcmFile = null;
+        File tempPostFile = null;
+        File tempStringsFile = null;
+        try {
+            tempPcmFile = File.createTempFile("pcm", ".snd", workingDir);
+            tempPostFile = File.createTempFile("post", ".htk", workingDir);
+            tempStringsFile = File.createTempFile("mlf", ".txt", workingDir);
+            FileOutputStream fos = new FileOutputStream(tempPcmFile);
+            fos.write(channelData);
+            fos.close();
+            waveformToPosteriors(tempPcmFile, tempPostFile);
+            FloatDenseMatrix posteriors = readPosteriors(tempPostFile);
+            log.info("posteriors size = [" + posteriors.rows() + ", " + posteriors.columns() + "]");
+            posteriorsToStrings(tempPostFile, tempStringsFile);
+            List<MasterLabel> labels = readStrings(tempStringsFile);
+            PosteriorsConverter postConv = new PosteriorsConverter(posteriors, labels);
+            out.putNextEntry(new ZipEntry(systemId.shortName + ".mlf"));
+            postConv.writeMasterLabels(out);
+            out.closeEntry();
+            out.putNextEntry(new ZipEntry(systemId.shortName + ".post"));
+            postConv.writePhonemePosteriors(out);
+            out.closeEntry();
+        } finally {
+            for (File tempFile : new File[]{tempPcmFile, tempPostFile, tempStringsFile}) {
+                tempFile.delete();
+            }
+        }
     }
 
     public void posteriorsToStrings(final File posteriorsFile, final File stringsFile) throws IOException {
@@ -86,7 +145,7 @@ public final class PhnRecSystem {
         command.add(phnRecExe.getAbsolutePath());
         command.add("-v");
         command.add("-c");
-        command.add(systemConfigDir.getAbsolutePath());
+        command.add(workingDir.getAbsolutePath());
         // source is posteriors in HTK format
         command.add("-s");
         command.add("post");
@@ -125,8 +184,6 @@ public final class PhnRecSystem {
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.redirectErrorStream(true);
         Process process = pb.start();
-//        String[] cmdarray = command.toArray(new String[0]);
-//        Process process = Runtime.getRuntime().exec(cmdarray);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = reader.readLine();
         while (line != null) {
@@ -149,7 +206,7 @@ public final class PhnRecSystem {
         command.add(phnRecExe.getAbsolutePath());
         command.add("-v");
         command.add("-c");
-        command.add(systemConfigDir.getAbsolutePath());
+        command.add(workingDir.getAbsolutePath());
         // source is single channel linear 16-bit PCM data
         command.add("-s");
         command.add("wf");
