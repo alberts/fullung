@@ -17,7 +17,7 @@ import org.apache.commons.logging.LogFactory;
 
 public final class CalculateKernel {
     private static final Log LOG = LogFactory.getLog(CalculateKernel.class);
-    
+
     public static Set<String> readFrontendNames() throws IOException {
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -25,31 +25,40 @@ public final class CalculateKernel {
                 return name.startsWith("frontend_") && name.endsWith(".txt");
             }
         };
-        File[] files = FileUtils.listFiles("C:/home/albert/LRE2007/keysetc/albert/output", filter);
+        File[] files = FileUtils.listFiles("C:/home/albert/LRE2007/keysetc/albert/mitpart2", filter);
         Set<String> names = new HashSet<String>();
         for (File file : files) {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line = reader.readLine();
-            while (line != null) {
-                String[] parts = line.split("\\s+");
-                String[] idparts = parts[1].split(",", 2);
-                String name = "/" + idparts[0] + "/" + idparts[1];
-                names.add(name);
-                line = reader.readLine();
+            try {
+                String line = reader.readLine();
+                while (line != null) {
+                    String[] parts = line.split("\\s+");
+                    String corpus = parts[0].toLowerCase();
+                    String filename = parts[2];
+                    String name = "/" + corpus + "/" + filename;
+                    // TODO get rid of this hack
+                    if (!corpus.equals("callfriend") && !filename.equals("tgtd.sph.2.30s.sph")) {
+                        names.add(name);
+                    }
+                    line = reader.readLine();
+                }
+            } finally {
+                reader.close();
             }
-            reader.close();
         }
         return names;
     }
 
     public static void main(final String[] args) throws IOException {
         LOG.info("starting kernel calculator");
-        H5File datah5 = new H5File("F:/ngrams.h5", H5File.H5F_ACC_RDONLY);
-        H5File kernelh5 = new H5File("F:/ngrams_kernel.h5");
+        H5File datah5 = new H5File("G:/rungrams.h5", H5File.H5F_ACC_RDONLY);
+        H5File kernelh5 = new H5File("G:/rungrams_kernel.h5");
         LOG.info("reading frontend names");
         Set<String> frontendNames = readFrontendNames();
-        LOG.info("got " + frontendNames.size() + " frontend names");
-        LinearKernelPrecomputer kernelComputer = new LinearKernelPrecomputer(datah5, kernelh5, 2400);
+        LOG.info("read " + frontendNames.size() + " frontend names");
+//        int bufferSize = 2400;
+        int bufferSize = 2000;
+        LinearKernelPrecomputer kernelComputer = new LinearKernelPrecomputer(datah5, kernelh5, bufferSize);
         kernelComputer.compute(frontendNames);
         kernelh5.close();
         datah5.close();
