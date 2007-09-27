@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.gridgain.grid.Grid;
+import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridTask;
 import org.gridgain.grid.GridTaskFuture;
 
@@ -21,7 +22,7 @@ public final class GridTaskManager<T> {
         this.maximumTasks = maximumTasks;
     }
 
-    public void execute(final GridTaskFactory<T> taskFactory) throws InterruptedException {
+    public void execute(final GridTaskFactory<T> taskFactory) throws GridException {
         List<GridTaskFuture> futures = new ArrayList<GridTaskFuture>();
         Iterator<T> pendingTasks = taskFactory.iterator();
         while (pendingTasks.hasNext() || futures.size() > 0) {
@@ -31,6 +32,7 @@ public final class GridTaskManager<T> {
                     // TODO feed future.get() back into TaskFactory so that it
                     // can decide things about the tasks it makes, e.g., whether
                     // to remanufacture an old task
+                    future.get();
                     completedFutures.add(future);
                 }
             }
@@ -41,7 +43,11 @@ public final class GridTaskManager<T> {
                 futures.add(future);
             }
             // TODO make sleep time configurable
-            Thread.sleep(1000L);
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                throw new GridException(null, e);
+            }
         }
     }
 }
