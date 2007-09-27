@@ -28,6 +28,9 @@ public final class GridTaskManager<T> {
             List<GridTaskFuture> completedFutures = new ArrayList<GridTaskFuture>();
             for (GridTaskFuture future : futures) {
                 if (future.isDone() || future.isCancelled()) {
+                    // TODO feed future.get() back into TaskFactory so that it
+                    // can decide things about the tasks it makes, e.g., whether
+                    // to remanufacture an old task
                     completedFutures.add(future);
                 }
             }

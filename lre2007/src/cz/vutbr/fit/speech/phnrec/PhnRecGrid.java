@@ -26,7 +26,7 @@ import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 public final class PhnRecGrid {
     private static GridTopologySpi createTopologySpi() {
         GridBasicTopologySpi topSpi = new GridBasicTopologySpi();
-        topSpi.setLocalNode(true);
+        topSpi.setLocalNode(false);
         topSpi.setRemoteNodes(true);
         return topSpi;
     }
@@ -43,7 +43,7 @@ public final class PhnRecGrid {
 
     private static List<PhnRecJobParameters> createJobParameters() throws IOException, UnsupportedAudioFileException {
         List<PhnRecJobParameters> jobParamsList = new ArrayList<PhnRecJobParameters>();
-        String path = "G:/temp";
+        String path = "G:/MIT/data";
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         for (File inputFile : FileUtils.listFiles(path, filter, true)) {
             System.out.println("processing " + inputFile.getCanonicalPath());
@@ -69,7 +69,9 @@ public final class PhnRecGrid {
             cfg.setTopologySpi(createTopologySpi());
             cfg.setExecutorService(executorService);
             final Grid grid = GridFactory.start(cfg);
-            GridTaskManager<PhnRecJob> taskManager = new GridTaskManager<PhnRecJob>(grid, PhnRecTask.class, 2);
+            int maximumJobs = 50;
+            GridTaskManager<PhnRecJob> taskManager = null;
+            taskManager = new GridTaskManager<PhnRecJob>(grid, PhnRecTask.class, maximumJobs);
             taskManager.execute(new PhnRecTaskFactory(jobParamsList));
         } finally {
             GridFactory.stop(true);

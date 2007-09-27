@@ -37,6 +37,7 @@ public final class PhnRecTask extends GridTaskAdapter<PhnRecJob> {
                 System.out.println("job failed:" + result.getException());
                 continue;
             }
+            System.out.println("got result from " + result.getNode().getPhysicalAddress());
             Object[] actualResult = (Object[]) result.getData();
             String filename = (String) actualResult[0];
             int channel = (Integer) actualResult[1];

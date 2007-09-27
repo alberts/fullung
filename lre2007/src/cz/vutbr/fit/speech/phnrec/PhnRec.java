@@ -38,7 +38,7 @@ public final class PhnRec {
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        File inputDirectory = new File("G:/temp");
+        File inputDirectory = new File("G:/MIT/data");
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         File[] inputFiles = FileUtils.listFiles(inputDirectory, filter, true);
         for (File inputFile : inputFiles) {
@@ -57,20 +57,20 @@ public final class PhnRec {
                 break;
             }
         }
-//        if (outputDone) {
-//            LOG.info("skipping " + inputFile.getCanonicalPath() + " entirely");
-//            return;
-//        }
+        if (outputDone) {
+            LOG.info("skipping " + inputFile.getCanonicalPath() + " entirely");
+            return;
+        }
         AudioInputStream sourceStream = AudioSystem.getAudioInputStream(inputFile);
         AudioInputStream targetStream = AudioSystem.getAudioInputStream(Encoding.PCM_SIGNED, sourceStream);
         byte[][] channelsData = splitChannels(targetStream);
         targetStream.close();
         for (int i = 0; i < channelsData.length; i++) {
             File outputFile = new File(inputFile.getCanonicalFile() + "_" + i + ".phnrec.zip");
-//            if (outputFile.isFile()) {
-//                LOG.info("skipping " + outputFile.getCanonicalPath());
-//                continue;
-//            }
+            if (outputFile.isFile()) {
+                LOG.info("skipping " + outputFile.getCanonicalPath());
+                continue;
+            }
             File tempOutputFile = File.createTempFile("phnrec", ".zip");
             tempOutputFile.deleteOnExit();
             LOG.info("Temporary output file = " + tempOutputFile.getCanonicalPath());
