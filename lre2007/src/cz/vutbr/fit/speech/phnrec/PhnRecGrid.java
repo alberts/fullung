@@ -43,7 +43,7 @@ public final class PhnRecGrid {
 
     private static List<PhnRecJobParameters> createJobParameters() throws IOException, UnsupportedAudioFileException {
         List<PhnRecJobParameters> jobParamsList = new ArrayList<PhnRecJobParameters>();
-        String path = "G:/MIT/data";
+        String path = "G:/temp";
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         for (File inputFile : FileUtils.listFiles(path, filter, true)) {
             System.out.println("processing " + inputFile.getCanonicalPath());
