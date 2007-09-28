@@ -10,14 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
@@ -82,10 +75,10 @@ public final class JackKnifeSVM {
     }
 
     private static final List<String> readNames(final String splitName, final H5File datah5) throws IOException {
-        String fileName = "C:/home/albert/LRE2007/keysetc/albert/output/" + splitName + ".txt";
+        String fileName = "C:/home/albert/LRE2007/keysetc/albert/mitpart2/" + splitName + ".txt";
         LOG.info("reading " + fileName);
         List<String> names = new ArrayList<String>();
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        BufferedReader reader = new BufferedReader(new FileReader(fileName), 1024 * 1024);
         String line = reader.readLine();
         while (line != null) {
             String[] parts = line.split("\\s+");
@@ -114,38 +107,16 @@ public final class JackKnifeSVM {
         Map<String, JackSVM2> models = new HashMap<String, JackSVM2>();
         LOG.info("reading kernel");
         final H5KernelReader2 kernelReader = new H5KernelReader2(kernelh5);
-        int nThreads = 2;
-        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingDeque<Runnable>(2 * nThreads), new ThreadPoolExecutor.CallerRunsPolicy());
-        CompletionService<Object[]> completionService = new ExecutorCompletionService<Object[]>(threadPool);
         for (int ts = 0; ts < TEST_SPLITS; ts++) {
             for (int bs = 0; bs < BACKEND_SPLITS; bs++) {
                 final String modelName = "frontend_" + ts + "_" + bs;
-                completionService.submit(new Callable<Object[]>() {
-                    @Override
-                    public Object[] call() throws Exception {
-                        final List<Handle2> trainData;
-                        synchronized (datah5) {
-                            trainData = readSplit(modelName, datah5);
-                        }
-                        JackSVM2 svm = new JackSVM2(kernelReader);
-                        svm.train(trainData);
-                        synchronized (datah5) {
-                            svm.compact();
-                        }
-                        return new Object[]{modelName, svm};
-                    }
-                });
+                final List<Handle2> trainData = readSplit(modelName, datah5);
+                JackSVM2 svm = new JackSVM2(kernelReader);
+                svm.train(trainData);
+                svm.compact();
+                models.put(modelName, svm);
             }
         }
-        for (int i = 0; i < TEST_SPLITS * BACKEND_SPLITS; i++) {
-            Future<Object[]> future = completionService.take();
-            Object[] result = future.get();
-            models.put((String) result[0], (JackSVM2) result[1]);
-        }
-        LOG.info("shutting down thread pool");
-        threadPool.shutdown();
-        threadPool.awaitTermination(0L, TimeUnit.MILLISECONDS);
         return models;
     }
 
@@ -182,11 +153,10 @@ public final class JackKnifeSVM {
         JackSVM2 firstModel = models.get("frontend_0");
         FloatDenseMatrix firstSVs = firstModel.getSupportVectors();
         List<String> targetLabels = firstModel.getTargetLabels();
-
-        FloatDenseMatrix finalSVs = new FloatDenseMatrix(firstSVs.rows(), firstSVs.columns(), Orientation.COLUMN,
-                Storage.DIRECT);
-        FloatDenseVector finalRhos = new FloatDenseVector(firstSVs.rows());
-
+        final int rows = firstSVs.rows();
+        final int cols = firstSVs.columns();
+        FloatDenseMatrix finalSVs = new FloatDenseMatrix(rows, cols, Orientation.COLUMN, Storage.DIRECT);
+        FloatDenseVector finalRhos = new FloatDenseVector(rows);
         for (int ts = 0; ts < TEST_SPLITS; ts++) {
             String modelName = "frontend_" + ts;
             JackSVM2 svm = models.get(modelName);
@@ -232,14 +202,14 @@ public final class JackKnifeSVM {
 
     public static void main(final String[] args) throws IOException, InterruptedException, ExecutionException {
         LOG.info("starting");
-        H5File datah5 = new H5File("F:/ngrams.h5", H5File.H5F_ACC_RDONLY);
-        H5File kernelh5 = new H5File("F:/ngrams_kernel.h5", H5File.H5F_ACC_RDONLY);
+        H5File datah5 = new H5File("G:/czngrams.h5", H5File.H5F_ACC_RDONLY);
+        H5File kernelh5 = new H5File("G:/czngrams_kernel.h5", H5File.H5F_ACC_RDONLY);
         LOG.info("training frontend models");
         Map<String, JackSVM2> models = trainModels(datah5, kernelh5);
         LOG.info("training done");
         kernelh5.close();
-        scoreBackend(models, datah5);
-        scoreTest(models, datah5);
+//        scoreBackend(models, datah5);
+//        scoreTest(models, datah5);
         // TODO score final model on everything as a check
         datah5.close();
         LOG.info("done");

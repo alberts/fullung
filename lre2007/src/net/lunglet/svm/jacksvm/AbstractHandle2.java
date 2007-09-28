@@ -1,10 +1,13 @@
 package net.lunglet.svm.jacksvm;
 
-import com.googlecode.array4j.FloatVector;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import com.googlecode.array4j.FloatVector;
 
 public abstract class AbstractHandle2 implements Handle2 {
     private final int index;
@@ -65,6 +68,6 @@ public abstract class AbstractHandle2 implements Handle2 {
     }
 
     public final void setScores(final List<Score> scores) {
-        this.scores = new ArrayList<Score>(scores);
+        this.scores = Collections.unmodifiableList(new ArrayList<Score>(scores));
     }
 }

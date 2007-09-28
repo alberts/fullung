@@ -1,5 +1,7 @@
 package net.lunglet.svm.jacksvm;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +12,7 @@ import java.util.Set;
 import net.lunglet.svm.Handle;
 import net.lunglet.svm.PrecomputedKernel;
 import net.lunglet.svm.SimpleSvm;
+import net.lunglet.svm.SvmNode;
 import net.lunglet.svm.jacksvm.Handle2.Score;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +38,7 @@ public final class JackSVM2 implements Serializable {
     // dealing with this problem in general. Maybe having classes that need to
     // contain a logger and also be serializable are symptomatic of a bad design
     // though...
-    private final transient Log log = LogFactory.getLog(JackSVM.class);
+    private transient Log log = LogFactory.getLog(JackSVM2.class);
 
     private FloatDenseVector rhos;
 
@@ -45,15 +48,23 @@ public final class JackSVM2 implements Serializable {
 
     private SimpleSvm[] originalSvms;
 
+    private transient List<Handle2> trainData;
+
+    public void setTrainData(final List<Handle2> trainData) {
+        this.trainData = trainData;
+    }
+
     public JackSVM2(final FloatDenseMatrix supportVectors, final FloatDenseVector rhos, final List<String> targetLabels) {
         this.kernelReader = null;
         this.supportVectors = supportVectors;
         this.rhos = rhos;
         this.targetLabels = targetLabels;
+        this.trainData = null;
     }
 
     public JackSVM2(final KernelReader kernelReader) {
         this.kernelReader = kernelReader;
+        this.trainData = null;
     }
 
     private PrecomputedKernel createPrecomputedKernel(final int[] indexes) {
@@ -66,6 +77,21 @@ public final class JackSVM2 implements Serializable {
                 return kernelReader.read(indexes[i], indexes[j]);
             }
         };
+    }
+
+    public SvmNode[] getSvmNodes() {
+        if (originalSvms == null) {
+            throw new IllegalStateException("SvmNodes only available before compaction");
+        }
+        List<SvmNode> svmNodes = new ArrayList<SvmNode>();
+        for (SimpleSvm svm : originalSvms) {
+            for (SvmNode node : svm.getSvmNodes()) {
+                // map from svm assigned index to data index
+                node.setIndex(trainData.get(node.getIndex()).getIndex());
+            }
+            Collections.addAll(svmNodes, svm.getSvmNodes());
+        }
+        return svmNodes.toArray(new SvmNode[0]);
     }
 
     private PrecomputedKernel createPrecomputedKernel2(final int[] indexes) {
@@ -121,6 +147,8 @@ public final class JackSVM2 implements Serializable {
         if (originalSvms == null) {
             throw new IllegalStateException();
         }
+        // don't need this anymore
+        trainData = null;
         for (int i = 0; i < originalSvms.length; i++) {
             log.info("compacting and extracting model");
             SimpleSvm svm = originalSvms[i];
@@ -133,7 +161,6 @@ public final class JackSVM2 implements Serializable {
             }
             supportVectors.setRow(i, sv);
             rhos.set(i, svm.getRho());
-            break;
         }
         originalSvms = null;
     }
@@ -179,7 +206,12 @@ public final class JackSVM2 implements Serializable {
             String targetLabel = labelsList.get(i);
             originalSvms[i] = train(targetLabel, trainData, kernel);
             targetLabels.add(targetLabel);
-            break;
         }
+        this.trainData = trainData;
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.log = LogFactory.getLog(JackSVM2.class);
     }
 }
