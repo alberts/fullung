@@ -25,8 +25,15 @@ import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.IntType;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.hdf.DataSetCreatePropListBuilder.FillTime;
+import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+// TODO calculate size of buffers dynamically by looking at data
+// dimension and available memory (maybe using MXbean?)
+
+// TODO alternate between front to back and back to front iteration
+// over blocks to make optimal use of disk cache
 
 public final class LinearKernelPrecomputer {
     private static long elementOffset(final long m, final long n) {
@@ -55,9 +62,12 @@ public final class LinearKernelPrecomputer {
         this.bufferSize = bufferSize;
     }
 
-    // TODO alternate between front to back and back to front iteration over
-    // blocks to make optimal use of disk cache
-    public void compute(final Set<String> names) {
+    public void compute(final Set<SplitEntry> entries) {
+        log.info("reading data");
+        Set<String> names = new HashSet<String>();
+        for (SplitEntry entry : entries) {
+            names.add(entry.getName());
+        }
         Map<Integer, DataVector> vecsMap = readDataVectors(names);
         List<DataVector> vecs = new ArrayList<DataVector>(vecsMap.values());
         if (vecs.size() == 0) {

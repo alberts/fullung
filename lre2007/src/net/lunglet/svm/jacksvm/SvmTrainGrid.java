@@ -34,67 +34,6 @@ public final class SvmTrainGrid {
 
     private static final int BACKEND_SPLITS = 10;
 
-    private static final List<Handle2> readData(final List<String> names, final H5File datah5) {
-        List<Handle2> handles = new ArrayList<Handle2>();
-        for (final String name : names) {
-            DataSet ds = datah5.getRootGroup().openDataSet(name);
-            int[] indexes = ds.getIntArrayAttribute("indexes");
-            String label = ds.getStringAttribute("label");
-            ds.close();
-            for (int i = 0; i < indexes.length; i++) {
-                final int j = i;
-                final int index = indexes[i];
-                handles.add(new AbstractHandle2(name, index, label) {
-                    @Override
-                    public FloatVector<?> getData() {
-                        DataSet dataset = datah5.getRootGroup().openDataSet(name);
-                        DataSpace fileSpace = dataset.getSpace();
-                        int len = (int) fileSpace.getDim(1);
-                        DataSpace memSpace = new DataSpace(len);
-                        FloatDenseVector data = new FloatDenseVector(len, Orientation.COLUMN, Storage.DIRECT);
-                        long[] start = {j, 0};
-                        long[] count = {1, 1};
-                        long[] block = {1, fileSpace.getDim(1)};
-                        fileSpace.selectHyperslab(SelectionOperator.SET, start, null, count, block);
-                        dataset.read(data.data(), FloatType.IEEE_F32LE, memSpace, fileSpace);
-                        fileSpace.close();
-                        memSpace.close();
-                        dataset.close();
-                        return data;
-                    }
-                });
-            }
-        }
-        return handles;
-    }
-
-    private static final List<String> readNames(final String splitName) {
-        String fileName = "C:/home/albert/LRE2007/keysetc/albert/mitpart2/" + splitName + ".txt";
-        System.out.println(fileName);
-        List<String> names = new ArrayList<String>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            String line = reader.readLine();
-            while (line != null) {
-                String[] parts = line.split("\\s+");
-                String corpus = parts[0].toLowerCase();
-                String filename = parts[2];
-                String name = String.format("/%s/%s", corpus, filename);
-
-                // TODO get rid of this hack
-                if (!corpus.equals("callfriend") && !filename.equals("tgtd.sph.2.30s.sph")) {
-                    names.add(name);
-                }
-
-                line = reader.readLine();
-            }
-            reader.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return names;
-    }
-
     public static void main(final String[] args) throws Exception {
         final H5File datah5 = new H5File("G:/czngrams.h5", H5File.H5F_ACC_RDONLY);
         final List<String> modelNames = new ArrayList<String>();
@@ -132,7 +71,8 @@ public final class SvmTrainGrid {
                                 return null;
                             }
                             List<String> names = readNames(modelName);
-                            // TODO can probably remove this when we fix HDF
+                            // XXX probably need to have separate instances of
+                            // datah5 for the reduce thread and this main thread
                             List<Handle2> trainData = null;
                             synchronized (H5Library.class) {
                                 trainData = readData(names, datah5);

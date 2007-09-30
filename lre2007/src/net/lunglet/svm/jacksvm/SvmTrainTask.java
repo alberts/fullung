@@ -70,10 +70,10 @@ public final class SvmTrainTask extends GridTaskAdapter<SvmTrainJob> {
                     }
                 });
             }
-            // TODO can probably remove this when we fix HDF
             synchronized (H5Library.class) {
                 svm.compact();
             }
+            // TODO write svms in HDF file using model name as dataset name
             try {
                 String fileName = modelName + ".dat.gz";
                 ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(fileName)));

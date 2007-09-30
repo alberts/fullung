@@ -36,7 +36,6 @@ public final class LinearKernelPrecomputer2 {
         DataType dtype = FloatType.IEEE_F32LE;
         DataSet gramds = kernelh5.getRootGroup().createDataSet("kernel", dtype, gramspace, builder.build());
         gramspace.close();
-
         throw new UnsupportedOperationException();
     }
 }

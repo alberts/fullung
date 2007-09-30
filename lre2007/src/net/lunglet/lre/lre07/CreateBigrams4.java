@@ -1,23 +1,21 @@
 package net.lunglet.lre.lre07;
 
-import java.io.BufferedReader;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
+import cz.vutbr.fit.speech.phnrec.PhonemeUtil;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.sound.sampled.UnsupportedAudioFileException;
-
 import net.lunglet.hdf.Attribute;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
@@ -27,62 +25,9 @@ import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.IntType;
 import net.lunglet.hdf.SelectionOperator;
-import net.lunglet.io.FileUtils;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
-
-import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
-import cz.vutbr.fit.speech.phnrec.PhonemeUtil;
+import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
 
 public final class CreateBigrams4 {
-    private static final String SPLITS_DIR = "C:/home/albert/LRE2007/keysetc/albert/mitpart2";
-
-    private static class SplitFile implements Comparable<SplitFile> {
-        private String id;
-
-        private String corpus;
-
-        private String filename;
-
-        private String label;
-
-        private int duration;
-
-        public File getFile() {
-            return new File("G:/MIT/data/" + duration + "/" + corpus + "/" + filename + "_0.phnrec.zip");
-        }
-
-        public boolean exists() {
-            return getFile().exists();
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (obj == null || !(obj instanceof SplitFile)) {
-                return false;
-            }
-            if (obj == this) {
-                return true;
-            }
-            SplitFile other = (SplitFile) obj;
-            return new EqualsBuilder().append(id, other.id).isEquals();
-        }
-
-        @Override
-        public int hashCode() {
-            return new HashCodeBuilder().append(id).toHashCode();
-        }
-
-        @Override
-        public int compareTo(final SplitFile o) {
-            return id.compareTo(o.id);
-        }
-    }
-
     private static List<FloatDenseVector> readPhnRecZip(final String phonemePrefix, final File zipFile)
             throws IOException {
         InputStream stream = new FileInputStream(zipFile);
@@ -132,27 +77,25 @@ public final class CreateBigrams4 {
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        Set<SplitFile> splitFiles = readSplits("frontend");
-        splitFiles.addAll(readSplits("backend"));
-        splitFiles.addAll(readSplits("test"));
+        CrossValidationSplits experiment = new CrossValidationSplits();
+        Set<SplitEntry> splitFiles = experiment.getAllSplits();
         System.out.println(splitFiles.size());
-        System.exit(1);
 
         final String phonemePrefix = "ru";
-        H5File h5file = new H5File("G:/" + phonemePrefix + "ngrams.h5");
+        H5File h5file = new H5File(new File(Constants.WORKING_DIRECTORY, phonemePrefix + "ngrams.h5"));
         Map<String, Group> groups = new HashMap<String, Group>();
-        for (SplitFile splitFile : splitFiles) {
-            if (groups.containsKey(splitFile.corpus)) {
+        for (SplitEntry splitFile : splitFiles) {
+            if (groups.containsKey(splitFile.getCorpus())) {
                 continue;
             }
-            Group group = h5file.getRootGroup().createGroup("/" + splitFile.corpus);
-            groups.put(splitFile.corpus, group);
+            Group group = h5file.getRootGroup().createGroup("/" + splitFile.getCorpus());
+            groups.put(splitFile.getCorpus(), group);
         }
 
         int index = 0;
-        List<SplitFile> sortedfrontendFiles = new ArrayList<SplitFile>(splitFiles);
+        List<SplitEntry> sortedfrontendFiles = new ArrayList<SplitEntry>(splitFiles);
         Collections.sort(sortedfrontendFiles);
-        for (SplitFile splitFile : sortedfrontendFiles) {
+        for (SplitEntry splitFile : sortedfrontendFiles) {
             File zipFile = splitFile.getFile();
 //            System.out.println(zipFile);
             List<FloatDenseVector> segments = readPhnRecZip(phonemePrefix, zipFile);
@@ -161,64 +104,13 @@ public final class CreateBigrams4 {
                 continue;
             }
             FloatDenseVector ngrams = calculateNGrams(segments);
-            Group group = groups.get(splitFile.corpus);
-            writeNGrams(splitFile.id, splitFile.label, ngrams, group, index++);
+            Group group = groups.get(splitFile.getCorpus());
+            writeNGrams(splitFile.getName(), splitFile.getLanguage(), ngrams, group, index++);
         }
 
         for (Group group : groups.values()) {
             group.close();
         }
         h5file.close();
-    }
-
-    private static Set<SplitFile> readSplits(final String prefix) throws IOException {
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                File file = new File(dir, name);
-                if (!file.isFile()) {
-                    return false;
-                }
-                String fileName = file.getName().toLowerCase();
-                return fileName.startsWith(prefix + "_") && fileName.endsWith(".txt");
-            }
-        };
-        File[] splitIndexFiles = FileUtils.listFiles(SPLITS_DIR, filter);
-        Set<SplitFile> splitFiles = new HashSet<SplitFile>();
-        for (File splitIndexFile : splitIndexFiles) {
-            System.out.println(splitIndexFile);
-            BufferedReader reader = new BufferedReader(new FileReader(splitIndexFile), 512 * 1024);
-            try {
-                String line = reader.readLine();
-                while (line != null) {
-                    String[] parts = line.split("\\s+");
-                    SplitFile splitFile = new SplitFile();
-                    splitFile.corpus = parts[0].toLowerCase();
-                    splitFile.filename = parts[2];
-                    splitFile.id = String.format("/%s/%s", splitFile.corpus, splitFile.filename);
-                    splitFile.label = parts[3];
-                    splitFile.duration = Integer.valueOf(parts[4]);
-                    if (splitFile.duration != 3 && splitFile.duration != 10 && splitFile.duration != 30) {
-                        throw new IOException();
-                    }
-                    splitFiles.add(splitFile);
-                    line = reader.readLine();
-                }
-            } finally {
-                reader.close();
-            }
-        }
-        Set<SplitFile> invalidSplitFiles = new HashSet<SplitFile>();
-        for (SplitFile splitFile : splitFiles) {
-            if (!splitFile.exists()) {
-                invalidSplitFiles.add(splitFile);
-                // XXX get rid of this callfriend hack later
-                if (!splitFile.corpus.toLowerCase().equals("callfriend")) {
-                    System.out.println(splitFile.getFile() + " is missing");
-                }
-            }
-        }
-        splitFiles.removeAll(invalidSplitFiles);
-        return splitFiles;
     }
 }

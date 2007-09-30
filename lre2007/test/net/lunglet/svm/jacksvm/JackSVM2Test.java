@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +22,14 @@ import net.lunglet.hdf.FileAccessPropListBuilder;
 import net.lunglet.hdf.FileCreatePropList;
 import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
+import net.lunglet.svm.Handle;
+import net.lunglet.svm.SvmNode;
+import net.lunglet.svm.jacksvm.Handle2.Score;
 
 import org.junit.Test;
 
 import com.googlecode.array4j.FloatMatrixUtils;
+import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
@@ -65,11 +70,11 @@ public final class JackSVM2Test {
     private List<Handle2> createData(final H5File datah5) {
         Group dataRoot = datah5.getRootGroup();
         dataRoot.createGroup("/foo").close();
-        int datasets = 30;
-        int classes = 3;
-        Random rng = new Random();
-        //Random rng = new Random(1234);
-        //Random rng = new Random(-1231429939);
+//        int datasets = 30;
+//        int classes = 3;
+        int datasets = 10;
+        int classes = 2;
+        Random rng = new Random(1234);
         int dataColumns = 10;
         List<FloatDenseMatrix> dataList = new ArrayList<FloatDenseMatrix>();
         int dataRows = 0;
@@ -77,7 +82,8 @@ public final class JackSVM2Test {
         HDFWriter dataWriter = new HDFWriter(datah5);
         List<Handle2> handleList = new ArrayList<Handle2>();
         for (int i = 0; i < datasets; i++) {
-            int rows = 1 + rng.nextInt(6);
+//            int rows = 1 + rng.nextInt(6);
+            int rows = 1;
             final FloatDenseMatrix x = new FloatDenseMatrix(rows, dataColumns);
             int labelIndex = rng.nextInt(classes);
             FloatMatrixUtils.fillGaussian(x, labelIndex, 0.01, rng);
@@ -128,30 +134,83 @@ public final class JackSVM2Test {
         return names;
     }
 
+    private Map<String, List<Score>> createScoresMap(final List<Handle2> data) {
+        Map<String, List<Score>> scoresMap = new HashMap<String, List<Score>>();
+        for (Handle2 handle : data) {
+            scoresMap.put(handle.getName(), handle.getScores());
+        }
+        return scoresMap;
+    }
+
     @Test
     public void test() throws IOException, ClassNotFoundException {
         H5File datah5 = createMemoryH5File();
         H5File kernelh5 = createMemoryH5File();
         List<Handle2> data = createData(datah5);
+
+        final Map<Integer, Handle2> indexDataMap = new HashMap<Integer, Handle2>();
+        for (Handle2 handle : data) {
+            indexDataMap.put(handle.getIndex(), handle);
+        }
+
         Set<String> names = getNames(datah5);
         LinearKernelPrecomputer kernelComputer = new LinearKernelPrecomputer(datah5, kernelh5);
         kernelComputer.compute(names);
         checkKernel(datah5, kernelh5);
+
+        // create reference scores
         JackSVM2 svm = new JackSVM2(new H5KernelReader(kernelh5));
         svm.train(data);
         svm.compact();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+        svm.score(data);
+        Map<String, List<Score>> expectedScoresMap = createScoresMap(data);
+
+        // serialize svm before and after compaction
+        JackSVM2 svm1 = new JackSVM2(new H5KernelReader(kernelh5));
+        svm1.train(data);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(svm);
+        oos.writeObject(svm1);
+        oos.reset();
+        svm1.compact();
+        oos.writeObject(svm1);
+        oos.reset();
         oos.close();
+
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
         JackSVM2 svm2 = (JackSVM2) ois.readObject();
+        JackSVM2 svm3 = (JackSVM2) ois.readObject();
         ois.close();
-        svm2.score(data);
-        for (Handle2 handle : data) {
-            System.out.println(String.format("%s %d %s %s", handle.getName(), handle.getIndex(), handle.getLabel(),
-                handle.getScores()));
+
+        // restore node handles after deserialization
+        for (final SvmNode node : svm2.getSvmNodes()) {
+            final Handle2 handle = indexDataMap.get(node.getIndex());
+            node.setHandle(new Handle() {
+                @Override
+                public FloatVector<?> getData() {
+                    return handle.getData();
+                }
+
+                @Override
+                public int getLabel() {
+                    // don't need the label here because training is done
+                    throw new UnsupportedOperationException();
+                }
+            });
         }
+
+        svm2.compact();
+        svm2.score(data);
+        Map<String, List<Score>> scoresMap2 = createScoresMap(data);
+        // TODO do an almostEquals comparison on the scores
+//        assertEquals(expectedScoresMap, scoresMap2);
+        System.out.println(expectedScoresMap);
+        System.out.println(scoresMap2);
+
+        svm3.score(data);
+        Map<String, List<Score>> scoresMap3 = createScoresMap(data);
+        assertEquals(expectedScoresMap, scoresMap3);
+
         kernelh5.close();
         datah5.close();
     }
