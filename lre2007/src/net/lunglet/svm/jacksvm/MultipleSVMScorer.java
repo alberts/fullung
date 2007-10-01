@@ -1,36 +1,27 @@
 package net.lunglet.svm.jacksvm;
 
-import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.zip.GZIPInputStream;
-import net.lunglet.lre.lre07.Constants;
+import net.lunglet.hdf.DataSet;
+import net.lunglet.hdf.H5File;
 
 // TODO score test_i against fe_i_j for all j and then average over scores
 
 // TODO score test_i against language-averaged support vectors (call it fe_i)
 
 public final class MultipleSVMScorer {
-    private static FloatDenseMatrix readFrontend(final int tidx, final int beidx) throws IOException,
-            ClassNotFoundException {
-        File dataDir = new File(Constants.WORKING_DIRECTORY, "sdv_sun_1");
-        File file = new File(dataDir, "frontend_0_0.dat.gz");
-        ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(new FileInputStream(file)));
-        JackSVM2 svm = (JackSVM2) ois.readObject();
-        ois.close();
-        FloatDenseMatrix sv = svm.getSupportVectors();
-        FloatDenseVector rhos = svm.getRhos();
-        FloatDenseMatrix model = new FloatDenseMatrix(sv.columns() + 1, sv.rows(), Orientation.COLUMN, Storage.DIRECT);
-        model.setRow(model.rows() - 1, rhos);
-        return model;
-    }
-
     public static void main(final String[] args) throws IOException, ClassNotFoundException {
-        readFrontend(0, 0);
+        H5File modelsh5 = new H5File("G:/models.h5", H5File.H5F_ACC_RDONLY);
+        for (DataSet ds : modelsh5.getRootGroup().getDataSets()) {
+            // TODO read data from _test_0
+            // TODO read floatdensematrix here
+            FloatDenseMatrix model = new FloatDenseMatrix(19183, 14);
+            ds.close();
+            // TODO read data from backend_0_0
+            // TODO score
+            // train more, score more
+            // TODO do averaging stuff
+        }
+        modelsh5.close();
     }
 }

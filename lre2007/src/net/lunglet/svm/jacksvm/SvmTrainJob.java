@@ -1,16 +1,13 @@
 package net.lunglet.svm.jacksvm;
 
+import com.googlecode.array4j.FloatVector;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import net.lunglet.hdf.H5File;
-
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
-
-import com.googlecode.array4j.FloatVector;
 
 public final class SvmTrainJob implements GridJob {
     private static final long serialVersionUID = 1L;
@@ -42,14 +39,26 @@ public final class SvmTrainJob implements GridJob {
         throw new UnsupportedOperationException();
     }
 
+    private static class KernelReaderHolder {
+        private static final KernelReader INSTANCE;
+
+        static {
+            String filename = "G:/czngrams_kernel.h5";
+            System.out.println("reading kernel from " + filename);
+            // TODO introduce a net.lunglet.datadir property for finding this
+            // kind of file that has been manually distributed to all the nodes
+            H5File kernelh5 = new H5File(filename, H5File.H5F_ACC_RDONLY);
+            INSTANCE = new H5KernelReader2(kernelh5);
+            kernelh5.close();
+        }
+    }
+
+    private static KernelReader getKernelReader() {
+        return KernelReaderHolder.INSTANCE;
+    }
+
     @Override
     public Serializable execute() throws GridException {
-        System.out.println("reading kernel");
-        // TODO introduce a net.lunglet.datadir property for finding this
-        // kind of file that has been manually distributed to all the nodes
-        H5File kernelh5 = new H5File("/opt/tmp/albert/czngrams_kernel.h5", H5File.H5F_ACC_RDONLY);
-        KernelReader kernelReader = new H5KernelReader2(kernelh5);
-        kernelh5.close();
         List<Handle2> remoteData = new ArrayList<Handle2>();
         for (final Handle3 handle : networkData) {
             remoteData.add(new Handle2() {
@@ -89,8 +98,14 @@ public final class SvmTrainJob implements GridJob {
                 }
             });
         }
-        JackSVM2 svm = new JackSVM2(kernelReader);
+//        String filename = "G:/czngrams_kernel.h5";
+//        System.out.println("reading kernel from " + filename);
+//        H5File kernelh5 = new H5File(filename, H5File.H5F_ACC_RDONLY);
+//        KernelReader kernelReader = new H5KernelReader2(kernelh5);
+//        JackSVM2 svm = new JackSVM2(kernelReader);
+        JackSVM2 svm = new JackSVM2(getKernelReader());
         svm.train(remoteData);
+//        kernelh5.close();
         return new Object[]{modelName, svm};
     }
 }

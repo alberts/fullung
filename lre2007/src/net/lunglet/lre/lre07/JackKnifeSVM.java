@@ -1,5 +1,6 @@
 package net.lunglet.lre.lre07;
 
+import com.googlecode.array4j.dense.FloatDenseMatrix;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,32 +20,33 @@ import org.apache.commons.logging.LogFactory;
 
 public final class JackKnifeSVM {
     private static final Log LOG = LogFactory.getLog(JackKnifeSVM.class);
-    
+
     private final CrossValidationSplits cvsplits;
-    
+
     private final H5File datah5;
-    
+
     private final H5File kernelh5;
-    
+
     public JackKnifeSVM(final CrossValidationSplits cvsplits, final H5File datah5, final H5File kernelh5) {
         this.cvsplits = cvsplits;
         this.datah5 = datah5;
         this.kernelh5 = kernelh5;
     }
 
-    public Map<String, JackSVM2> trainModels() throws IOException, InterruptedException, ExecutionException {
-        Map<String, JackSVM2> models = new HashMap<String, JackSVM2>();
+    public Map<String, FloatDenseMatrix> trainModels() throws IOException, InterruptedException, ExecutionException {
+        Map<String, FloatDenseMatrix> models = new HashMap<String, FloatDenseMatrix>();
         LOG.info("reading kernel");
         final H5KernelReader2 kernelReader = new H5KernelReader2(kernelh5);
-        Map<String, Handle2> frontendData = cvsplits.getFrontendData(datah5);
+//        Map<String, Handle2> frontendData = cvsplits.getFrontendData(datah5);
         for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
             for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
                 final String modelName = "frontend_" + ts + "_" + bs;
-                final List<Handle2> trainData = cvsplits.getData(modelName, frontendData);
+//                final List<Handle2> trainData = cvsplits.getData(modelName, frontendData);
+                final List<Handle2> trainData = cvsplits.getData(modelName, datah5);
                 JackSVM2 svm = new JackSVM2(kernelReader);
                 svm.train(trainData);
                 svm.compact();
-                models.put(modelName, svm);
+                models.put(modelName, svm.getModels());
             }
         }
         return models;
@@ -135,10 +137,11 @@ public final class JackKnifeSVM {
         String workingDir = Constants.WORKING_DIRECTORY;
         H5File datah5 = new H5File(new File(workingDir, "czngrams.h5"), H5File.H5F_ACC_RDONLY);
         H5File kernelh5 = new H5File(new File(workingDir, "czngrams_kernel.h5"), H5File.H5F_ACC_RDONLY);
-        CrossValidationSplits cvsplits = new CrossValidationSplits(10, 10);
+        CrossValidationSplits cvsplits = new CrossValidationSplits(1, 1);
         JackKnifeSVM jacksvm = new JackKnifeSVM(cvsplits, datah5, kernelh5);
         LOG.info("training frontend models");
-        Map<String, JackSVM2> models = jacksvm.trainModels();
+        Map<String, FloatDenseMatrix> models = jacksvm.trainModels();
+//        System.out.println(models.get("frontend_0_0").transpose());
         LOG.info("training done");
         kernelh5.close();
 //        scoreBackend(models, datah5);

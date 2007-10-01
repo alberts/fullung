@@ -155,7 +155,7 @@ public final class JackSVM2Test {
 
         Set<String> names = getNames(datah5);
         LinearKernelPrecomputer kernelComputer = new LinearKernelPrecomputer(datah5, kernelh5);
-        kernelComputer.compute(names);
+//        kernelComputer.compute(names);
         checkKernel(datah5, kernelh5);
 
         // create reference scores

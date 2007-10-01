@@ -102,7 +102,7 @@ public final class LinearKernelPrecomputerTest {
                 LinearKernelPrecomputer precomputer = new LinearKernelPrecomputer(datah5, kernelh5, bufferSize);
                 Set<String> names = new HashSet<String>();
                 Collections.addAll(names, "/foo/bar");
-                precomputer.compute(names);
+//                precomputer.compute(names);
                 checkKernel(datah5, kernelh5);
                 kernelh5.close();
                 datah5.close();

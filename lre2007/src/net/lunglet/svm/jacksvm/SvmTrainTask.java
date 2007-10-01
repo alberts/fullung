@@ -1,27 +1,21 @@
 package net.lunglet.svm.jacksvm;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.io.HDFWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.zip.GZIPOutputStream;
-
+import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.H5Library;
 import net.lunglet.svm.Handle;
 import net.lunglet.svm.SvmNode;
-
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
 import org.gridgain.grid.GridNode;
 import org.gridgain.grid.GridTaskAdapter;
-
-import com.googlecode.array4j.FloatVector;
-
-// TODO figure out which thread calls reduce, etc.
 
 public final class SvmTrainTask extends GridTaskAdapter<SvmTrainJob> {
     private static final long serialVersionUID = 1L;
@@ -34,8 +28,22 @@ public final class SvmTrainTask extends GridTaskAdapter<SvmTrainJob> {
         if (subgrid == null || subgrid.isEmpty()) {
             throw new IllegalArgumentException();
         }
+        // make it more likely that a node will be chosen if it has more processors
+        List<GridNode> procgrid = new ArrayList<GridNode>();
+        for (GridNode node : subgrid) {
+            String numproc = (String) node.getAttribute("NUMBER_OF_PROCESSORS");
+            if (numproc != null) {
+                for (int i = 0; i < Integer.valueOf(numproc); i++) {
+                    procgrid.add(node);
+                }
+            } else {
+                procgrid.add(node);
+            }
+        }
         Map<GridJob, GridNode> map = new HashMap<GridJob, GridNode>(1);
-        map.put(job, subgrid.get(rng.nextInt(subgrid.size())));
+        GridNode node = procgrid.get(rng.nextInt(procgrid.size()));
+        System.out.println("assigning task to " + node.getPhysicalAddress());
+        map.put(job, node);
         return map;
     }
 
@@ -70,17 +78,13 @@ public final class SvmTrainTask extends GridTaskAdapter<SvmTrainJob> {
                     }
                 });
             }
+            System.out.println("reducing in thread " + Thread.currentThread().getId());
             synchronized (H5Library.class) {
                 svm.compact();
-            }
-            // TODO write svms in HDF file using model name as dataset name
-            try {
-                String fileName = modelName + ".dat.gz";
-                ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(fileName)));
-                oos.writeObject(svm);
-                oos.close();
-            } catch (IOException e) {
-                throw new GridException(null, e);
+                H5File modelsh5 = new H5File("G:/czmodels.h5", H5File.H5F_ACC_RDWR);
+                HDFWriter writer = new HDFWriter(modelsh5);
+                writer.write(modelName, svm.getModels());
+                writer.close();
             }
             System.out.println("training of " + modelName + " is done");
         }

@@ -44,7 +44,7 @@ public final class GridTaskManager<T> {
             }
             // TODO make sleep time configurable
             try {
-                Thread.sleep(1000L);
+                Thread.sleep(10000L);
             } catch (InterruptedException e) {
                 throw new GridException(null, e);
             }

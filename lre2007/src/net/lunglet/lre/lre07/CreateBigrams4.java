@@ -77,10 +77,8 @@ public final class CreateBigrams4 {
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        CrossValidationSplits experiment = new CrossValidationSplits();
-        Set<SplitEntry> splitFiles = experiment.getAllSplits();
-        System.out.println(splitFiles.size());
-
+        CrossValidationSplits cvsplits = new CrossValidationSplits(1, 1);
+        Set<SplitEntry> splitFiles = cvsplits.getAllSplits();
         final String phonemePrefix = "ru";
         H5File h5file = new H5File(new File(Constants.WORKING_DIRECTORY, phonemePrefix + "ngrams.h5"));
         Map<String, Group> groups = new HashMap<String, Group>();
@@ -91,13 +89,11 @@ public final class CreateBigrams4 {
             Group group = h5file.getRootGroup().createGroup("/" + splitFile.getCorpus());
             groups.put(splitFile.getCorpus(), group);
         }
-
         int index = 0;
         List<SplitEntry> sortedfrontendFiles = new ArrayList<SplitEntry>(splitFiles);
         Collections.sort(sortedfrontendFiles);
         for (SplitEntry splitFile : sortedfrontendFiles) {
-            File zipFile = splitFile.getFile();
-//            System.out.println(zipFile);
+            File zipFile = splitFile.getFile("_0.phnrec.zip");
             List<FloatDenseVector> segments = readPhnRecZip(phonemePrefix, zipFile);
             if (segments.size() < 2) {
                 System.out.println("too few segments for " + zipFile);
@@ -107,7 +103,6 @@ public final class CreateBigrams4 {
             Group group = groups.get(splitFile.getCorpus());
             writeNGrams(splitFile.getName(), splitFile.getLanguage(), ngrams, group, index++);
         }
-
         for (Group group : groups.values()) {
             group.close();
         }

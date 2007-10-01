@@ -19,6 +19,7 @@ import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
+import net.lunglet.hdf.H5Library;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.svm.jacksvm.AbstractHandle2;
 import net.lunglet.svm.jacksvm.Handle2;
@@ -128,12 +129,17 @@ public final class CrossValidationSplits {
         return splits.get(name);
     }
 
+    public Set<SplitEntry> getAllSplits() {
+        return splits.get("all");
+    }
+
     private static FloatDenseVector getHandleData(final H5File datah5, final String name, final long[] start) {
         DataSet dataset = datah5.getRootGroup().openDataSet(name);
         DataSpace fileSpace = dataset.getSpace();
         int len = (int) fileSpace.getDim(1);
         DataSpace memSpace = new DataSpace(len);
-        FloatDenseVector data = new FloatDenseVector(len, Orientation.COLUMN, Storage.DIRECT);
+        // TODO investigate effect of heap vs direct storage here
+        FloatDenseVector data = new FloatDenseVector(len, Orientation.COLUMN, Storage.HEAP);
         long[] count = {1, 1};
         long[] block = {1, fileSpace.getDim(1)};
         fileSpace.selectHyperslab(SelectionOperator.SET, start, null, count, block);
@@ -156,16 +162,25 @@ public final class CrossValidationSplits {
         return getData(datah5, splits.get("test"));
     }
 
-    public Map<String, Handle2> getFrontendData(final H5File datah5) {
+    public Map<String, Handle2> getDataMap(final String splitName, final H5File datah5) {
         Map<String, Handle2> data = new HashMap<String, Handle2>();
-        for (Handle2 handle : getData("frontend", datah5)) {
+        for (Handle2 handle : getData(splitName, datah5)) {
             data.put(handle.getName(), handle);
         }
         return data;
     }
 
+    public List<Handle2> getData(final String splitName, final Map<String, Handle2> data) {
+        List<Handle2> handles = new ArrayList<Handle2>();
+        for (SplitEntry entry : getSplit(splitName)) {
+            handles.add(data.get(entry.getName()));
+        }
+        return handles;
+    }
+
     public List<Handle2> getData(final String splitName, final H5File datah5) {
         List<Handle2> handles = new ArrayList<Handle2>();
+        // TODO this loop is too slow, mostly due to HDF operations
         for (SplitEntry entry : splits.get(splitName)) {
             final String name = entry.getName();
             DataSet ds = datah5.getRootGroup().openDataSet(name);
@@ -176,14 +191,11 @@ public final class CrossValidationSplits {
                 final int j = i;
                 final int index = indexes[i];
                 handles.add(new AbstractHandle2(name, index, label) {
-                    private FloatDenseVector data = null;
-
                     @Override
                     public FloatVector<?> getData() {
-                        if (data == null) {
-                            data = getHandleData(datah5, name, new long[]{j, 0});
+                        synchronized (H5Library.class) {
+                            return getHandleData(datah5, name, new long[]{j, 0});
                         }
-                        return data;
                     }
                 });
             }
@@ -234,14 +246,11 @@ public final class CrossValidationSplits {
         splits.put("frontend", frontend);
         splits.put("backend", backend);
         splits.put("test", test);
+        Set<SplitEntry> all = new HashSet<SplitEntry>();
+        all.addAll(frontend);
+        all.addAll(backend);
+        all.addAll(test);
+        splits.put("all", all);
         return splits;
-    }
-
-    public List<Handle2> getData(final String splitName, final Map<String, Handle2> data) {
-        List<Handle2> handles = new ArrayList<Handle2>();
-        for (SplitEntry entry : getSplit(splitName)) {
-            handles.add(data.get(entry.getName()));
-        }
-        return handles;
     }
 }

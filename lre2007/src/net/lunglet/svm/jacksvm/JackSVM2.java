@@ -1,5 +1,12 @@
 package net.lunglet.svm.jacksvm;
 
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.math.FloatMatrixMath;
+import com.googlecode.array4j.packed.FloatPackedMatrix;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -8,23 +15,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import net.lunglet.svm.Handle;
 import net.lunglet.svm.PrecomputedKernel;
 import net.lunglet.svm.SimpleSvm;
 import net.lunglet.svm.SvmNode;
 import net.lunglet.svm.jacksvm.Handle2.Score;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
-import com.googlecode.array4j.math.FloatMatrixMath;
-import com.googlecode.array4j.packed.FloatPackedMatrix;
 
 // TODO make cost at training configurable
 
@@ -108,20 +105,6 @@ public final class JackSVM2 implements Serializable {
         return kernel;
     }
 
-    public FloatDenseVector getRhos() {
-        if (rhos == null) {
-            throw new IllegalStateException();
-        }
-        return rhos;
-    }
-
-    public FloatDenseMatrix getSupportVectors() {
-        if (supportVectors == null) {
-            throw new IllegalStateException();
-        }
-        return supportVectors;
-    }
-
     public List<String> getTargetLabels() {
         return Collections.unmodifiableList(targetLabels);
     }
@@ -163,6 +146,23 @@ public final class JackSVM2 implements Serializable {
             rhos.set(i, svm.getRho());
         }
         originalSvms = null;
+    }
+
+    public FloatDenseMatrix getModels() {
+        if (supportVectors == null || rhos == null) {
+            throw new IllegalStateException();
+        }
+        FloatDenseMatrix models = new FloatDenseMatrix(supportVectors.rows(), supportVectors.columns() + 1,
+                Orientation.ROW, Storage.DIRECT);
+        for (int i = 0; i < supportVectors.rows(); i++) {
+            for (int j = 0; j < supportVectors.columns(); j++) {
+                models.set(i, j, supportVectors.get(i, j));
+            }
+        }
+        for (int i = 0; i < rhos.length(); i++) {
+            models.set(i, models.columns() - 1, rhos.get(i));
+        }
+        return models;
     }
 
     private SimpleSvm train(final String targetLabel, final List<Handle2> data, final PrecomputedKernel kernel) {
