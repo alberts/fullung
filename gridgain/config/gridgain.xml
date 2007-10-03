@@ -9,8 +9,8 @@
     <property name="peerClassLoadingEnabled" value="true" />
     <property name="executorService">
       <bean class="java.util.concurrent.ThreadPoolExecutor">
-        <constructor-arg type="int" value="2" />
-        <constructor-arg type="int" value="2" />
+        <constructor-arg type="int" value="3" />
+        <constructor-arg type="int" value="3" />
         <constructor-arg type="long">
           <util:constant static-field="java.lang.Long.MAX_VALUE" />
         </constructor-arg>
