@@ -88,12 +88,12 @@ public final class SvmTrainJob implements GridJob {
                 }
 
                 @Override
-                public void setScores(List<Score> scores) {
+                public void setScores(final List<Score> scores) {
                     throw new UnsupportedOperationException();
                 }
 
                 @Override
-                public int compareTo(Handle2 o) {
+                public int compareTo(final Handle2 o) {
                     throw new UnsupportedOperationException();
                 }
             });

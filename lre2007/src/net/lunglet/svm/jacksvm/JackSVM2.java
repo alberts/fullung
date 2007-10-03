@@ -45,23 +45,15 @@ public final class JackSVM2 implements Serializable {
 
     private SimpleSvm[] originalSvms;
 
-    private transient List<Handle2> trainData;
-
-    public void setTrainData(final List<Handle2> trainData) {
-        this.trainData = trainData;
-    }
-
     public JackSVM2(final FloatDenseMatrix supportVectors, final FloatDenseVector rhos, final List<String> targetLabels) {
         this.kernelReader = null;
         this.supportVectors = supportVectors;
         this.rhos = rhos;
         this.targetLabels = targetLabels;
-        this.trainData = null;
     }
 
     public JackSVM2(final KernelReader kernelReader) {
         this.kernelReader = kernelReader;
-        this.trainData = null;
     }
 
     private PrecomputedKernel createPrecomputedKernel(final int[] indexes) {
@@ -76,15 +68,17 @@ public final class JackSVM2 implements Serializable {
         };
     }
 
+    // TODO this method can't be called more than once because it modifies the
+    // nodes of the original SVMs
     public SvmNode[] getSvmNodes() {
         if (originalSvms == null) {
             throw new IllegalStateException("SvmNodes only available before compaction");
         }
         List<SvmNode> svmNodes = new ArrayList<SvmNode>();
         for (SimpleSvm svm : originalSvms) {
-            for (SvmNode node : svm.getSvmNodes()) {
-                // map from svm assigned index to data index
-                node.setIndex(trainData.get(node.getIndex()).getIndex());
+            // skip null svm here in case all models weren't trained
+            if (svm == null) {
+                continue;
             }
             Collections.addAll(svmNodes, svm.getSvmNodes());
         }
@@ -109,6 +103,20 @@ public final class JackSVM2 implements Serializable {
         return Collections.unmodifiableList(targetLabels);
     }
 
+    public FloatDenseMatrix getSupportVectors() {
+        if (supportVectors == null) {
+            throw new IllegalStateException("SVM not compacted");
+        }
+        return supportVectors;
+    }
+
+    public FloatDenseVector getRhos() {
+        if (rhos == null) {
+            throw new IllegalStateException("SVM not compacted");
+        }
+        return rhos;
+    }
+
     public void score(final List<Handle2> testData) {
         if (supportVectors == null || rhos == null) {
             throw new IllegalStateException();
@@ -118,7 +126,7 @@ public final class JackSVM2 implements Serializable {
             // TODO read testData into buffer so that we can score with a gemm
             FloatDenseMatrix result = FloatMatrixMath.times(supportVectors, handle.getData());
             List<Score> scores = new ArrayList<Score>(supportVectors.rows());
-            for (int j = 0; j < result.rows(); j++) {
+            for (int j = 0; j < Math.min(targetLabels.size(), result.rows()); j++) {
                 float score = result.get(j, 0) - rhos.get(j);
                 scores.add(new Score(targetLabels.get(j), score));
             }
@@ -130,9 +138,12 @@ public final class JackSVM2 implements Serializable {
         if (originalSvms == null) {
             throw new IllegalStateException();
         }
-        // don't need this anymore
-        trainData = null;
         for (int i = 0; i < originalSvms.length; i++) {
+            // skip over null original SVM in case some models weren't trained
+            // (useful for debugging)
+            if (originalSvms[i] == null) {
+                continue;
+            }
             log.info("compacting and extracting model");
             SimpleSvm svm = originalSvms[i];
             svm.compact();
@@ -145,13 +156,15 @@ public final class JackSVM2 implements Serializable {
             supportVectors.setRow(i, sv);
             rhos.set(i, svm.getRho());
         }
-        originalSvms = null;
+        this.originalSvms = null;
     }
 
     public FloatDenseMatrix getModels() {
         if (supportVectors == null || rhos == null) {
             throw new IllegalStateException();
         }
+        // XXX row orientation is good here, since we write this matrix to a HDF
+        // file, but it shouldn't matter eventually
         FloatDenseMatrix models = new FloatDenseMatrix(supportVectors.rows(), supportVectors.columns() + 1,
                 Orientation.ROW, Storage.DIRECT);
         for (int i = 0; i < supportVectors.rows(); i++) {
@@ -160,7 +173,9 @@ public final class JackSVM2 implements Serializable {
             }
         }
         for (int i = 0; i < rhos.length(); i++) {
-            models.set(i, models.columns() - 1, rhos.get(i));
+            // use -rho here because scoring will take place using a single
+            // matrix multiplication, which implies addition
+            models.set(i, models.columns() - 1, -rhos.get(i));
         }
         return models;
     }
@@ -207,7 +222,6 @@ public final class JackSVM2 implements Serializable {
             originalSvms[i] = train(targetLabel, trainData, kernel);
             targetLabels.add(targetLabel);
         }
-        this.trainData = trainData;
     }
 
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {

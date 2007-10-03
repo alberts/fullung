@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="jar-complete" name="phnrec">
+<project basedir="." default="jar-complete" name="lre2007">
 	<property file="build.properties" />
 
 	<property file="default.build.properties" />

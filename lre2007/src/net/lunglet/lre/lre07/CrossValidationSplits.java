@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,8 +53,16 @@ public final class CrossValidationSplits {
             return corpus;
         }
 
+        public int getDuration() {
+            return duration;
+        }
+
         public String getLanguage() {
             return language;
+        }
+
+        public String getBaseName() {
+            return filename.substring(0, filename.lastIndexOf(".sph"));
         }
 
         public void setDuration(final int duration) {
@@ -175,6 +184,9 @@ public final class CrossValidationSplits {
         for (SplitEntry entry : getSplit(splitName)) {
             handles.add(data.get(entry.getName()));
         }
+        // sort handles here so that indexes into handle list always retrieve
+        // the same data
+        Collections.sort(handles);
         return handles;
     }
 
@@ -211,6 +223,7 @@ public final class CrossValidationSplits {
         while (line != null) {
             SplitEntry entry = new SplitEntry();
             String[] parts = line.split("\\s+");
+            // TODO remove this toLowerCase call
             entry.corpus = parts[0].toLowerCase();
             entry.filename = parts[2];
             entry.language = parts[3];
@@ -231,7 +244,10 @@ public final class CrossValidationSplits {
         Set<SplitEntry> backend = new HashSet<SplitEntry>();
         Set<SplitEntry> test = new HashSet<SplitEntry>();
         for (int i = 0; i < testSplits; i++) {
-            test.addAll(readSplit("test_" + i));
+            String testname = "test_" + i;
+            Set<SplitEntry> testi = readSplit(testname);
+            splits.put(testname, testi);
+            test.addAll(testi);
             for (int j = 0; j < backendSplits; j++) {
                 final String fename = "frontend_" + i + "_" + j;
                 Set<SplitEntry> feij = readSplit(fename);

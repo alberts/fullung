@@ -1,5 +1,6 @@
 package net.lunglet.gridgain;
 
+import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.blas.FloatDenseBLAS;
@@ -10,14 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import net.lunglet.hdf.FileAccessPropList;
-import net.lunglet.hdf.FileAccessPropListBuilder;
-import net.lunglet.hdf.FileCreatePropList;
-import net.lunglet.hdf.H5File;
 import org.gridgain.grid.Grid;
 import org.gridgain.grid.GridConfigurationAdapter;
 import org.gridgain.grid.GridException;
@@ -58,16 +54,47 @@ public final class TestGrid {
 
         @Override
         public Serializable execute() throws GridException {
-            System.out.println("doing hdf stuff");
-            FileCreatePropList fcpl = FileCreatePropList.DEFAULT;
-            FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
-            String name = UUID.randomUUID().toString();
-            H5File h5 = new H5File(name, fcpl, fapl);
-            fapl.close();
-            h5.close();
-            System.out.println("doing mkl stuff");
-            FloatDenseMatrix x = new FloatDenseMatrix(1000, 1000, Orientation.COLUMN, Storage.DIRECT);
-            FloatDenseBLAS.DEFAULT.gemm(1.0f, x, x, 1.0f, x);
+//            System.out.println("doing hdf stuff");
+//            FileCreatePropList fcpl = FileCreatePropList.DEFAULT;
+//            FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
+//            String name = UUID.randomUUID().toString();
+//            H5File h5 = new H5File(name, fcpl, fapl);
+//            fapl.close();
+//            h5.close();
+//            System.out.println("doing mkl stuff");
+//            FloatDenseMatrix x = new FloatDenseMatrix(1000, 1000, Orientation.COLUMN, Storage.DIRECT);
+//            FloatDenseBLAS.DEFAULT.gemm(1.0f, x, x, 1.0f, x);
+//            return null;
+            Random rng = new Random(0);
+            for (int n = 50; n < 751; n += 10) {
+                final int r;
+                if (n < 100) {
+                    r = 5000;
+                } else {
+                    r = 500;
+                }
+                float alpha = 1.0f;
+                Orientation orient = Orientation.COLUMN;
+                Storage storage = Storage.DIRECT;
+                FloatDenseMatrix a = new FloatDenseMatrix(n, n, orient, storage);
+                FloatDenseMatrix b = new FloatDenseMatrix(n, n, orient, storage);
+                float beta = 1.0f;
+                FloatDenseMatrix c = new FloatDenseMatrix(n, n, orient, storage);
+                FloatMatrixUtils.fillRandom(a, rng);
+                FloatMatrixUtils.fillRandom(b, rng);
+                FloatMatrixUtils.fillRandom(c, rng);
+                for (int i = 0; i < 10; i++) {
+                    FloatDenseBLAS.DEFAULT.gemm(alpha, a, b, beta, c);
+                }
+                long startTime = System.nanoTime();
+                for (int i = 0; i < r; i++) {
+                    FloatDenseBLAS.DEFAULT.gemm(alpha, a, b, beta, c);
+                }
+                long t = System.nanoTime() - startTime;
+                int f = 2 * (n + 1) * n * n;
+                double mfs = f / (t / 1000.0) * r;
+                System.out.println(String.format("n = %d, mfs = %f", n, mfs));
+            }
             return null;
         }
     }
@@ -84,7 +111,7 @@ public final class TestGrid {
         try {
             final Grid grid = GridFactory.start(cfg);
             List<GridTaskFuture> futures = new ArrayList<GridTaskFuture>();
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 1; i++) {
                 GridTaskFuture future = grid.execute(TestTask.class.getName(), new TestJob());
                 futures.add(future);
             }

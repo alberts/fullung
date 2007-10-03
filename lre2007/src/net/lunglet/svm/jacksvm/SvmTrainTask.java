@@ -57,19 +57,13 @@ public final class SvmTrainTask extends GridTaskAdapter<SvmTrainJob> {
             Object[] data = (Object[]) result.getData();
             String modelName = (String) data[0];
             SvmTrainJob job = (SvmTrainJob) result.getJob();
-            List<Handle2> trainData = job.getLocalData();
-            final Map<Integer, Handle2> indexDataMap = new HashMap<Integer, Handle2>();
-            for (Handle2 handle : trainData) {
-                indexDataMap.put(handle.getIndex(), handle);
-            }
+            final List<Handle2> trainData = job.getLocalData();
             JackSVM2 svm = (JackSVM2) data[1];
-            svm.setTrainData(trainData);
-            for (SvmNode node : svm.getSvmNodes()) {
-                final Handle2 handle = indexDataMap.get(node.getIndex());
+            for (final SvmNode node : svm.getSvmNodes()) {
                 node.setHandle(new Handle() {
                     @Override
                     public FloatVector<?> getData() {
-                        return handle.getData();
+                        return trainData.get(node.getIndex()).getData();
                     }
 
                     @Override
@@ -78,7 +72,6 @@ public final class SvmTrainTask extends GridTaskAdapter<SvmTrainJob> {
                     }
                 });
             }
-            System.out.println("reducing in thread " + Thread.currentThread().getId());
             synchronized (H5Library.class) {
                 svm.compact();
                 H5File modelsh5 = new H5File("G:/czmodels.h5", H5File.H5F_ACC_RDWR);
