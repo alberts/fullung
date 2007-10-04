@@ -29,8 +29,8 @@ public final class KernelChecker {
     }
 
     public static void main(final String[] args) {
-        H5File datah5 = new H5File("F:/ngrams.h5", H5File.H5F_ACC_RDONLY);
-        H5File kernelh5 = new H5File("F:/ngrams_kernel.h5", H5File.H5F_ACC_RDONLY);
+        H5File datah5 = new H5File("C:/home/albert/LRE2007/work/data.h5", H5File.H5F_ACC_RDONLY);
+        H5File kernelh5 = new H5File("C:/home/albert/LRE2007/work/kernel.h5", H5File.H5F_ACC_RDONLY);
         LOG.info("getting names of datasets");
         Set<String> names = getNames(datah5);
 
@@ -67,10 +67,10 @@ public final class KernelChecker {
                     LOG.error(String.format("invalid value for K(%d, %d): %.15e vs %.15e, delta = %.15e",
                         veci.getIndex(), vecj.getIndex(), k, kread, delta));
                     errorCount++;
-//                    if (errorCount > 20) {
-//                        LOG.fatal("too many errors, exiting");
-//                        return;
-//                    }
+                    if (errorCount > 20) {
+                        LOG.fatal("too many errors, exiting");
+                        return;
+                    }
                 }
             }
         }

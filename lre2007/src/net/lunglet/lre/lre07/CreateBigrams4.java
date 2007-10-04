@@ -79,8 +79,8 @@ public final class CreateBigrams4 {
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
         CrossValidationSplits cvsplits = new CrossValidationSplits(1, 1);
         Set<SplitEntry> splitFiles = cvsplits.getAllSplits();
-        final String phonemePrefix = "ru";
-        H5File h5file = new H5File(new File(Constants.WORKING_DIRECTORY, phonemePrefix + "ngrams.h5"));
+        final String phonemePrefix = "cz";
+        H5File h5file = new H5File(new File("G:/", phonemePrefix + "ngrams.h5"));
         Map<String, Group> groups = new HashMap<String, Group>();
         for (SplitEntry splitFile : splitFiles) {
             if (groups.containsKey(splitFile.getCorpus())) {

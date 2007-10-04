@@ -24,6 +24,7 @@ import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
+import net.lunglet.svm.jacksvm.CompactJackSVM2Builder;
 import net.lunglet.svm.jacksvm.H5KernelReader2;
 import net.lunglet.svm.jacksvm.Handle2;
 import net.lunglet.svm.jacksvm.JackSVM2;
@@ -47,7 +48,7 @@ public final class JackKnifeSVM {
     }
 
     public Map<String, JackSVM2> trainModels() throws IOException, InterruptedException, ExecutionException {
-        Map<String, JackSVM2> models = new HashMap<String, JackSVM2>();
+        Map<String, CompactJackSVM2Builder> svmBuilders = new HashMap<String, CompactJackSVM2Builder>();
         LOG.info("reading kernel");
         final H5KernelReader2 kernelReader = new H5KernelReader2(kernelh5);
         Map<String, Handle2> frontendHandles = cvsplits.getDataMap("frontend", datah5);
@@ -57,9 +58,18 @@ public final class JackKnifeSVM {
                 final List<Handle2> trainData = cvsplits.getData(modelName, frontendHandles);
                 JackSVM2 svm = new JackSVM2(kernelReader);
                 svm.train(trainData);
-                svm.compact();
-                models.put(modelName, svm);
+                svmBuilders.put(modelName, svm.getCompactBuilder());
             }
+        }
+        LOG.info("compacting");
+        for (Handle2 handle : frontendHandles.values()) {
+            for (CompactJackSVM2Builder svmBuilder : svmBuilders.values()) {
+                svmBuilder.present(handle.getData(), handle.getIndex());
+            }
+        }
+        Map<String, JackSVM2> models = new HashMap<String, JackSVM2>();
+        for (Map.Entry<String, CompactJackSVM2Builder> entry : svmBuilders.entrySet()) {
+            models.put(entry.getKey(), entry.getValue().build());
         }
         return models;
     }
@@ -230,21 +240,21 @@ public final class JackKnifeSVM {
 
     public static void main(final String[] args) throws IOException, InterruptedException, ExecutionException {
         LOG.info("starting");
-        String workingDir = Constants.WORKING_DIRECTORY;
+        String workingDir = "G:/";
         H5File datah5 = new H5File(new File(workingDir, "czngrams.h5"), H5File.H5F_ACC_RDONLY);
         H5File kernelh5 = new H5File(new File(workingDir, "czngrams_kernel.h5"), H5File.H5F_ACC_RDONLY);
         CrossValidationSplits cvsplits = new CrossValidationSplits(1, 1);
         JackKnifeSVM jacksvm = new JackKnifeSVM(cvsplits, datah5, kernelh5);
         LOG.info("training frontend models");
         Map<String, JackSVM2> models = jacksvm.trainModels();
-        Map<String, FloatDenseMatrix> models2 = new HashMap<String, FloatDenseMatrix>();
-        for (Map.Entry<String, JackSVM2> entry : models.entrySet()) {
-            models2.put(entry.getKey(), entry.getValue().getModels());
-        }
+//        Map<String, FloatDenseMatrix> models2 = new HashMap<String, FloatDenseMatrix>();
+//        for (Map.Entry<String, JackSVM2> entry : models.entrySet()) {
+//            models2.put(entry.getKey(), entry.getValue().getModels());
+//        }
         LOG.info("training done");
         kernelh5.close();
         jacksvm.scoreBackend(models, datah5);
-        jacksvm.scoreBackend2(models2, datah5);
+//        jacksvm.scoreBackend2(models2, datah5);
 //        scoreTest(models, datah5);
 //        // TODO score final model on everything as a check
         datah5.close();

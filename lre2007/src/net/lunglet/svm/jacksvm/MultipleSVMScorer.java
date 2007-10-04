@@ -22,15 +22,14 @@ import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.lre.lre07.CrossValidationSplits;
 import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
 
-// TODO score test_i against fe_i_j for all j and then average over scores
-
-// TODO score test_i against language-averaged support vectors (call it fe_i)
-
 public final class MultipleSVMScorer {
+    // TODO don't hard-code SV_DIM
     private static final int SV_DIM = 19182;
 
+//    private static final String MODELS_FILENAME = "C:/home/albert/LRE2007/work/models.h5";
     private static final String MODELS_FILENAME = "G:/czmodels.h5";
 
+//    private static final String DATA_FILENAME = "G:/data.h5";
     private static final String DATA_FILENAME = "G:/czngrams.h5";
 
     private static FloatDenseMatrix readData(final List<SplitEntry> entries) {
@@ -90,7 +89,7 @@ public final class MultipleSVMScorer {
     }
 
     public static void main(final String[] args) throws IOException {
-        CrossValidationSplits cvsplits = new CrossValidationSplits(10, 10);
+        CrossValidationSplits cvsplits = new CrossValidationSplits(1, 1);
         H5File modelsh5 = new H5File(MODELS_FILENAME, H5File.H5F_ACC_RDONLY);
         for (int tidx = 0; tidx < cvsplits.getTestSplits(); tidx++) {
             for (int beidx = 0; beidx < cvsplits.getBackendSplits(); beidx++) {

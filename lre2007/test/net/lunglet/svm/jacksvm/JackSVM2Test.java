@@ -1,7 +1,14 @@
 package net.lunglet.svm.jacksvm;
 
 import static org.junit.Assert.assertEquals;
-
+import com.googlecode.array4j.FloatMatrixUtils;
+import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.io.HDFReader;
+import com.googlecode.array4j.io.HDFWriter;
+import com.googlecode.array4j.math.FloatMatrixMath;
+import com.googlecode.array4j.packed.FloatPackedMatrix;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,28 +22,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.FileAccessPropList;
 import net.lunglet.hdf.FileAccessPropListBuilder;
 import net.lunglet.hdf.FileCreatePropList;
 import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
-import net.lunglet.svm.Handle;
-import net.lunglet.svm.SvmNode;
 import net.lunglet.svm.jacksvm.Handle2.Score;
-
 import org.junit.Test;
-
-import com.googlecode.array4j.FloatMatrixUtils;
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
-import com.googlecode.array4j.io.HDFReader;
-import com.googlecode.array4j.io.HDFWriter;
-import com.googlecode.array4j.math.FloatMatrixMath;
-import com.googlecode.array4j.packed.FloatPackedMatrix;
 
 public final class JackSVM2Test {
     public static H5File createMemoryH5File() {
@@ -161,8 +154,12 @@ public final class JackSVM2Test {
         // create reference scores
         JackSVM2 svm = new JackSVM2(new H5KernelReader(kernelh5));
         svm.train(data);
-        svm.compact();
-        svm.score(data);
+        CompactJackSVM2Builder svmBuilder = svm.getCompactBuilder();
+        for (Handle2 x : data) {
+            svmBuilder.present(x.getData(), x.getIndex());
+        }
+        JackSVM2 compactSvm = svmBuilder.build();
+        compactSvm.score(data);
         Map<String, List<Score>> expectedScoresMap = createScoresMap(data);
 
         // serialize svm before and after compaction
@@ -172,8 +169,11 @@ public final class JackSVM2Test {
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(svm1);
         oos.reset();
-        svm1.compact();
-        oos.writeObject(svm1);
+        svmBuilder = svm1.getCompactBuilder();
+        for (Handle2 x : data) {
+            svmBuilder.present(x.getData(), x.getIndex());
+        }
+        oos.writeObject(svmBuilder.build());
         oos.reset();
         oos.close();
 
@@ -181,26 +181,12 @@ public final class JackSVM2Test {
         JackSVM2 svm2 = (JackSVM2) ois.readObject();
         JackSVM2 svm3 = (JackSVM2) ois.readObject();
         ois.close();
-
-        // restore node handles after deserialization
-        for (final SvmNode node : svm2.getSvmNodes()) {
-            final Handle2 handle = indexDataMap.get(node.getIndex());
-            node.setHandle(new Handle() {
-                @Override
-                public FloatVector<?> getData() {
-                    return handle.getData();
-                }
-
-                @Override
-                public int getLabel() {
-                    // don't need the label here because training is done
-                    throw new UnsupportedOperationException();
-                }
-            });
+        svmBuilder = svm2.getCompactBuilder();
+        for (Handle2 x : data) {
+            svmBuilder.present(x.getData(), x.getIndex());
         }
-
-        svm2.compact();
-        svm2.score(data);
+        JackSVM2 compactSvm2 = svmBuilder.build();
+        compactSvm2.score(data);
         Map<String, List<Score>> scoresMap2 = createScoresMap(data);
         // TODO do an almostEquals comparison on the scores
 //        assertEquals(expectedScoresMap, scoresMap2);

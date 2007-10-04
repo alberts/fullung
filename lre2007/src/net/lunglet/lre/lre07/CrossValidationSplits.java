@@ -20,7 +20,6 @@ import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
-import net.lunglet.hdf.H5Library;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.svm.jacksvm.AbstractHandle2;
 import net.lunglet.svm.jacksvm.Handle2;
@@ -192,7 +191,6 @@ public final class CrossValidationSplits {
 
     public List<Handle2> getData(final String splitName, final H5File datah5) {
         List<Handle2> handles = new ArrayList<Handle2>();
-        // TODO this loop is too slow, mostly due to HDF operations
         for (SplitEntry entry : splits.get(splitName)) {
             final String name = entry.getName();
             DataSet ds = datah5.getRootGroup().openDataSet(name);
@@ -205,9 +203,7 @@ public final class CrossValidationSplits {
                 handles.add(new AbstractHandle2(name, index, label) {
                     @Override
                     public FloatVector<?> getData() {
-                        synchronized (H5Library.class) {
-                            return getHandleData(datah5, name, new long[]{j, 0});
-                        }
+                        return getHandleData(datah5, name, new long[]{j, 0});
                     }
                 });
             }

@@ -37,9 +37,9 @@ public final class JackSVM2 implements Serializable {
     // though...
     private transient Log log = LogFactory.getLog(JackSVM2.class);
 
-    private FloatDenseVector rhos;
+    private final FloatDenseVector rhos;
 
-    private FloatDenseMatrix supportVectors;
+    private final FloatDenseMatrix supportVectors;
 
     private List<String> targetLabels;
 
@@ -54,6 +54,8 @@ public final class JackSVM2 implements Serializable {
 
     public JackSVM2(final KernelReader kernelReader) {
         this.kernelReader = kernelReader;
+        this.supportVectors = null;
+        this.rhos = null;
     }
 
     private PrecomputedKernel createPrecomputedKernel(final int[] indexes) {
@@ -133,30 +135,9 @@ public final class JackSVM2 implements Serializable {
             handle.setScores(scores);
         }
     }
-
-    public void compact() {
-        if (originalSvms == null) {
-            throw new IllegalStateException();
-        }
-        for (int i = 0; i < originalSvms.length; i++) {
-            // skip over null original SVM in case some models weren't trained
-            // (useful for debugging)
-            if (originalSvms[i] == null) {
-                continue;
-            }
-            log.info("compacting and extracting model");
-            SimpleSvm svm = originalSvms[i];
-            svm.compact();
-            FloatVector<?> sv = svm.getSupportVector();
-            if (supportVectors == null) {
-                final int svrows = rhos.length();
-                final int svcols = sv.length();
-                this.supportVectors = new FloatDenseMatrix(svrows, svcols, Orientation.COLUMN, Storage.DIRECT);
-            }
-            supportVectors.setRow(i, sv);
-            rhos.set(i, svm.getRho());
-        }
-        this.originalSvms = null;
+    
+    public CompactJackSVM2Builder getCompactBuilder() {
+        return new CompactJackSVM2Builder(originalSvms, targetLabels);
     }
 
     public FloatDenseMatrix getModels() {
@@ -183,17 +164,22 @@ public final class JackSVM2 implements Serializable {
     private SimpleSvm train(final String targetLabel, final List<Handle2> data, final PrecomputedKernel kernel) {
         log.info("training with target label " + targetLabel);
         List<Handle> dataList = new ArrayList<Handle>();
-        for (final Handle2 x : data) {
+        for (final Handle2 handle : data) {
             dataList.add(new Handle() {
                 @Override
                 public FloatVector<?> getData() {
-                    return x.getData();
+                    return handle.getData();
                 }
 
                 @Override
                 public int getLabel() {
                     // TODO maybe do 1 and -1 instead
-                    return x.getLabel().equals(targetLabel) ? 0 : 1;
+                    return handle.getLabel().equals(targetLabel) ? 0 : 1;
+                }
+
+                @Override
+                public int getIndex() {
+                    return handle.getIndex();
                 }
             });
         }
@@ -214,7 +200,6 @@ public final class JackSVM2 implements Serializable {
         List<String> labelsList = new ArrayList<String>(uniqueLabels);
         Collections.sort(labelsList);
         int p = labelsList.size() <= 2 ? 1 : labelsList.size();
-        this.rhos = new FloatDenseVector(p);
         this.targetLabels = new ArrayList<String>(p);
         this.originalSvms = new SimpleSvm[p];
         for (int i = 0; i < p; i++) {

@@ -1,5 +1,6 @@
 package net.lunglet.svm.jacksvm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +10,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.googlecode.array4j.FloatVector;
 
-public abstract class AbstractHandle2 implements Handle2 {
+public abstract class AbstractHandle2 implements Handle2, Serializable {
     private final int index;
 
     private final String label;
