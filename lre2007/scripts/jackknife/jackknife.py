@@ -377,24 +377,15 @@ def read_callfriend_index(fp):
         if len(parts) > 1:
             parts = parts[1].split('|')
             for part in parts:
-                if not part.find('=') >= 0:
-                    continue
+                if not part.find('=') >= 0: continue
                 key, value = part.split('=', 1)
                 info[key] = value
         if segments.has_key(id):
             raise ValueError, 'duplicate id: %d' % id
-        files = set([
-                '%s.0.0.3s.sph' % langid,
-                '%s.1.0.3s.sph' % langid,
-                '%s.0.0.10s.sph' % langid,
-                '%s.1.0.10s.sph' % langid,
-                '%s.0.0.30s.sph' % langid,
-                '%s.1.0.30s.sph' % langid
-                ])
         segments['callfriend',id] = {
             'language' : lang,
             'overlap' : set(),
-            'files' : files,
+            'files' : set(['%s.sph' % langid]),
             }
     return segments
 
@@ -413,7 +404,7 @@ def read_callhome_index(fp):
         segments['callhome',id] = {
             'language' : lang,
             'overlap' : set(),
-            'files' : set()
+            'files' : set([parts[-1].lower()])
             }
     return segments
 
@@ -450,10 +441,11 @@ def read_ohsu(fp):
             lang = 'chinese'
         else:
             raise ValueError, 'invalid id: %s' % id
+        files = set(['%s-A-con.nis' % id, '%s-B-con.nis' % id])
         segments['OHSU',id] = {
             'language' : lang,
             'overlap' : set(),
-            'files' : set()
+            'files' : files
             }
     return segments
 
@@ -509,6 +501,36 @@ def read_sre04_key(fp):
         key[segid] = {'language' : lang, 'id' : id}
     return key
 
+def read_sre04_segments(fp):
+    if isinstance(fp, basestring):
+        fp = open(fp, 'r')
+    lines = fp.readlines()
+    fp.close()
+    segments = {}
+    for line in lines:
+        parts = re.split('\s+', line.strip())
+        segid, langcode, id = parts[0:3]
+        duration = parts[4]
+        # exclude summed conversations
+        if duration not in ('10, 30, 1s'): continue
+        lang = SRE_LANGUAGE_CODES[langcode]
+        key = 'MIXER', id
+        if duration == '1s':
+            files = set(['sre04.1side.%s.sph' % segid])
+        else:
+            duration = int(duration)
+            files = set(['sre04.%ds.%s.sph' % (duration, segid)])
+        if key not in segments:
+            segments[key] = {
+                'language' : lang,
+                'overlap' : set(),
+                'files' : files
+                }
+        else:
+            assert segments[key]['language'] == lang
+            segments[key]['files'] |= files
+    return segments
+
 def read_sre05_key(fp):
     if isinstance(fp, basestring):
         fp = open(fp, 'r')
@@ -517,9 +539,8 @@ def read_sre05_key(fp):
     key = {}
     for line in lines:
         parts = re.split('\s+', line.strip())
-        segid = parts[1]
-        if segid == 'xxxx':
-            continue
+        segid = parts[1].lower()
+        if segid == 'xxxx': continue
         langcode = parts[2].upper()
         lang = SRE_LANGUAGE_CODES[langcode.upper()]
         id = parts[3]
@@ -529,6 +550,32 @@ def read_sre05_key(fp):
         else:
             key[segid] = values
     return key
+
+def read_sre05_segments(fp):
+    if isinstance(fp, basestring):
+        fp = open(fp, 'r')
+    lines = fp.readlines()
+    fp.close()
+    segments = {}
+    for line in lines:
+        parts = re.split('\s+', line.strip())
+        segid, channel = parts[1].lower(), parts[4].upper()
+        if segid == 'xxxx' or channel not in ('A', 'B'):
+            continue
+        langcode = parts[2].upper()
+        lang = SRE_LANGUAGE_CODES[langcode.upper()]
+        id = parts[3]
+        key = 'MIXER', id
+        if key not in segments:
+            segments[key] = {
+                'language' : lang,
+                'overlap' : set(),
+                'files' : set(['sre05.1side.%s.sph' % segid])
+                }
+        else:
+            assert segments[key]['language'] == lang
+            segments[key]['files'].add('sre05.1side.%s.sph' % segid)
+    return segments
 
 def read_sre06_key(fp):
     if isinstance(fp, basestring):
@@ -542,10 +589,46 @@ def read_sre06_key(fp):
         id = parts[2]
         langcode = parts[7]
         key[segid] = {'id' : id}
+        # only set language if we have a valid language code and pick
+        # up any segments with a missing language later
         if langcode not in ('-', 'unk'):
             lang = SRE_LANGUAGE_CODES[langcode]
             key[segid]['language'] = lang
     return key
+
+def read_sre06_segments(fp):
+    if isinstance(fp, basestring):
+        fp = open(fp, 'r')
+    lines = fp.readlines()
+    fp.close()
+    segments = {}
+    for line in lines:
+        parts = re.split('\s+', line.strip())
+        langcode = parts[7]
+        if langcode in ('-', 'unk'): continue
+        conv = parts[1].lower()
+        if conv not in ('1conv4w', '10sec4w'): continue
+        channel = parts[6].lower()
+        if channel not in ('a', 'b'): continue
+        segid, id = parts[0], parts[2]
+        lang = SRE_LANGUAGE_CODES[langcode]
+        if conv == '1conv4w':
+            files = set(['sre06.1side.%s.sph' % segid])
+        elif conv == '10sec4w':
+            files = set(['sre06.10s.%s.sph' % segid])
+        else:
+            assert False
+        key = 'MIXER', id
+        if key not in segments:
+            segments[key] = {
+                'language' : lang,
+                'overlap' : set(),
+                'files' : files
+                }
+        else:
+            assert segments[key]['language'] == lang
+            segments[key]['files'] |= files
+    return segments
 
 def read_mit_key(fp):
     sre04key = read_sre04_key('sre04_key-v2.txt')
@@ -620,8 +703,7 @@ def read_cslu22_index(fp):
     fp.close()
     segments = {}
     for line in lines:
-        if not line.find('.story.') >= 0:
-            continue
+        if not line.find('.story.') >= 0: continue
         lang, stuff, id = line.strip().split('/')
         if lang == 'hindi':
             lang = 'hindustani'
@@ -662,6 +744,9 @@ def read_keys():
     segments.update(read_lid05e1_key('lid05e1key.txt'))
     segments.update(read_ohsu('ohsu.txt'))
     segments.update(read_lre07_tr('lre07_tr_call_side_info.csv'))
+    segments.update(read_sre04_segments('sre04_key-v2.txt'))
+    segments.update(read_sre05_segments('sre05-key-v7b.txt'))
+    segments.update(read_sre06_segments('sre06_test_seg_key_v9.txt'))
     merge_segments(segments, read_mit_key('key.lid07d1'))
 
     # create implied segments
@@ -732,7 +817,6 @@ def write_split(fp, keys, files):
     fp.close()
 
 def segments_to_files(segments):
-
     files = {}
     for k, v in segments.iteritems():
         assert v.has_key('files')
@@ -748,7 +832,7 @@ def segments_to_files(segments):
                 elif f.find('.30s.') >= 0:
                     duration = 30
                 else:
-                    assert False
+                    duration = -1
             id = k + (f,)
             files[id] = {
                 'language' : v['language'],
@@ -805,15 +889,7 @@ def check_splits(files, testsplits, besplits, fesplits):
             for j, vj in besplits.iteritems():
                 if i != j: continue
                 assert f not in vj
-                try:
-                    assert len(vj & overlap) == 0
-                except:
-                    print '-' * 80
-                    print f
-                    print overlap
-                    print vj & overlap
-                    print '-' * 80
-                    assert False
+                assert len(vj & overlap) == 0
 
 def write_key(fp, files):
     if isinstance(fp, basestring):
@@ -842,6 +918,7 @@ def debug(segments, files):
 
 def files_to_groups(files):
     validfiles = set([x.strip() for x in open('validfiles.txt').readlines()])
+    validcf = set([x.strip() for x in open('validcf.txt').readlines()])
     for badfile in INVALID_FILES: assert badfile in files
     groups = set()
     for k, v in files.iteritems():
@@ -850,12 +927,15 @@ def files_to_groups(files):
         o -= INVALID_FILES
         def validfiles_filter(x):
             duration = files[x]['duration']
+            if duration == -1 or x[2].find('sre') == 0:
+                return True
             filekey = '%d/%s/%s' % (duration, x[0], x[2])
-            if filekey not in validfiles and x[0] != 'callfriend':
-                print 'skipping invalid file %s' % filekey
-                return False
-            return True
+            return filekey in validfiles
+        def valid_callfriend_filter(x):
+            if x[0] != 'callfriend': return True
+            return x[1] in validcf
         o = filter(validfiles_filter,  o)
+        o = filter(valid_callfriend_filter,  o)
         # group might become empty if it only contained invalid files,
         # so check len before adding
         if len(o) > 0:
@@ -906,10 +986,9 @@ def create_subsets(groups, n):
     return subsets
 
 def create_splits(groups):
-    validcf = set([x.strip() for x in open('validcf.txt').readlines()])
-    frontend_filter = lambda x: x[4]==30 and x[3] in FRONTEND_LANGUAGES and (x[0] != 'callfriend' or x[1] in validcf)
-    backend_filter = lambda x: x[4]==30 and x[3] in FRONTEND_LANGUAGES and x[0] != 'callfriend'
-    test_filter = lambda x: x[4]==30 and x[3] in FRONTEND_LANGUAGES and x[0] != 'callfriend'
+    frontend_filter = lambda x: x[3] in FRONTEND_LANGUAGES
+    backend_filter = lambda x: x[4] in (3,10,30) and x[3] in FRONTEND_LANGUAGES and x[2].find('sre') == -1
+    test_filter = lambda x: x[4] in (3,10,30) and x[3] in FRONTEND_LANGUAGES and x[2].find('sre') == -1
 
     test_splits, be_splits, fe_splits = {}, {}, {}
     testsubsets = create_subsets(groups, TEST_SPLITS)
@@ -979,12 +1058,11 @@ def write_split(fp, files):
 def main():
     print >>sys.stderr, 'reading keys...'
     segments = read_keys()
+    print >>sys.stderr, 'checking segments...'
     check_segments(segments)
     files = segments_to_files(segments)
     groups = files_to_groups(files)
     testsplits, besplits, fesplits = create_splits(groups)
-    # XXX this check is really slow
-    #check_splits(files, testsplits, besplits, fesplits)
 
     write_key(os.path.join('output', 'key.txt'), files)
     for k, v in testsplits.iteritems():
@@ -996,6 +1074,10 @@ def main():
     for k, v in fesplits.iteritems():
         filename = os.path.join('output', 'frontend_%d_%d.txt' % k)
         write_split(filename, v)
+
+    # XXX this check takes a long time
+    print >>sys.stderr, 'checking splits...'
+    check_splits(files, testsplits, besplits, fesplits)
 
 if __name__ == '__main__':
     main()
