@@ -1,0 +1,4497 @@
+0001 arabic.egyptian  10  callfriend,5878
+0005 english.am.south  10  callfriend,6955
+0007 english.am.gen  10  callfriend,6952
+0009 english.am.gen  10
+000d mandarin.north  10  callfriend,5530
+000f english.am.gen  10
+000h arabic.egyptian  10  callfriend,5822
+000i japanese  10  callfriend,6616
+000m japanese  10  callfriend,6490
+000p korean  10  callfriend,6704
+000r spanish.highland  10  callfriend,5558
+000s french.canada  10  callfriend,5485
+000u farsi  10  callfriend,6860
+000v farsi  10  callfriend,6811
+000y english.am.gen  10
+0011 english.am.gen  10
+0012 japanese  10  callfriend,6632
+0013 german  10  callfriend,6573
+0015 japanese  10  callfriend,6465
+0018 spanish.carib  10  callfriend,6887
+001a spanish.highland  10  callfriend,5418
+001c vietnamese  10  callfriend,6758
+001g english.am.gen  10
+001j japanese  10  callfriend,6587
+001k english.am.gen  10
+001l english.am.gen  10
+001n tamil  10  callfriend,6368
+001q spanish.carib  10  callfriend,6950
+001r mandarin.north  10  callfriend,5195
+001t spanish.carib  10  callfriend,6950
+001w farsi  10  callfriend,6797
+001x korean  10  callfriend,6673
+0020 spanish.highland  10  callfriend,5258
+0023 english.am.gen  10  callfriend,6865
+0025 english.am.gen  10
+0026 english.am.gen  10
+0028 vietnamese  10  callfriend,6930
+002d english.am.gen  10
+002i japanese  10  callfriend,6805
+002l mandarin.north  10  callfriend,5806
+002n hindi  10  callfriend,6563
+002o english.am.gen  10
+002s english.am.gen  10
+002v arabic.egyptian  10  callfriend,6431
+002w vietnamese  10  callfriend,6951
+002x spanish.carib  10  callfriend,6896
+0030 english.am.gen  10
+0031 french.canada  10  callfriend,5465
+0038 spanish.carib  10  callfriend,6851
+003e japanese  10  callfriend,6490
+003n english.am.gen  10
+003p english.am.gen  10
+003q mandarin.north  10  callfriend,5800
+0040 korean  10  callfriend,6792
+0043 english.am.south  10  callfriend,6956
+0045 french.canada  10  callfriend,5506
+0047 hindi  10  callfriend,6495
+004d tamil  10  callfriend,6591
+004g arabic.egyptian  10  callfriend,5913
+004j spanish.highland  10  callfriend,5704
+004k english.am.south  10  callfriend,6890
+004m english.am.gen  10  callfriend,6557
+004n english.am.gen  10
+004u hindi  10  callfriend,6620
+004v japanese  10  callfriend,6414
+0053 english.am.gen  10
+0054 english.am.gen  10
+0059 english.am.gen  10
+005c french.canada  10  callfriend,5508
+005i german  10  callfriend,6548
+005k english.am.south  10  callfriend,6975
+005m farsi  10  callfriend,6842
+005n hindi  10  callfriend,6607
+005o mandarin.north  10  callfriend,5906
+005s english.am.gen  10
+005t mandarin.taiwan  10  callfriend,5979
+005v spanish.carib  10  callfriend,6949
+005y english.am.gen  10
+005z english.am.gen  10
+0065 english.am.gen  10
+0067 mandarin.taiwan  10  callfriend,5948
+0068 tamil  10  callfriend,6223
+006c mandarin.north  10  callfriend,5806
+006e farsi  10  callfriend,6835
+006i english.am.gen  10
+006m english.am.gen  10
+006o japanese  10  callfriend,6766
+006q farsi  10  callfriend,6835
+006u english.am.gen  10
+006x english.am.gen  10
+0070 hindi  10  callfriend,6400
+0079 english.am.gen  10
+007d farsi  10  callfriend,6741
+007e english.am.gen  10
+007g spanish.highland  10  callfriend,4468
+007j vietnamese  10  callfriend,6906
+007k english.am.gen  10
+007m english.am.gen  10  callfriend,6428
+007n hindi  10  callfriend,6585
+007o mandarin.north  10  callfriend,5904
+007p english.am.gen  10
+007q japanese  10  callfriend,6587
+007s english.am.gen  10
+007u tamil  10  callfriend,6444
+007v arabic.egyptian  10  callfriend,6431
+007x english.am.gen  10  callfriend,6952
+0083 spanish.carib  10  callfriend,6868
+0086 english.am.gen  10
+0089 mandarin.taiwan  10  callfriend,5901
+008c mandarin.north  10  callfriend,5824
+008e english.am.gen  10
+008h korean  10  callfriend,6753
+008j hindi  10  callfriend,6619
+008k german  10  callfriend,6918
+008p english.am.south  10  callfriend,6932
+008r english.am.gen  10
+008s english.am.gen  10
+008u mandarin.north  10  callfriend,5821
+008y english.am.south  10  callfriend,6970
+0093 spanish.highland  10  callfriend,5685
+0096 mandarin.taiwan  10  callfriend,5979
+0098 german  10  callfriend,6421
+0099 mandarin.north  10  callfriend,5904
+009d english.am.gen  10
+009f vietnamese  10  callfriend,6901
+009h english.am.gen  10
+009m tamil  10  callfriend,6335
+009n vietnamese  10  callfriend,6951
+009o english.am.gen  10
+009r farsi  10  callfriend,6772
+009s english.am.gen  10
+009u german  10  callfriend,6684
+00a1 english.am.south  10  callfriend,6956
+00a7 english.am.gen  10
+00ae english.am.gen  10
+00am japanese  10  callfriend,6414
+00ao english.am.gen  10
+00ar mandarin.taiwan  10  callfriend,5971
+00bd korean  10  callfriend,6633
+00bg english.am.gen  10
+00bk mandarin.north  10  callfriend,5973
+00bo german  10  callfriend,6940
+00bp english.am.gen  10
+00bq english.am.gen  10
+00bt french.canada  10  callfriend,5466
+00bu french.canada  10  callfriend,5464
+00c4 mandarin.north  10  callfriend,5905
+00c5 mandarin.north  10  callfriend,5779
+00c9 english.am.south  10  callfriend,6890
+00ca spanish.carib  10  callfriend,6854
+00cd spanish.carib  10  callfriend,6884
+00ce mandarin.taiwan  10  callfriend,5948
+00ck vietnamese  10  callfriend,6909
+00cl english.am.gen  10
+00cm mandarin.taiwan  10  callfriend,5983
+00co english.am.south  10  callfriend,6970
+00cr spanish.highland  10  callfriend,5112
+00cs tamil  10  callfriend,6433
+00ct korean  10  callfriend,6773
+00cy tamil  10  callfriend,6591
+00d0 french.canada  10  callfriend,5405
+00d1 korean  10  callfriend,6757
+00d4 mandarin.taiwan  10  callfriend,5894
+00d9 korean  10  callfriend,6682
+00da spanish.highland  10  callfriend,5607
+00dc german  10  callfriend,6972
+00dh english.am.gen  10
+00di farsi  10  callfriend,6881
+00dp hindi  10  callfriend,6400
+00dq japanese  10  callfriend,6616
+00ds english.am.gen  10
+00dw english.am.south  10  callfriend,6975
+00dy french.canada  10  callfriend,5405
+00e1 vietnamese  10  callfriend,6756
+00e2 japanese  10  callfriend,6414
+00e3 japanese  10  callfriend,6765
+00e8 english.am.gen  10
+00e9 english.am.gen  10
+00ed mandarin.taiwan  10  callfriend,5899
+00ef spanish.highland  10  callfriend,5607
+00eg spanish.highland  10  callfriend,4500
+00eh korean  10  callfriend,6753
+00ej english.am.south  10  callfriend,6974
+00ek english.am.gen  10
+00el farsi  10  callfriend,6818
+00em french.canada  10  callfriend,5465
+00en english.am.south  10  callfriend,6966
+00eo english.am.gen  10  callfriend,6278
+00ew hindi  10  callfriend,6426
+00ex english.am.south  10  callfriend,6933
+00f0 english.am.gen  10
+00f5 korean  10  callfriend,6753
+00f6 korean  10  callfriend,6673
+00f8 farsi  10  callfriend,6823
+00fb english.am.south  10  callfriend,6953
+00fe korean  10  callfriend,6783
+00fh english.am.gen  10
+00fi german  10  callfriend,6846
+00fk english.am.gen  10
+00fl english.am.gen  10
+00fm english.am.gen  10
+00fo english.am.south  10  callfriend,6966
+00fr mandarin.taiwan  10  callfriend,5968
+00g1 arabic.egyptian  10  callfriend,6254
+00g2 english.am.gen  10
+00g3 vietnamese  10  callfriend,6895
+00g6 english.am.gen  10
+00g8 english.am.gen  10
+00ga tamil  10  callfriend,6423
+00gb mandarin.taiwan  10  callfriend,5972
+00gg english.am.gen  10
+00gh korean  10  callfriend,6633
+00gi spanish.highland  10  callfriend,5367
+00gm tamil  10  callfriend,6223
+00gp english.am.gen  10
+00gq farsi  10  callfriend,6859
+00gs english.am.gen  10
+00gv japanese  10  callfriend,6739
+00gw farsi  10  callfriend,6818
+00h1 tamil  10  callfriend,6287
+00h2 tamil  10  callfriend,6454
+00h4 english.am.gen  10
+00h6 tamil  10  callfriend,6519
+00h9 english.am.south  10  callfriend,6962
+00ha english.am.gen  10  callfriend,6201
+00hf french.canada  10  callfriend,5500
+00hg spanish.carib  10  callfriend,6868
+00hl arabic.egyptian  10  callfriend,6052
+00hm spanish.highland  10  callfriend,5582
+00hs vietnamese  10  callfriend,6817
+00hw german  10  callfriend,6972
+00i1 german  10  callfriend,6853
+00i2 spanish.carib  10  callfriend,6945
+00i3 mandarin.taiwan  10  callfriend,5929
+00i4 english.am.gen  10
+00i8 tamil  10  callfriend,6778
+00ib mandarin.taiwan  10  callfriend,5899
+00ik english.am.south  10  callfriend,6931
+00ir farsi  10  callfriend,6873
+00is english.am.gen  10  callfriend,6503
+00iu korean  10  callfriend,6762
+00iv japanese  10  callfriend,6465
+00ix korean  10  callfriend,6725
+00j1 arabic.egyptian  10  callfriend,5507
+00j2 german  10  callfriend,6522
+00j8 english.am.gen  10  callfriend,6952
+00jh farsi  10  callfriend,6842
+00jj mandarin.north  10  callfriend,5949
+00jo english.am.gen  10  callfriend,6899
+00jp arabic.egyptian  10  callfriend,6496
+00jq mandarin.north  10  callfriend,5530
+00jt english.am.gen  10
+00ju english.am.gen  10  callfriend,6239
+00jv german  10  callfriend,6684
+00jx spanish.carib  10  callfriend,6948
+00k1 spanish.highland  10  callfriend,5638
+00k3 vietnamese  10  callfriend,6930
+00k4 english.am.gen  10
+00k6 spanish.carib  10  callfriend,6958
+00k8 korean  10  callfriend,6633
+00kb english.am.gen  10
+00ke spanish.carib  10  callfriend,6851
+00ki french.canada  10  callfriend,5466
+00kj french.canada  10  callfriend,5485
+00kk english.am.gen  10
+00km hindi  10  callfriend,6608
+00ko farsi  10  callfriend,6797
+00ks german  10  callfriend,6590
+00kt spanish.highland  10  callfriend,5582
+00ku english.am.gen  10  callfriend,6476
+00kz vietnamese  10  callfriend,6906
+00l3 english.am.south  10  callfriend,6947
+00l4 german  10  callfriend,6577
+00l6 french.canada  10  callfriend,5404
+00l7 farsi  10  callfriend,6788
+00ld english.am.gen  10
+00lg farsi  10  callfriend,6801
+00lj spanish.highland  10  callfriend,5354
+00lo english.am.gen  10
+00ls english.am.south  10  callfriend,6975
+00lv german  10  callfriend,6832
+00m3 french.canada  10  callfriend,5460
+00m4 farsi  10  callfriend,6849
+00m7 english.am.gen  10
+00ma tamil  10  callfriend,6417
+00mc english.am.gen  10
+00md tamil  10  callfriend,6357
+00me mandarin.north  10  callfriend,5949
+00mk english.am.gen  10
+00mm english.am.gen  10  callfriend,6557
+00mr farsi  10  callfriend,6801
+00mx vietnamese  10  callfriend,6670
+00mz mandarin.taiwan  10  callfriend,5957
+00n1 tamil  10  callfriend,6287
+00n4 japanese  10  callfriend,6525
+00n8 french.canada  10  callfriend,5506
+00n9 english.am.gen  10
+00na korean  10  callfriend,6757
+00nb english.am.gen  10
+00ne mandarin.taiwan  10  callfriend,5901
+00ng mandarin.north  10  callfriend,5905
+00nh arabic.egyptian  10  callfriend,5409
+00nl spanish.carib  10  callfriend,6887
+00nn korean  10  callfriend,6799
+00np english.am.gen  10  callfriend,6239
+00nz english.am.gen  10
+00o3 french.canada  10  callfriend,5460
+00of english.am.gen  10
+00og spanish.highland  10  callfriend,4468
+00oj japanese  10  callfriend,6742
+00ol spanish.highland  10  callfriend,5638
+00os german  10  callfriend,6590
+00ov english.am.gen  10  callfriend,6193
+00ox english.am.gen  10
+00p3 tamil  10  callfriend,6547
+00p6 vietnamese  10  callfriend,6657
+00p8 farsi  10  callfriend,6811
+00p9 vietnamese  10  callfriend,6740
+00pa tamil  10  callfriend,6778
+00pb farsi  10  callfriend,6859
+00pj spanish.carib  10  callfriend,6884
+00pk english.am.gen  10
+00po korean  10  callfriend,6783
+00pq english.am.gen  10
+00ps arabic.egyptian  10  callfriend,6003
+00pv english.am.gen  10
+00pw mandarin.north  10  callfriend,5973
+00py japanese  10  callfriend,6738
+00q1 arabic.egyptian  10  callfriend,5774
+00q2 arabic.egyptian  10  callfriend,6496
+00q5 english.am.gen  10
+00q7 mandarin.taiwan  10  callfriend,5895
+00qb tamil  10  callfriend,6454
+00qd english.am.gen  10  callfriend,6278
+00qe english.am.gen  10
+00qh hindi  10  callfriend,6556
+00qk english.am.gen  10
+00qn mandarin.taiwan  10  callfriend,5983
+00qr english.am.gen  10
+00qv mandarin.north  10  callfriend,5824
+00r0 vietnamese  10  callfriend,6951
+00r3 german  10  callfriend,6684
+00ra hindi  10  callfriend,6619
+00rc english.am.gen  10
+00rd mandarin.taiwan  10  callfriend,5972
+00rf english.am.gen  10
+00rg german  10  callfriend,6846
+00rh hindi  10  callfriend,6619
+00ri spanish.highland  10  callfriend,5607
+00rp hindi  10  callfriend,6426
+00rt english.am.gen  10  callfriend,6239
+00ry farsi  10  callfriend,6860
+00s1 spanish.highland  10  callfriend,5502
+00s7 korean  10  callfriend,6808
+00sb hindi  10  callfriend,6552
+00sd tamil  10  callfriend,6444
+00se english.am.gen  10
+00sg arabic.egyptian  10  callfriend,6496
+00sh arabic.egyptian  10  callfriend,5955
+00su english.am.gen  10
+00sx japanese  10  callfriend,6632
+00sz mandarin.taiwan  10  callfriend,5979
+00t1 mandarin.taiwan  10  callfriend,5879
+00t5 english.am.south  10  callfriend,6962
+00t7 hindi  10  callfriend,6441
+00t8 hindi  10  callfriend,6580
+00t9 mandarin.taiwan  10  callfriend,5894
+00tc english.am.south  10  callfriend,6927
+00tf farsi  10  callfriend,6741
+00ti spanish.carib  10  callfriend,6948
+00tj mandarin.north  10  callfriend,4972
+00tk spanish.carib  10  callfriend,6868
+00tn english.am.south  10  callfriend,6947
+00tr hindi  10  callfriend,6627
+00tt english.am.gen  10
+00tv german  10  callfriend,6806
+00u1 spanish.carib  10  callfriend,6878
+00u4 english.am.gen  10
+00u7 farsi  10  callfriend,6788
+00u9 spanish.carib  10  callfriend,6949
+00ub mandarin.north  10  callfriend,5916
+00uc english.am.gen  10  callfriend,6428
+00ud japanese  10  callfriend,6414
+00ue arabic.egyptian  10  callfriend,5961
+00ug french.canada  10  callfriend,5466
+00uh english.am.gen  10
+00uj tamil  10  callfriend,6501
+00up english.am.gen  10
+00uq tamil  10  callfriend,6368
+00ur korean  10  callfriend,6730
+00us korean  10  callfriend,6673
+00uv english.am.gen  10  callfriend,6507
+00ux english.am.south  10  callfriend,6947
+00v0 mandarin.north  10  callfriend,5824
+00v3 spanish.highland  10  callfriend,4500
+00v6 english.am.gen  10
+00v8 vietnamese  10  callfriend,6906
+00vb german  10  callfriend,6590
+00vd japanese  10  callfriend,4905
+00vg english.am.gen  10  callfriend,6649
+00vj mandarin.north  10  callfriend,5916
+00vk english.am.gen  10
+00vl french.canada  10  callfriend,5464
+00vp korean  10  callfriend,6799
+00vw french.canada  10  callfriend,5499
+00vx spanish.highland  10  callfriend,4468
+00vy vietnamese  10  callfriend,6740
+00w4 vietnamese  10  callfriend,6901
+00w6 spanish.carib  10  callfriend,6949
+00w7 german  10  callfriend,6695
+00w8 vietnamese  10  callfriend,6898
+00w9 mandarin.north  10  callfriend,5773
+00wb english.am.gen  10
+00wf english.am.south  10  callfriend,6954
+00wg spanish.highland  10  callfriend,5589
+00wh vietnamese  10  callfriend,6934
+00wi farsi  10  callfriend,6873
+00wl arabic.egyptian  10  callfriend,5759
+00wo english.am.gen  10
+00wp spanish.carib  10  callfriend,6874
+00wt japanese  10  callfriend,6763
+00wv english.am.gen  10  callfriend,6862
+00x6 english.am.gen  10
+00x9 english.am.gen  10
+00xa vietnamese  10  callfriend,6850
+00xc english.am.gen  10
+00xg english.am.gen  10  callfriend,6451
+00xh vietnamese  10  callfriend,6827
+00xo mandarin.taiwan  10  callfriend,5912
+00xp hindi  10  callfriend,6607
+00xq hindi  10  callfriend,6619
+00xs arabic.egyptian  10  callfriend,5804
+00xu korean  10  callfriend,6808
+00xv hindi  10  callfriend,6617
+00xy spanish.carib  10  callfriend,6887
+00y1 hindi  10  callfriend,6505
+00y2 spanish.highland  10  callfriend,5704
+00y6 german  10  callfriend,6481
+00yb english.am.gen  10
+00yc english.am.south  10  callfriend,6927
+00yg german  10  callfriend,6481
+00yh english.am.gen  10  callfriend,6402
+00yl english.am.gen  10
+00yn tamil  10  callfriend,6368
+00yp english.am.gen  10  callfriend,6511
+00yw german  10  callfriend,6832
+00yx farsi  10  callfriend,6797
+00yz korean  10  callfriend,6645
+00z4 arabic.egyptian  10  callfriend,6301
+00z5 farsi  10  callfriend,6848
+00z6 french.canada  10  callfriend,5404
+00z9 farsi  10  callfriend,6879
+00zc english.am.gen  10
+00zf mandarin.taiwan  10  callfriend,5951
+00zh japanese  10  callfriend,6630
+00zi mandarin.taiwan  10  callfriend,5929
+00zl korean  10  callfriend,6704
+00zo hindi  10  callfriend,6627
+00zq vietnamese  10  callfriend,6779
+00zt english.am.gen  10
+00zv japanese  10  callfriend,6742
+00zx spanish.carib  10  callfriend,6856
+0102 french.canada  10  callfriend,5500
+0105 english.am.gen  10
+0107 english.am.gen  10
+010a arabic.egyptian  10  callfriend,5822
+010d english.am.gen  10
+010o mandarin.taiwan  10  callfriend,5876
+010q korean  10  callfriend,6648
+0110 english.am.gen  10
+0111 german  10  callfriend,6853
+0113 english.am.gen  10  callfriend,6402
+0114 english.am.gen  10
+011a english.am.gen  10  callfriend,6278
+011e english.am.gen  10
+011f japanese  10  callfriend,6490
+011g english.am.south  10  callfriend,6965
+011i korean  10  callfriend,6808
+011k english.am.gen  10
+011m mandarin.north  10  callfriend,5821
+011o korean  10  callfriend,6773
+011r japanese  10  callfriend,6766
+011t english.am.gen  10
+011x mandarin.taiwan  10  callfriend,5929
+011z mandarin.north  10  callfriend,5904
+0120 english.am.gen  10
+0121 english.am.gen  10
+0123 english.am.gen  10  callfriend,6503
+0125 mandarin.taiwan  10  callfriend,5957
+0126 japanese  10  callfriend,6765
+012c english.am.south  10  callfriend,6931
+012d vietnamese  10  callfriend,6657
+012f spanish.carib  10  callfriend,6959
+012j japanese  10  callfriend,6761
+012k english.am.gen  10  callfriend,6865
+012m english.am.gen  10
+012n tamil  10  callfriend,6433
+012o mandarin.taiwan  10  callfriend,5912
+012q arabic.egyptian  10  callfriend,5913
+012r english.am.south  10  callfriend,6943
+012u english.am.gen  10
+012w spanish.highland  10  callfriend,4468
+0130 hindi  10  callfriend,6585
+0133 german  10  callfriend,6537
+0136 spanish.carib  10  callfriend,6959
+0137 korean  10  callfriend,6697
+013a korean  10  callfriend,6792
+013b mandarin.taiwan  10  callfriend,5971
+013e english.am.gen  10
+013l vietnamese  10  callfriend,6895
+013m hindi  10  callfriend,6665
+013o japanese  10  callfriend,6616
+013p tamil  10  callfriend,6439
+013t korean  10  callfriend,6730
+013w mandarin.north  10  callfriend,5812
+0140 english.am.gen  10
+014a arabic.egyptian  10  callfriend,5961
+014c japanese  10  callfriend,6805
+014d korean  10  callfriend,6645
+014h mandarin.taiwan  10  callfriend,5901
+014m arabic.egyptian  10  callfriend,5878
+014n tamil  10  callfriend,6356
+014p arabic.egyptian  10  callfriend,5759
+014r hindi  10  callfriend,6523
+014t french.canada  10  callfriend,5461
+014z mandarin.taiwan  10  callfriend,5893
+0152 english.am.gen  10  callfriend,6862
+0153 german  10  callfriend,6537
+0154 japanese  10  callfriend,6763
+0155 farsi  10  callfriend,6842
+0156 hindi  10  callfriend,6523
+0157 english.am.gen  10
+015b english.am.gen  10
+015c tamil  10  callfriend,6591
+015e german  10  callfriend,6577
+015u mandarin.north  10  callfriend,4972
+015x english.am.south  10  callfriend,6970
+015y vietnamese  10  callfriend,6847
+0160 english.am.gen  10
+0164 tamil  10  callfriend,6335
+0165 english.am.gen  10
+0166 french.canada  10  callfriend,5505
+0167 mandarin.taiwan  10  callfriend,5876
+0168 farsi  10  callfriend,6768
+016a english.am.gen  10
+016b farsi  10  callfriend,6788
+016c french.canada  10  callfriend,5485
+016h english.am.gen  10
+016j korean  10  callfriend,6773
+016k english.am.gen  10
+016l english.am.gen  10
+016n spanish.carib  10  callfriend,6878
+016o english.am.gen  10  callfriend,6402
+016s english.am.gen  10
+016t english.am.gen  10
+016u farsi  10  callfriend,6768
+016v english.am.gen  10
+016z german  10  callfriend,6780
+0171 english.am.gen  10  callfriend,6193
+0174 farsi  10  callfriend,6873
+017b korean  10  callfriend,6725
+017c farsi  10  callfriend,6859
+017d mandarin.north  10  callfriend,5949
+017i mandarin.north  10  callfriend,5906
+017j english.am.gen  10
+017o english.am.gen  10
+017p english.am.gen  10
+017q farsi  10  callfriend,6768
+017s mandarin.north  10  callfriend,5779
+017v tamil  10  callfriend,6357
+017w mandarin.taiwan  10  callfriend,5957
+017y vietnamese  10  callfriend,6670
+0180 english.am.south  10  callfriend,6965
+0185 arabic.egyptian  10  callfriend,6003
+0187 spanish.highland  10  callfriend,5112
+0189 japanese  10  callfriend,6630
+018b hindi  10  callfriend,6523
+018d english.am.south  10  callfriend,6943
+018g spanish.carib  10  callfriend,6896
+018i english.am.south  10  callfriend,6968
+018j vietnamese  10  callfriend,6657
+018m arabic.egyptian  10  callfriend,5804
+018r english.am.gen  10
+018s mandarin.taiwan  10  callfriend,5893
+018v tamil  10  callfriend,6454
+018x german  10  callfriend,6548
+0192 mandarin.north  10  callfriend,5010
+0193 french.canada  10  callfriend,5482
+0198 english.am.gen  10  callfriend,6869
+0199 english.am.gen  10
+019f french.canada  10  callfriend,5482
+019k hindi  10  callfriend,6400
+019n tamil  10  callfriend,6433
+019p german  10  callfriend,6421
+019s mandarin.taiwan  10  callfriend,5879
+01a5 english.am.gen  10
+01a9 english.am.gen  10
+01aa hindi  10  callfriend,6556
+01ab english.am.south  10  callfriend,6946
+01ac mandarin.north  10  callfriend,5930
+01ae japanese  10  callfriend,6716
+01aj mandarin.taiwan  10  callfriend,5974
+01al french.canada  10  callfriend,5404
+01am mandarin.taiwan  10  callfriend,5895
+01ao english.am.south  10  callfriend,6965
+01ap vietnamese  10  callfriend,6894
+01as english.am.gen  10
+01at farsi  10  callfriend,6871
+01b4 english.am.gen  10  callfriend,6865
+01b5 english.am.south  10  callfriend,6968
+01ba vietnamese  10  callfriend,6894
+01bq tamil  10  callfriend,6330
+01bs english.am.gen  10
+01bt english.am.south  10  callfriend,6955
+01bv english.am.south  10  callfriend,6927
+01bw english.am.gen  10
+01by korean  10  callfriend,6753
+01bz english.am.gen  10
+01c4 french.canada  10  callfriend,5464
+01c6 english.am.gen  10
+01c7 arabic.egyptian  10  callfriend,5781
+01cb english.am.gen  10  callfriend,6476
+01cd spanish.carib  10  callfriend,6875
+01ce mandarin.north  10  callfriend,5949
+01cg german  10  callfriend,6918
+01cj french.canada  10  callfriend,5499
+01cl japanese  10  callfriend,6739
+01cm german  10  callfriend,6590
+01cq english.am.gen  10  callfriend,6511
+01cr english.am.gen  10  callfriend,6557
+01d0 english.am.gen  10
+01d2 english.am.gen  10
+01d5 english.am.gen  10
+01d8 english.am.south  10  callfriend,6933
+01d9 english.am.south  10  callfriend,6965
+01dc french.canada  10  callfriend,5483
+01de english.am.gen  10
+01dj korean  10  callfriend,6708
+01dk hindi  10  callfriend,6505
+01dl korean  10  callfriend,6757
+01dr tamil  10  callfriend,6501
+01ds german  10  callfriend,6831
+01du english.am.gen  10
+01dv vietnamese  10  callfriend,6740
+01dz vietnamese  10  callfriend,6764
+01e4 spanish.highland  10  callfriend,5316
+01ef tamil  10  callfriend,6330
+01eo english.am.gen  10
+01ep japanese  10  callfriend,6759
+01eq vietnamese  10  callfriend,6898
+01es mandarin.taiwan  10  callfriend,5894
+01f1 korean  10  callfriend,6762
+01f4 vietnamese  10  callfriend,6756
+01f5 arabic.egyptian  10  callfriend,5955
+01f7 english.am.south  10  callfriend,6946
+01f9 vietnamese  10  callfriend,6764
+01fb english.am.gen  10
+01fh tamil  10  callfriend,6439
+01fp spanish.highland  10  callfriend,5112
+01fr vietnamese  10  callfriend,6827
+01fs english.am.gen  10
+01fu mandarin.north  10  callfriend,5530
+01fv hindi  10  callfriend,6607
+01fw english.am.south  10  callfriend,6932
+01fy arabic.egyptian  10  callfriend,5822
+01fz arabic.egyptian  10  callfriend,5781
+01g4 spanish.highland  10  callfriend,5650
+01gc english.am.gen  10
+01gd mandarin.north  10  callfriend,5806
+01gf tamil  10  callfriend,6444
+01gh english.am.gen  10
+01gi english.am.gen  10  callfriend,6899
+01gk english.am.gen  10
+01gr farsi  10  callfriend,6848
+01gs english.am.gen  10
+01gu german  10  callfriend,6537
+01gv english.am.gen  10
+01gx vietnamese  10  callfriend,6850
+01h4 english.am.gen  10
+01h7 tamil  10  callfriend,6454
+01h9 english.am.gen  10
+01hd german  10  callfriend,6940
+01hg french.canada  10  callfriend,5485
+01hm mandarin.north  10  callfriend,5530
+01hn english.am.gen  10
+01ho spanish.carib  10  callfriend,6884
+01hq tamil  10  callfriend,6423
+01ht japanese  10  callfriend,6759
+01hw english.am.gen  10
+01i0 farsi  10  callfriend,6818
+01i4 farsi  10  callfriend,6741
+01i8 english.am.gen  10  callfriend,6451
+01ie english.am.gen  10
+01if english.am.south  10  callfriend,6890
+01ii farsi  10  callfriend,6848
+01ij vietnamese  10  callfriend,6930
+01ik farsi  10  callfriend,6858
+01il japanese  10  callfriend,6738
+01im hindi  10  callfriend,6627
+01io vietnamese  10  callfriend,6740
+01ip german  10  callfriend,6522
+01ir english.am.gen  10  callfriend,6503
+01is english.am.gen  10
+01iw english.am.gen  10
+01j0 english.am.gen  10
+01j1 spanish.carib  10  callfriend,6948
+01j8 spanish.highland  10  callfriend,5418
+01ja mandarin.north  10  callfriend,5821
+01jg english.am.gen  10
+01jj spanish.carib  10  callfriend,6878
+01jl english.am.gen  10  callfriend,6503
+01jo french.canada  10  callfriend,5482
+01jq french.canada  10  callfriend,5483
+01jr english.am.gen  10
+01jw english.am.gen  10
+01k0 arabic.egyptian  10  callfriend,6496
+01k1 spanish.highland  10  callfriend,5502
+01k3 korean  10  callfriend,6645
+01k6 hindi  10  callfriend,6400
+01k9 hindi  10  callfriend,6552
+01ke spanish.carib  10  callfriend,6876
+01kk mandarin.taiwan  10  callfriend,5934
+01kn english.am.gen  10
+01ko arabic.egyptian  10  callfriend,6052
+01kr vietnamese  10  callfriend,6758
+01kt english.am.gen  10  callfriend,6201
+01ku english.am.gen  10
+01kw farsi  10  callfriend,6823
+01kx mandarin.north  10  callfriend,4972
+01kz hindi  10  callfriend,6627
+01l1 english.am.gen  10
+01l2 korean  10  callfriend,6730
+01l3 mandarin.north  10  callfriend,5779
+01l5 farsi  10  callfriend,6881
+01l9 french.canada  10  callfriend,5508
+01la spanish.carib  10  callfriend,6875
+01ld english.am.gen  10
+01li english.am.gen  10
+01ln arabic.egyptian  10  callfriend,6135
+01lp arabic.egyptian  10  callfriend,5781
+01lw tamil  10  callfriend,6519
+01m9 english.am.gen  10
+01mc french.canada  10  callfriend,5474
+01me english.am.south  10  callfriend,6966
+01mf mandarin.north  10  callfriend,5905
+01mg english.am.gen  10  callfriend,6402
+01mj english.am.gen  10
+01ml spanish.highland  10  callfriend,5340
+01mm english.am.gen  10  callfriend,6476
+01mu spanish.highland  10  callfriend,5589
+01mv farsi  10  callfriend,6859
+01my german  10  callfriend,6573
+01mz hindi  10  callfriend,6556
+01n0 japanese  10  callfriend,6759
+01n3 vietnamese  10  callfriend,6951
+01n4 english.am.gen  10
+01n7 tamil  10  callfriend,6335
+01nc english.am.gen  10
+01ni english.am.gen  10
+01nk arabic.egyptian  10  callfriend,5507
+01nl mandarin.taiwan  10  callfriend,5893
+01nm english.am.south  10  callfriend,6927
+01np english.am.gen  10
+01nw mandarin.taiwan  10  callfriend,5929
+01nx mandarin.north  10  callfriend,5773
+01nz english.am.gen  10
+01o0 english.am.gen  10  callfriend,6862
+01o2 japanese  10  callfriend,6739
+01o4 english.am.gen  10
+01o6 mandarin.north  10  callfriend,5690
+01o7 english.am.gen  10
+01oc vietnamese  10  callfriend,6758
+01oh hindi  10  callfriend,6572
+01op spanish.highland  10  callfriend,5650
+01p2 german  10  callfriend,6522
+01p5 farsi  10  callfriend,6801
+01p7 english.am.gen  10  callfriend,6511
+01p8 vietnamese  10  callfriend,6817
+01pb hindi  10  callfriend,6441
+01ph arabic.egyptian  10  callfriend,6210
+01pi vietnamese  10  callfriend,6670
+01pj japanese  10  callfriend,6716
+01pm mandarin.taiwan  10  callfriend,5894
+01po vietnamese  10  callfriend,6827
+01pq vietnamese  10  callfriend,6850
+01pt korean  10  callfriend,6708
+01q0 arabic.egyptian  10  callfriend,5409
+01q5 japanese  10  callfriend,6525
+01qe spanish.highland  10  callfriend,5685
+01qf french.canada  10  callfriend,5466
+01qm korean  10  callfriend,6774
+01qs spanish.carib  10  callfriend,6856
+01qt english.am.gen  10
+01qu english.am.gen  10
+01r7 mandarin.north  10  callfriend,5973
+01r8 mandarin.taiwan  10  callfriend,5912
+01r9 english.am.gen  10
+01ra english.am.gen  10
+01rb farsi  10  callfriend,6858
+01rc french.canada  10  callfriend,5500
+01rf german  10  callfriend,6577
+01rh japanese  10  callfriend,6805
+01rt japanese  10  callfriend,6761
+01rv korean  10  callfriend,6633
+01rw english.am.gen  10
+01rz english.am.gen  10
+01s0 vietnamese  10  callfriend,6909
+01s5 english.am.gen  10
+01s6 spanish.carib  10  callfriend,6877
+01s9 german  10  callfriend,6972
+01sa german  10  callfriend,6548
+01sb english.am.gen  10  callfriend,6649
+01sd french.canada  10  callfriend,5461
+01se english.am.gen  10
+01sh hindi  10  callfriend,6617
+01sr english.am.gen  10
+01su english.am.gen  10
+01t9 english.am.south  10  callfriend,6933
+01ta english.am.gen  10
+01tb french.canada  10  callfriend,5499
+01te arabic.egyptian  10  callfriend,6431
+01tf german  10  callfriend,6573
+01tk english.am.gen  10
+01tl english.am.gen  10
+01tm farsi  10  callfriend,6881
+01tq german  10  callfriend,6780
+01tx english.am.gen  10
+01tz korean  10  callfriend,6682
+01u2 korean  10  callfriend,6704
+01u3 french.canada  10  callfriend,5481
+01u5 english.am.gen  10  callfriend,6899
+01u8 german  10  callfriend,6846
+01uc english.am.south  10  callfriend,6953
+01uf mandarin.north  10  callfriend,5973
+01ui spanish.carib  10  callfriend,6874
+01uj english.am.gen  10
+01uk vietnamese  10  callfriend,6779
+01un german  10  callfriend,6421
+01uq english.am.south  10  callfriend,6956
+01ut mandarin.taiwan  10  callfriend,5974
+01uv vietnamese  10  callfriend,6764
+01uy english.am.gen  10
+01v2 english.am.gen  10
+01v5 english.am.gen  10
+01v9 tamil  10  callfriend,6471
+01vf arabic.egyptian  10  callfriend,5409
+01vg spanish.highland  10  callfriend,5641
+01vi english.am.south  10  callfriend,6973
+01vl spanish.carib  10  callfriend,6876
+01vn english.am.gen  10
+01vw mandarin.taiwan  10  callfriend,5974
+01w1 arabic.egyptian  10  callfriend,6135
+01w4 english.am.gen  10
+01w7 mandarin.north  10  callfriend,5779
+01wa arabic.egyptian  10  callfriend,5804
+01wb english.am.gen  10
+01wg spanish.highland  10  callfriend,5582
+01wi spanish.carib  10  callfriend,6868
+01wj french.canada  10  callfriend,5482
+01wo korean  10  callfriend,6697
+01wp tamil  10  callfriend,6417
+01wq mandarin.taiwan  10  callfriend,5948
+01wr arabic.egyptian  10  callfriend,6254
+01wt spanish.carib  10  callfriend,6877
+01wz german  10  callfriend,6831
+01x5 mandarin.north  10  callfriend,5800
+01x9 japanese  10  callfriend,6434
+01xc english.am.gen  10
+01xf spanish.carib  10  callfriend,6945
+01xg french.canada  10  callfriend,5462
+01xh english.am.gen  10
+01xj arabic.egyptian  10  callfriend,5822
+01xk arabic.egyptian  10  callfriend,5769
+01xm english.am.gen  10
+01xo vietnamese  10  callfriend,6934
+01xr arabic.egyptian  10  callfriend,6431
+01xs english.am.gen  10  callfriend,6278
+01xt english.am.gen  10
+01xy english.am.gen  10
+01y2 english.am.gen  10  callfriend,6239
+01y3 mandarin.taiwan  10  callfriend,5968
+01ye hindi  10  callfriend,6563
+01yi english.am.gen  10  callfriend,6649
+01yl mandarin.north  10  callfriend,5930
+01yp german  10  callfriend,6806
+01yx english.am.gen  10
+01yy korean  10  callfriend,6774
+01z3 english.am.gen  10
+01z4 hindi  10  callfriend,6585
+01z7 spanish.carib  10  callfriend,6959
+01z8 german  10  callfriend,6481
+01za german  10  callfriend,6780
+01zb vietnamese  10  callfriend,6898
+01ze french.canada  10  callfriend,5508
+01zf english.am.gen  10
+01zg mandarin.taiwan  10  callfriend,5899
+01zj korean  10  callfriend,6696
+01zl english.am.gen  10
+01zn english.am.gen  10
+0200 vietnamese  10  callfriend,6779
+0201 korean  10  callfriend,6774
+020d english.am.south  10  callfriend,6974
+020e tamil  10  callfriend,6471
+020g french.canada  10  callfriend,5474
+020h french.canada  10  callfriend,5498
+020v english.am.gen  10
+020w german  10  callfriend,6695
+020y mandarin.taiwan  10  callfriend,5934
+021f arabic.egyptian  10  callfriend,6003
+021h mandarin.north  10  callfriend,5784
+021l english.am.gen  10
+021m spanish.carib  10  callfriend,6896
+021n english.am.gen  10  callfriend,6511
+021q hindi  10  callfriend,6580
+021s korean  10  callfriend,6645
+021z farsi  10  callfriend,6772
+0221 french.canada  10  callfriend,5483
+0227 english.am.gen  10
+022d english.am.gen  10
+022e spanish.carib  10  callfriend,6883
+022k hindi  10  callfriend,6665
+022m japanese  10  callfriend,4905
+022p english.am.gen  10
+022q tamil  10  callfriend,6417
+022s mandarin.north  10  callfriend,5773
+022w english.am.gen  10  callfriend,6862
+022x spanish.highland  10  callfriend,5704
+022y vietnamese  10  callfriend,6817
+0231 spanish.highland  10  callfriend,5638
+0232 english.am.gen  10
+0233 vietnamese  10  callfriend,6670
+0234 english.am.gen  10
+023d english.am.gen  10
+023g french.canada  10  callfriend,5481
+023k mandarin.taiwan  10  callfriend,5968
+023n english.am.gen  10
+023o mandarin.north  10  callfriend,5195
+023s english.am.gen  10
+023t english.am.gen  10
+023w arabic.egyptian  10  callfriend,6254
+023y french.canada  10  callfriend,5462
+0240 english.am.gen  10
+0244 french.canada  10  callfriend,5410
+0246 english.am.south  10  callfriend,6953
+0248 farsi  10  callfriend,6811
+024b spanish.highland  10  callfriend,5418
+024c mandarin.north  10  callfriend,5906
+024d french.canada  10  callfriend,5465
+024h english.am.gen  10
+024l english.am.gen  10
+024m spanish.carib  10  callfriend,6887
+024n english.am.gen  10
+024o hindi  10  callfriend,6572
+024t tamil  10  callfriend,6223
+024u english.am.gen  10  callfriend,6938
+024x korean  10  callfriend,6799
+0251 french.canada  10  callfriend,5465
+0252 vietnamese  10  callfriend,6901
+0254 korean  10  callfriend,6808
+0255 english.am.gen  10
+0257 english.am.gen  10
+0258 english.am.gen  10
+0259 farsi  10  callfriend,6835
+025f vietnamese  10  callfriend,6756
+025i english.am.gen  10
+025j hindi  10  callfriend,6505
+025k english.am.gen  10
+025r farsi  10  callfriend,6772
+025x spanish.carib  10  callfriend,6945
+025y arabic.egyptian  10  callfriend,5961
+025z english.am.gen  10
+0260 english.am.gen  10
+0262 korean  10  callfriend,6799
+0265 mandarin.north  10  callfriend,5930
+0267 farsi  10  callfriend,6849
+026b mandarin.north  10  callfriend,5916
+026c spanish.highland  10  callfriend,5340
+026e spanish.carib  10  callfriend,6877
+026f spanish.highland  10  callfriend,5354
+026h hindi  10  callfriend,6580
+026i hindi  10  callfriend,6505
+026j english.am.gen  10
+026m english.am.south  10  callfriend,6970
+026u german  10  callfriend,6780
+026x english.am.gen  10
+026y japanese  10  callfriend,6763
+0273 tamil  10  callfriend,6330
+027a spanish.highland  10  callfriend,5502
+027c spanish.highland  10  callfriend,5354
+027h vietnamese  10  callfriend,6779
+027m japanese  10  callfriend,6434
+027r english.am.gen  10
+0283 english.am.gen  10
+0284 french.canada  10  callfriend,5462
+0285 english.am.gen  10  callfriend,6193
+028a japanese  10  callfriend,6759
+028e arabic.egyptian  10  callfriend,5507
+028j hindi  10  callfriend,6608
+028m spanish.carib  10  callfriend,6874
+028q english.am.gen  10
+028z english.am.gen  10
+0295 farsi  10  callfriend,6860
+0299 english.am.gen  10
+029c korean  10  callfriend,6792
+029f tamil  10  callfriend,6429
+029j english.am.gen  10
+029l japanese  10  callfriend,6742
+029n farsi  10  callfriend,6772
+029q english.am.gen  10
+029r english.am.gen  10
+029s tamil  10  callfriend,6519
+029t french.canada  10  callfriend,5483
+029u english.am.gen  10
+029v spanish.carib  10  callfriend,6884
+02a1 english.am.gen  10
+02a7 mandarin.north  10  callfriend,5930
+02a8 spanish.carib  10  callfriend,6959
+02ac english.am.gen  10  callfriend,6451
+02ad spanish.highland  10  callfriend,5361
+02ae spanish.highland  10  callfriend,5607
+02aj french.canada  10  callfriend,5405
+02am japanese  10  callfriend,6587
+02an english.am.south  10  callfriend,6956
+02at hindi  10  callfriend,6585
+02b0 english.am.gen  10
+02b5 tamil  10  callfriend,6287
+02b8 german  10  callfriend,6522
+02ba french.canada  10  callfriend,5410
+02bc korean  10  callfriend,6725
+02be tamil  10  callfriend,6357
+02bf tamil  10  callfriend,6778
+02bj mandarin.taiwan  10  callfriend,5879
+02bk mandarin.north  10  callfriend,5812
+02bt arabic.egyptian  10  callfriend,5878
+02bu english.am.gen  10
+02by arabic.egyptian  10  callfriend,5774
+02c0 english.am.gen  10
+02c2 english.am.gen  10
+02c4 french.canada  10  callfriend,5506
+02c5 english.am.gen  10
+02c9 english.am.south  10  callfriend,6943
+02ca english.am.south  10  callfriend,6973
+02cb farsi  10  callfriend,6879
+02ch english.am.gen  10
+02cj farsi  10  callfriend,6871
+02ck french.canada  10  callfriend,5505
+02cm english.am.gen  10
+02cn tamil  10  callfriend,6223
+02cp english.am.south  10  callfriend,6932
+02cq arabic.egyptian  10  callfriend,5759
+02cs french.canada  10  callfriend,5505
+02cw french.canada  10  callfriend,5404
+02cz spanish.highland  10  callfriend,5650
+02db english.am.gen  10
+02dc mandarin.taiwan  10  callfriend,5979
+02dh farsi  10  callfriend,6835
+02dk korean  10  callfriend,6648
+02du tamil  10  callfriend,6439
+02dw english.am.gen  10
+02dx german  10  callfriend,6831
+02dy japanese  10  callfriend,6738
+02e0 french.canada  10  callfriend,5498
+02e1 english.am.gen  10
+02e2 japanese  10  callfriend,6716
+02e5 tamil  10  callfriend,6417
+02e7 mandarin.taiwan  10  callfriend,5972
+02ea english.am.gen  10
+02eb hindi  10  callfriend,6495
+02ec spanish.highland  10  callfriend,5316
+02ef english.am.gen  10
+02eg french.canada  10  callfriend,5481
+02ek german  10  callfriend,6806
+02en hindi  10  callfriend,6580
+02ep french.canada  10  callfriend,5500
+02ev arabic.egyptian  10  callfriend,5769
+02ew arabic.egyptian  10  callfriend,6135
+02ex spanish.highland  10  callfriend,5367
+02f1 mandarin.taiwan  10  callfriend,5983
+02f3 english.am.gen  10
+02f5 mandarin.north  10  callfriend,4972
+02f6 spanish.highland  10  callfriend,5650
+02f8 spanish.highland  10  callfriend,5558
+02fc hindi  10  callfriend,6552
+02fg vietnamese  10  callfriend,6898
+02fj french.canada  10  callfriend,5498
+02fl tamil  10  callfriend,6471
+02fm german  10  callfriend,6695
+02ft arabic.egyptian  10  callfriend,6210
+02fx english.am.gen  10
+02fz german  10  callfriend,6537
+02g1 mandarin.taiwan  10  callfriend,5895
+02g5 mandarin.taiwan  10  callfriend,5960
+02gk tamil  10  callfriend,6547
+02gn vietnamese  10  callfriend,6847
+02go mandarin.north  10  callfriend,5010
+02gq korean  10  callfriend,6762
+02gr vietnamese  10  callfriend,6894
+02gs mandarin.north  10  callfriend,5784
+02h0 tamil  10  callfriend,6368
+02h1 farsi  10  callfriend,6768
+02h3 mandarin.north  10  callfriend,5010
+02h9 arabic.egyptian  10  callfriend,6210
+02ha mandarin.north  10  callfriend,5905
+02hd vietnamese  10  callfriend,6850
+02hf japanese  10  callfriend,4905
+02hi arabic.egyptian  10  callfriend,5774
+02hj english.am.gen  10
+02hk english.am.gen  10
+02ho vietnamese  10  callfriend,6895
+02hp spanish.carib  10  callfriend,6834
+02hv farsi  10  callfriend,6801
+02hy hindi  10  callfriend,6495
+02hz english.am.south  10  callfriend,6975
+02i0 german  10  callfriend,6918
+02i2 english.am.gen  10
+02i3 german  10  callfriend,6846
+02i6 hindi  10  callfriend,6426
+02i7 arabic.egyptian  10  callfriend,6003
+02ic hindi  10  callfriend,6579
+02ih german  10  callfriend,6610
+02in english.am.gen  10  callfriend,6865
+02iq hindi  10  callfriend,6665
+02iu korean  10  callfriend,6783
+02iw english.am.south  10  callfriend,6966
+02j5 german  10  callfriend,6831
+02j7 arabic.egyptian  10  callfriend,5913
+02j8 korean  10  callfriend,6708
+02jc tamil  10  callfriend,6501
+02jh spanish.carib  10  callfriend,6950
+02ji hindi  10  callfriend,6523
+02jj farsi  10  callfriend,6741
+02jn spanish.carib  10  callfriend,6958
+02ju french.canada  10  callfriend,5462
+02k4 mandarin.taiwan  10  callfriend,5895
+02k5 english.am.south  10  callfriend,6890
+02k7 tamil  10  callfriend,6519
+02k8 english.am.south  10  callfriend,6974
+02kd spanish.carib  10  callfriend,6854
+02ke tamil  10  callfriend,6330
+02kg mandarin.north  10  callfriend,5916
+02kh mandarin.taiwan  10  callfriend,5971
+02kk spanish.carib  10  callfriend,6883
+02kl hindi  10  callfriend,6620
+02kn english.am.gen  10
+02kr farsi  10  callfriend,6858
+02ku german  10  callfriend,6421
+02l4 japanese  10  callfriend,6632
+02l6 japanese  10  callfriend,6465
+02l8 german  10  callfriend,6832
+02l9 farsi  10  callfriend,6849
+02lc vietnamese  10  callfriend,6756
+02ld hindi  10  callfriend,6572
+02lh spanish.carib  10  callfriend,6875
+02lm farsi  10  callfriend,6858
+02lq korean  10  callfriend,6697
+02lr english.am.gen  10
+02ls french.canada  10  callfriend,5460
+02lt german  10  callfriend,6806
+02lu spanish.highland  10  callfriend,5582
+02m1 mandarin.north  10  callfriend,5784
+02m5 german  10  callfriend,6481
+02m9 mandarin.taiwan  10  callfriend,5948
+02mg spanish.carib  10  callfriend,6883
+02mi japanese  10  callfriend,6630
+02mj spanish.highland  10  callfriend,5685
+02mk hindi  10  callfriend,6607
+02mn french.canada  10  callfriend,5508
+02mp english.am.gen  10
+02mq french.canada  10  callfriend,5464
+02mr spanish.highland  10  callfriend,5361
+02ms english.am.gen  10  callfriend,6508
+02my english.am.gen  10
+02mz english.am.south  10  callfriend,6954
+02n1 english.am.gen  10
+02n2 mandarin.taiwan  10  callfriend,5879
+02n7 tamil  10  callfriend,6356
+02n8 farsi  10  callfriend,6823
+02na vietnamese  10  callfriend,6847
+02nd spanish.carib  10  callfriend,6851
+02nh spanish.highland  10  callfriend,5558
+02nl french.canada  10  callfriend,5499
+02nr japanese  10  callfriend,6742
+02ns hindi  10  callfriend,6665
+02nu spanish.highland  10  callfriend,5418
+02nw english.am.south  10  callfriend,6974
+02ny german  10  callfriend,6548
+02o6 mandarin.north  10  callfriend,5690
+02oc english.am.gen  10
+02og mandarin.taiwan  10  callfriend,5960
+02oj english.am.south  10  callfriend,6946
+02ol english.am.gen  10  callfriend,6508
+02om tamil  10  callfriend,6444
+02on spanish.carib  10  callfriend,6896
+02or hindi  10  callfriend,6617
+02ou english.am.gen  10
+02ov arabic.egyptian  10  callfriend,5769
+02ox mandarin.taiwan  10  callfriend,5876
+02p3 english.am.gen  10
+02p7 korean  10  callfriend,6682
+02pa tamil  10  callfriend,6439
+02pb spanish.carib  10  callfriend,6875
+02pc farsi  10  callfriend,6873
+02pj japanese  10  callfriend,6761
+02po german  10  callfriend,6940
+02px hindi  10  callfriend,6556
+02q3 mandarin.taiwan  10  callfriend,5876
+02q4 mandarin.taiwan  10  callfriend,5968
+02q7 japanese  10  callfriend,6632
+02qe mandarin.north  10  callfriend,5784
+02qj farsi  10  callfriend,6797
+02qq hindi  10  callfriend,6563
+02qt spanish.highland  10  callfriend,5641
+02qv french.canada  10  callfriend,5474
+02r0 english.am.gen  10  callfriend,6201
+02r2 english.am.gen  10  callfriend,6193
+02r4 tamil  10  callfriend,6335
+02r6 english.am.south  10  callfriend,6955
+02r9 korean  10  callfriend,6725
+02rg vietnamese  10  callfriend,6909
+02rh spanish.carib  10  callfriend,6851
+02rk english.am.gen  10
+02rn vietnamese  10  callfriend,6657
+02rr korean  10  callfriend,6696
+02rt english.am.gen  10  callfriend,6938
+02ru german  10  callfriend,6918
+02ry vietnamese  10  callfriend,6894
+02s7 tamil  10  callfriend,6547
+02sd english.am.gen  10
+02se vietnamese  10  callfriend,6934
+02sn spanish.highland  10  callfriend,5502
+02so english.am.south  10  callfriend,6931
+02sp japanese  10  callfriend,6716
+02su french.canada  10  callfriend,5410
+02sw english.am.gen  10
+02sx vietnamese  10  callfriend,6909
+02sz english.am.gen  10
+02t2 vietnamese  10  callfriend,6901
+02t6 farsi  10  callfriend,6881
+02tf english.am.gen  10
+02tg korean  10  callfriend,6757
+02th english.am.gen  10
+02ti english.am.gen  10
+02tj english.am.gen  10
+02tn spanish.carib  10  callfriend,6834
+02tq hindi  10  callfriend,6572
+02ts spanish.carib  10  callfriend,6834
+02tx spanish.carib  10  callfriend,6877
+02tz arabic.egyptian  10  callfriend,5781
+02u0 english.am.south  10  callfriend,6953
+02u8 korean  10  callfriend,6762
+02ua tamil  10  callfriend,6471
+02ub korean  10  callfriend,6682
+02uc mandarin.north  10  callfriend,5800
+02uh farsi  10  callfriend,6823
+02uj mandarin.taiwan  10  callfriend,5893
+02um german  10  callfriend,6684
+02un spanish.carib  10  callfriend,6876
+02uq english.am.south  10  callfriend,6955
+02us english.am.south  10  callfriend,6954
+02uu english.am.gen  10
+02v3 spanish.highland  10  callfriend,5316
+02v5 english.am.gen  10
+02v6 mandarin.north  10  callfriend,5800
+02v7 japanese  10  callfriend,6490
+02v8 english.am.gen  10  callfriend,6938
+02v9 vietnamese  10  callfriend,6895
+02vd japanese  10  callfriend,6805
+02vg mandarin.north  10  callfriend,5195
+02vl tamil  10  callfriend,6501
+02vu spanish.carib  10  callfriend,6876
+02vv korean  10  callfriend,6696
+02vz mandarin.taiwan  10  callfriend,5957
+02w0 japanese  10  callfriend,6616
+02w4 spanish.highland  10  callfriend,5258
+02w8 korean  10  callfriend,6648
+02wg english.am.gen  10
+02wh english.am.south  10  callfriend,6968
+02wj mandarin.taiwan  10  callfriend,5960
+02wo spanish.carib  10  callfriend,6874
+02wq german  10  callfriend,6610
+02wr japanese  10  callfriend,6738
+02ws english.am.gen  10
+02wx vietnamese  10  callfriend,6930
+02x1 vietnamese  10  callfriend,6817
+02x2 english.am.south  10  callfriend,6962
+02x6 arabic.egyptian  10  callfriend,5759
+02xj english.am.gen  10
+02xl japanese  10  callfriend,6630
+02xn english.am.gen  10  callfriend,6869
+02xp farsi  10  callfriend,6811
+02xv arabic.egyptian  10  callfriend,5769
+02y4 arabic.egyptian  10  callfriend,5955
+02y5 german  10  callfriend,6940
+02y7 spanish.highland  10  callfriend,5558
+02ye japanese  10  callfriend,6766
+02yh korean  10  callfriend,6783
+02yj english.am.gen  10
+02yk mandarin.taiwan  10  callfriend,5960
+02yr tamil  10  callfriend,6778
+02yt mandarin.north  10  callfriend,5904
+02yu spanish.highland  10  callfriend,5361
+02yv english.am.south  10  callfriend,6973
+02yx english.am.gen  10
+02z3 english.am.gen  10
+02z4 hindi  10  callfriend,6579
+02z5 english.am.gen  10  callfriend,6201
+02z7 french.canada  10  callfriend,5506
+02zb spanish.highland  10  callfriend,5367
+02zd spanish.carib  10  callfriend,6834
+02zf arabic.egyptian  10  callfriend,5961
+02zh arabic.egyptian  10  callfriend,5913
+02zj english.am.gen  10
+02zt spanish.highland  10  callfriend,5340
+02zu english.am.south  10  callfriend,6943
+02zw english.am.south  10  callfriend,6973
+02zz french.canada  10  callfriend,5461
+0302 english.am.gen  10
+0305 mandarin.taiwan  10  callfriend,5974
+030b english.am.gen  10  callfriend,6899
+030g spanish.highland  10  callfriend,5258
+030j english.am.gen  10
+030m farsi  10  callfriend,6871
+030q german  10  callfriend,6573
+030v vietnamese  10  callfriend,6906
+030y korean  10  callfriend,6708
+0310 mandarin.north  10  callfriend,5824
+0313 mandarin.taiwan  10  callfriend,5951
+0314 arabic.egyptian  10  callfriend,6052
+0315 english.am.gen  10
+0318 korean  10  callfriend,6774
+031d spanish.carib  10  callfriend,6878
+031e korean  10  callfriend,6648
+031f french.canada  10  callfriend,5481
+031h english.am.gen  10
+031i mandarin.north  10  callfriend,5010
+031l arabic.egyptian  10  callfriend,6135
+031n mandarin.taiwan  10  callfriend,5899
+031v vietnamese  10  callfriend,6827
+031w farsi  10  callfriend,6871
+031y spanish.carib  10  callfriend,6945
+031z english.am.gen  10
+0320 arabic.egyptian  10  callfriend,6052
+0322 hindi  10  callfriend,6563
+0323 french.canada  10  callfriend,5474
+0325 english.am.gen  10  callfriend,6451
+0329 mandarin.taiwan  10  callfriend,5901
+032f arabic.egyptian  10  callfriend,6254
+032s english.am.gen  10  callfriend,6869
+032t farsi  10  callfriend,6879
+0330 english.am.gen  10
+0335 japanese  10  callfriend,6434
+0337 spanish.highland  10  callfriend,5340
+033a english.am.gen  10  callfriend,6507
+033b mandarin.taiwan  10  callfriend,5912
+033l japanese  10  callfriend,6739
+033n english.am.gen  10
+0344 tamil  10  callfriend,6356
+0345 japanese  10  callfriend,6525
+034c german  10  callfriend,6972
+034d korean  10  callfriend,6697
+034e farsi  10  callfriend,6842
+034g mandarin.taiwan  10  callfriend,5983
+034h english.am.gen  10
+034i english.am.gen  10  callfriend,6649
+034r mandarin.taiwan  10  callfriend,5934
+0352 german  10  callfriend,6577
+0353 spanish.highland  10  callfriend,5354
+0356 spanish.highland  10  callfriend,4500
+0357 english.am.gen  10
+0359 mandarin.north  10  callfriend,5906
+035h mandarin.taiwan  10  callfriend,5972
+035m german  10  callfriend,6695
+035n english.am.gen  10
+035o french.canada  10  callfriend,5461
+035v spanish.highland  10  callfriend,5316
+035w hindi  10  callfriend,6579
+035y arabic.egyptian  10  callfriend,6301
+0361 japanese  10  callfriend,6765
+0363 english.am.gen  10
+0365 spanish.highland  10  callfriend,4500
+0367 mandarin.north  10  callfriend,5806
+036e arabic.egyptian  10  callfriend,6301
+036f tamil  10  callfriend,6591
+036g hindi  10  callfriend,6441
+036k german  10  callfriend,6853
+036q english.am.gen  10  callfriend,6507
+036x english.am.gen  10  callfriend,6476
+036y hindi  10  callfriend,6441
+0370 french.canada  10  callfriend,5405
+0371 english.am.gen  10
+0372 mandarin.north  10  callfriend,5821
+0378 french.canada  10  callfriend,5498
+0379 english.am.south  10  callfriend,6931
+037d english.am.gen  10
+037l farsi  10  callfriend,6849
+037m english.am.gen  10
+037n spanish.highland  10  callfriend,5367
+037s english.am.gen  10
+037z spanish.highland  10  callfriend,5258
+0382 english.am.gen  10
+0383 german  10  callfriend,6610
+038a japanese  10  callfriend,4905
+038b japanese  10  callfriend,6763
+038c tamil  10  callfriend,6429
+038g english.am.gen  10  callfriend,6428
+038k korean  10  callfriend,6773
+038w spanish.carib  10  callfriend,6948
+038y farsi  10  callfriend,6848
+0390 arabic.egyptian  10  callfriend,5804
+0391 korean  10  callfriend,6792
+0393 english.am.gen  10
+039b hindi  10  callfriend,6620
+039d tamil  10  callfriend,6433
+039e mandarin.taiwan  10  callfriend,5971
+039f english.am.gen  10
+039l farsi  10  callfriend,6818
+039o english.am.gen  10
+039q french.canada  10  callfriend,5460
+039s hindi  10  callfriend,6552
+03a1 japanese  10  callfriend,6587
+03ae farsi  10  callfriend,6879
+03ah spanish.highland  10  callfriend,5361
+03ak arabic.egyptian  10  callfriend,5878
+03al english.am.south  10  callfriend,6968
+03an japanese  10  callfriend,6765
+03ar english.am.gen  10
+03at hindi  10  callfriend,6495
+03aw english.am.gen  10
+03b0 mandarin.north  10  callfriend,5812
+03b4 spanish.carib  10  callfriend,6856
+03b5 korean  10  callfriend,6673
+03b7 tamil  10  callfriend,6357
+03bc english.am.gen  10
+03bg english.am.gen  10  callfriend,6508
+03bi english.am.south  10  callfriend,6946
+03bk english.am.gen  10  callfriend,6869
+03bl german  10  callfriend,6853
+03bp mandarin.north  10  callfriend,5195
+03br spanish.carib  10  callfriend,6883
+03bs english.am.gen  10  callfriend,6938
+03bt spanish.highland  10  callfriend,5112
+03c5 arabic.egyptian  10  callfriend,5409
+03c6 japanese  10  callfriend,6465
+03c7 arabic.egyptian  10  callfriend,6210
+03cb korean  10  callfriend,6704
+03cd english.am.gen  10  callfriend,6557
+03cf vietnamese  10  callfriend,6764
+03cj spanish.highland  10  callfriend,5641
+03ck spanish.highland  10  callfriend,5704
+03co english.am.gen  10
+03cw spanish.carib  10  callfriend,6854
+03cz farsi  10  callfriend,6860
+03d1 german  10  callfriend,6610
+03d7 vietnamese  10  callfriend,6758
+03da english.am.gen  10  callfriend,6428
+03db english.am.south  10  callfriend,6954
+03dg english.am.gen  10
+03dj tamil  10  callfriend,6287
+03do english.am.gen  10
+03dt japanese  10  callfriend,6766
+03du english.am.gen  10
+03dv english.am.gen  10
+03dw french.canada  10  callfriend,5410
+03e0 english.am.gen  10
+03e6 japanese  10  callfriend,6525
+03e7 hindi  10  callfriend,6579
+03e8 arabic.egyptian  10  callfriend,5774
+03ec farsi  10  callfriend,6788
+03ed english.am.south  10  callfriend,6962
+03eg english.am.gen  10
+03eh english.am.gen  10
+03ei tamil  10  callfriend,6547
+03ej hindi  10  callfriend,6617
+03ep english.am.gen  10
+03er english.am.gen  10  callfriend,6507
+03et spanish.carib  10  callfriend,6854
+03ex spanish.carib  10  callfriend,6950
+03ey korean  10  callfriend,6696
+03ez english.am.south  10  callfriend,6932
+03f0 english.am.south  10  callfriend,6947
+03f1 mandarin.taiwan  10  callfriend,5934
+03f4 spanish.carib  10  callfriend,6856
+03f6 arabic.egyptian  10  callfriend,5955
+03f9 english.am.gen  10  callfriend,6952
+03fb hindi  10  callfriend,6426
+03fc hindi  10  callfriend,6620
+03fg spanish.highland  10  callfriend,5638
+03fj german  10  callfriend,6832
+03fk english.am.gen  10
+03fp spanish.carib  10  callfriend,6949
+03fy spanish.highland  10  callfriend,5589
+03g1 english.am.gen  10
+03g2 mandarin.north  10  callfriend,5812
+03g9 japanese  10  callfriend,6761
+03gb japanese  10  callfriend,6434
+03gd english.am.gen  10  callfriend,6508
+03gf arabic.egyptian  10  callfriend,5507
+03gi vietnamese  10  callfriend,6847
+03gj vietnamese  10  callfriend,6934
+03go french.canada  10  callfriend,5505
+03gu mandarin.north  10  callfriend,5773
+03gy arabic.egyptian  10  callfriend,6301
+0003 hindi  3  callfriend,6563
+0004 tamil  3  callfriend,6417
+0006 spanish.highland  3  callfriend,5558
+000a english.am.south  3  callfriend,6956
+000e tamil  3  callfriend,6433
+000g arabic.egyptian  3  callfriend,6301
+000l english.am.south  3  callfriend,6955
+000o french.canada  3  callfriend,5474
+000t japanese  3  callfriend,6465
+000w tamil  3  callfriend,6547
+000x mandarin.north  3  callfriend,5906
+0014 hindi  3  callfriend,6579
+0019 tamil  3  callfriend,6356
+001d english.am.gen  3
+001i hindi  3  callfriend,6441
+001m english.am.gen  3
+001p japanese  3  callfriend,6738
+001u korean  3  callfriend,6792
+001y english.am.gen  3  callfriend,6476
+001z mandarin.taiwan  3  callfriend,5968
+0024 english.am.gen  3  callfriend,6952
+0027 english.am.south  3  callfriend,6927
+002r english.am.gen  3  callfriend,6451
+002u spanish.highland  3  callfriend,5650
+002y english.am.gen  3
+002z arabic.egyptian  3  callfriend,6135
+0035 arabic.egyptian  3  callfriend,5804
+0036 english.am.gen  3
+003c japanese  3  callfriend,6490
+003d french.canada  3  callfriend,5474
+003g english.am.gen  3
+003m english.am.gen  3  callfriend,6511
+003o english.am.gen  3
+003t english.am.gen  3  callfriend,6507
+003u spanish.highland  3  callfriend,5258
+003v mandarin.taiwan  3  callfriend,5974
+003y spanish.highland  3  callfriend,5685
+0041 korean  3  callfriend,6773
+0042 english.am.gen  3
+0044 english.am.south  3  callfriend,6943
+0048 hindi  3  callfriend,6400
+0049 japanese  3  callfriend,6765
+004c english.am.south  3  callfriend,6954
+004f english.am.gen  3  callfriend,6503
+004h tamil  3  callfriend,6519
+004l english.am.gen  3  callfriend,6508
+004o english.am.gen  3
+004p english.am.gen  3
+004q english.am.gen  3  callfriend,6862
+004r farsi  3  callfriend,6860
+004s vietnamese  3  callfriend,6847
+004x hindi  3  callfriend,6585
+004y tamil  3  callfriend,6330
+0051 japanese  3  callfriend,6805
+0052 japanese  3  callfriend,6434
+0055 farsi  3  callfriend,6881
+0057 vietnamese  3  callfriend,6930
+0058 arabic.egyptian  3  callfriend,5774
+005a farsi  3  callfriend,6879
+005d english.am.gen  3  callfriend,6451
+005e arabic.egyptian  3  callfriend,5759
+005g english.am.gen  3
+005h english.am.gen  3
+005j spanish.highland  3  callfriend,5589
+005l spanish.carib  3  callfriend,6883
+005p farsi  3  callfriend,6873
+005u french.canada  3  callfriend,5508
+005w english.am.gen  3
+0060 farsi  3  callfriend,6835
+0064 spanish.highland  3  callfriend,4500
+0066 vietnamese  3  callfriend,6894
+0069 english.am.gen  3
+006d english.am.gen  3
+006f japanese  3  callfriend,6630
+006n spanish.highland  3  callfriend,5582
+006p english.am.gen  3
+006r french.canada  3  callfriend,5483
+006t english.am.gen  3
+006w english.am.gen  3
+0072 farsi  3  callfriend,6879
+0074 english.am.south  3  callfriend,6955
+0075 mandarin.taiwan  3  callfriend,5971
+007a french.canada  3  callfriend,5410
+007b hindi  3  callfriend,6665
+007h spanish.carib  3  callfriend,6948
+007i english.am.gen  3
+007l korean  3  callfriend,6633
+007r japanese  3  callfriend,6805
+007t german  3  callfriend,6832
+007y spanish.carib  3  callfriend,6868
+0082 english.am.gen  3
+0084 spanish.carib  3  callfriend,6856
+0085 english.am.gen  3
+0087 mandarin.taiwan  3  callfriend,5983
+008n spanish.highland  3  callfriend,5607
+008o french.canada  3  callfriend,5485
+008t korean  3  callfriend,6696
+008v english.am.gen  3
+008w french.canada  3  callfriend,5464
+008x french.canada  3  callfriend,5465
+0090 english.am.gen  3
+0091 spanish.highland  3  callfriend,5704
+0092 spanish.carib  3  callfriend,6883
+0094 english.am.gen  3
+0095 spanish.highland  3  callfriend,5418
+0097 english.am.gen  3  callfriend,6201
+009a spanish.carib  3  callfriend,6883
+009b english.am.gen  3  callfriend,6865
+009c spanish.highland  3  callfriend,4500
+009k english.am.gen  3
+009l english.am.gen  3
+009p english.am.gen  3
+009t hindi  3  callfriend,6620
+009v spanish.carib  3  callfriend,6896
+009w hindi  3  callfriend,6627
+009x english.am.south  3  callfriend,6890
+00a2 spanish.carib  3  callfriend,6877
+00a4 english.am.gen  3
+00a6 english.am.gen  3
+00ab korean  3  callfriend,6645
+00ac spanish.carib  3  callfriend,6876
+00ad mandarin.north  3  callfriend,5821
+00ai mandarin.taiwan  3  callfriend,5974
+00aj english.am.gen  3
+00ak french.canada  3  callfriend,5506
+00al mandarin.taiwan  3  callfriend,5879
+00aq mandarin.taiwan  3  callfriend,5893
+00au german  3  callfriend,6806
+00av japanese  3  callfriend,6759
+00aw korean  3  callfriend,6648
+00ay spanish.carib  3  callfriend,6945
+00b0 english.am.gen  3
+00b2 japanese  3  callfriend,6742
+00b3 english.am.gen  3  callfriend,6862
+00b4 hindi  3  callfriend,6665
+00b6 farsi  3  callfriend,6811
+00b7 english.am.gen  3
+00b9 mandarin.taiwan  3  callfriend,5899
+00ba japanese  3  callfriend,6716
+00be hindi  3  callfriend,6617
+00bh english.am.gen  3
+00bi tamil  3  callfriend,6501
+00bj french.canada  3  callfriend,5461
+00bl english.am.gen  3
+00bw english.am.gen  3  callfriend,6865
+00bz spanish.highland  3  callfriend,5112
+00c1 english.am.gen  3  callfriend,6476
+00c8 mandarin.north  3  callfriend,5806
+00cc spanish.highland  3  callfriend,5641
+00cf spanish.carib  3  callfriend,6896
+00cg mandarin.north  3  callfriend,4972
+00ch english.am.gen  3
+00cj mandarin.taiwan  3  callfriend,5895
+00cq english.am.gen  3
+00cu english.am.south  3  callfriend,6975
+00cv japanese  3  callfriend,6761
+00cz korean  3  callfriend,6757
+00d3 farsi  3  callfriend,6849
+00d5 mandarin.north  3  callfriend,5784
+00d6 mandarin.taiwan  3  callfriend,5972
+00d7 tamil  3  callfriend,6501
+00db english.am.gen  3
+00de german  3  callfriend,6831
+00df english.am.gen  3
+00dl arabic.egyptian  3  callfriend,6052
+00do spanish.highland  3  callfriend,5340
+00dr english.am.south  3  callfriend,6953
+00dt english.am.gen  3
+00du english.am.gen  3
+00dz french.canada  3  callfriend,5462
+00e5 spanish.carib  3  callfriend,6949
+00ea german  3  callfriend,6577
+00eb arabic.egyptian  3  callfriend,6210
+00ep english.am.gen  3  callfriend,6193
+00er english.am.south  3  callfriend,6927
+00et vietnamese  3  callfriend,6930
+00eu japanese  3  callfriend,6805
+00ev hindi  3  callfriend,6495
+00ey english.am.gen  3
+00ez arabic.egyptian  3  callfriend,6003
+00f1 vietnamese  3  callfriend,6758
+00fa english.am.gen  3
+00fc french.canada  3  callfriend,5405
+00fd english.am.gen  3  callfriend,6869
+00ff korean  3  callfriend,6762
+00fn english.am.gen  3  callfriend,6451
+00fp korean  3  callfriend,6799
+00fq german  3  callfriend,6853
+00ft mandarin.north  3  callfriend,5784
+00fu spanish.highland  3  callfriend,5558
+00g0 spanish.highland  3  callfriend,5502
+00g4 spanish.carib  3  callfriend,6854
+00g7 french.canada  3  callfriend,5505
+00g9 english.am.gen  3
+00ge mandarin.north  3  callfriend,5930
+00gf english.am.gen  3
+00gj korean  3  callfriend,6799
+00gk korean  3  callfriend,6808
+00gr german  3  callfriend,6610
+00gy english.am.gen  3
+00gz english.am.south  3  callfriend,6954
+00he tamil  3  callfriend,6778
+00hh french.canada  3  callfriend,5461
+00hj arabic.egyptian  3  callfriend,5781
+00hk german  3  callfriend,6522
+00hn english.am.gen  3  callfriend,6865
+00ho hindi  3  callfriend,6495
+00hu japanese  3  callfriend,6616
+00hv hindi  3  callfriend,6617
+00hy spanish.highland  3  callfriend,5558
+00hz hindi  3  callfriend,6579
+00i0 korean  3  callfriend,6783
+00i9 japanese  3  callfriend,6587
+00ia french.canada  3  callfriend,5474
+00ic english.am.gen  3
+00id arabic.egyptian  3  callfriend,6301
+00ii english.am.gen  3
+00ij arabic.egyptian  3  callfriend,5781
+00il hindi  3  callfriend,6400
+00im english.am.south  3  callfriend,6975
+00io farsi  3  callfriend,6768
+00iq spanish.carib  3  callfriend,6896
+00iy farsi  3  callfriend,6797
+00j0 korean  3  callfriend,6783
+00j4 english.am.south  3  callfriend,6955
+00j5 english.am.south  3  callfriend,6956
+00j9 vietnamese  3  callfriend,6930
+00ja english.am.gen  3
+00jc english.am.gen  3
+00ji english.am.gen  3
+00jm spanish.carib  3  callfriend,6878
+00jn mandarin.north  3  callfriend,5812
+00js hindi  3  callfriend,6579
+00jy english.am.gen  3
+00k0 japanese  3  callfriend,6761
+00k2 spanish.carib  3  callfriend,6949
+00k5 english.am.gen  3  callfriend,6402
+00k7 arabic.egyptian  3  callfriend,5769
+00ka japanese  3  callfriend,6616
+00kd japanese  3  callfriend,6490
+00kf korean  3  callfriend,6708
+00kh english.am.gen  3  callfriend,6938
+00kl german  3  callfriend,6806
+00kn english.am.gen  3
+00kp mandarin.taiwan  3  callfriend,5912
+00kq tamil  3  callfriend,6356
+00kv english.am.gen  3
+00ky german  3  callfriend,6684
+00l2 hindi  3  callfriend,6552
+00l5 english.am.south  3  callfriend,6931
+00l8 french.canada  3  callfriend,5500
+00l9 japanese  3  callfriend,6490
+00lk english.am.gen  3  callfriend,6239
+00lm korean  3  callfriend,6648
+00lu english.am.gen  3
+00lw tamil  3  callfriend,6471
+00m1 mandarin.north  3  callfriend,5973
+00m2 english.am.gen  3
+00m6 japanese  3  callfriend,6716
+00m8 french.canada  3  callfriend,5481
+00m9 spanish.carib  3  callfriend,6834
+00mg mandarin.taiwan  3  callfriend,5876
+00mi english.am.gen  3  callfriend,6938
+00mt spanish.highland  3  callfriend,5650
+00mv spanish.highland  3  callfriend,5641
+00mw english.am.gen  3
+00n3 english.am.gen  3
+00n5 spanish.carib  3  callfriend,6876
+00n6 german  3  callfriend,6421
+00nk english.am.south  3  callfriend,6932
+00nm english.am.gen  3
+00no vietnamese  3  callfriend,6657
+00nr hindi  3  callfriend,6563
+00ns vietnamese  3  callfriend,6740
+00nu english.am.gen  3
+00nv english.am.gen  3
+00nw japanese  3  callfriend,6742
+00nx english.am.gen  3  callfriend,6508
+00ny spanish.carib  3  callfriend,6874
+00o0 french.canada  3  callfriend,5483
+00o4 english.am.gen  3
+00o5 vietnamese  3  callfriend,6779
+00o6 mandarin.north  3  callfriend,5916
+00oc tamil  3  callfriend,6591
+00oe korean  3  callfriend,6730
+00oh spanish.highland  3  callfriend,5367
+00om german  3  callfriend,6780
+00oo arabic.egyptian  3  callfriend,6052
+00or english.am.gen  3  callfriend,6952
+00ow farsi  3  callfriend,6741
+00oy tamil  3  callfriend,6519
+00oz english.am.gen  3
+00p1 english.am.south  3  callfriend,6962
+00p2 english.am.gen  3
+00p4 mandarin.taiwan  3  callfriend,5934
+00pc vietnamese  3  callfriend,6934
+00pg korean  3  callfriend,6757
+00pl english.am.gen  3
+00pu english.am.gen  3  callfriend,6649
+00pz english.am.gen  3
+00q0 english.am.south  3  callfriend,6970
+00q4 english.am.gen  3  callfriend,6239
+00q8 japanese  3  callfriend,6434
+00q9 english.am.south  3  callfriend,6970
+00qa hindi  3  callfriend,6619
+00qg japanese  3  callfriend,6742
+00qj hindi  3  callfriend,6556
+00ql french.canada  3  callfriend,5464
+00qp tamil  3  callfriend,6454
+00qt vietnamese  3  callfriend,6740
+00qx japanese  3  callfriend,6525
+00qy arabic.egyptian  3  callfriend,5774
+00r1 german  3  callfriend,6577
+00r5 english.am.gen  3  callfriend,6557
+00r6 english.am.gen  3
+00r8 spanish.carib  3  callfriend,6950
+00r9 spanish.highland  3  callfriend,4500
+00rb arabic.egyptian  3  callfriend,5955
+00rm mandarin.north  3  callfriend,5690
+00rn arabic.egyptian  3  callfriend,6003
+00ro korean  3  callfriend,6682
+00rr farsi  3  callfriend,6835
+00rs korean  3  callfriend,6725
+00ru german  3  callfriend,6684
+00rv mandarin.north  3  callfriend,5949
+00rx english.am.gen  3  callfriend,6865
+00s2 hindi  3  callfriend,6552
+00s3 arabic.egyptian  3  callfriend,5913
+00s6 french.canada  3  callfriend,5405
+00sa english.am.south  3  callfriend,6965
+00sf arabic.egyptian  3  callfriend,5774
+00si spanish.carib  3  callfriend,6834
+00sj mandarin.taiwan  3  callfriend,5957
+00sk mandarin.taiwan  3  callfriend,5893
+00sm korean  3  callfriend,6730
+00sp english.am.gen  3
+00ss vietnamese  3  callfriend,6756
+00sy english.am.gen  3
+00t0 spanish.highland  3  callfriend,5638
+00t2 english.am.gen  3
+00t4 spanish.highland  3  callfriend,5340
+00ta english.am.gen  3  callfriend,6193
+00tg english.am.gen  3
+00tx english.am.gen  3  callfriend,6649
+00tz spanish.highland  3  callfriend,4468
+00u2 hindi  3  callfriend,6563
+00u3 spanish.highland  3  callfriend,5367
+00u8 mandarin.taiwan  3  callfriend,5894
+00ua english.am.gen  3
+00uf french.canada  3  callfriend,5506
+00un korean  3  callfriend,6682
+00uo english.am.gen  3
+00uz german  3  callfriend,6684
+00v1 vietnamese  3  callfriend,6895
+00v2 vietnamese  3  callfriend,6895
+00v7 mandarin.north  3  callfriend,5906
+00v9 english.am.gen  3
+00ve japanese  3  callfriend,6716
+00vf spanish.carib  3  callfriend,6887
+00vh farsi  3  callfriend,6772
+00vm japanese  3  callfriend,6766
+00vn mandarin.north  3  callfriend,5779
+00vq spanish.carib  3  callfriend,6874
+00vs english.am.gen  3  callfriend,6503
+00vt english.am.gen  3  callfriend,6201
+00vv hindi  3  callfriend,6572
+00w0 french.canada  3  callfriend,5404
+00w1 german  3  callfriend,6421
+00wd english.am.south  3  callfriend,6947
+00wm english.am.gen  3
+00wr english.am.gen  3  callfriend,6899
+00ws french.canada  3  callfriend,5465
+00wu mandarin.north  3  callfriend,5812
+00wx english.am.gen  3
+00wz spanish.highland  3  callfriend,5650
+00x0 vietnamese  3  callfriend,6670
+00x3 spanish.highland  3  callfriend,5112
+00x8 english.am.gen  3
+00xi japanese  3  callfriend,6414
+00xj korean  3  callfriend,6725
+00xk tamil  3  callfriend,6335
+00xn english.am.gen  3
+00xr japanese  3  callfriend,6766
+00xx english.am.gen  3
+00xz hindi  3  callfriend,6441
+00y0 english.am.gen  3
+00y3 farsi  3  callfriend,6871
+00y4 english.am.gen  3
+00y5 english.am.gen  3  callfriend,6557
+00y7 french.canada  3  callfriend,5485
+00y8 mandarin.north  3  callfriend,5824
+00ya tamil  3  callfriend,6356
+00yj mandarin.taiwan  3  callfriend,5893
+00yk japanese  3  callfriend,6759
+00ym english.am.gen  3  callfriend,6503
+00yo vietnamese  3  callfriend,6764
+00yt english.am.gen  3
+00yu mandarin.north  3  callfriend,5930
+00z0 english.am.gen  3
+00z8 french.canada  3  callfriend,5465
+00zb english.am.gen  3
+00zj english.am.gen  3
+00zu vietnamese  3  callfriend,6895
+00zz vietnamese  3  callfriend,6740
+0100 english.am.south  3  callfriend,6932
+0103 mandarin.taiwan  3  callfriend,5929
+0104 french.canada  3  callfriend,5499
+010c mandarin.north  3  callfriend,5010
+010f german  3  callfriend,6421
+010h german  3  callfriend,6577
+010i english.am.gen  3  callfriend,6239
+010j japanese  3  callfriend,4905
+010l japanese  3  callfriend,6759
+010n mandarin.taiwan  3  callfriend,5876
+010p french.canada  3  callfriend,5465
+010r english.am.south  3  callfriend,6962
+010u farsi  3  callfriend,6858
+010w tamil  3  callfriend,6357
+010y french.canada  3  callfriend,5461
+010z english.am.gen  3  callfriend,6952
+0112 mandarin.taiwan  3  callfriend,5951
+0116 english.am.gen  3
+0118 farsi  3  callfriend,6848
+0119 farsi  3  callfriend,6811
+011b english.am.gen  3
+011d english.am.gen  3
+011h hindi  3  callfriend,6580
+011j english.am.gen  3
+011q english.am.gen  3
+011v english.am.gen  3
+011w mandarin.taiwan  3  callfriend,5934
+0124 japanese  3  callfriend,6414
+0127 english.am.gen  3
+012b spanish.highland  3  callfriend,5340
+012e english.am.gen  3  callfriend,6649
+012h tamil  3  callfriend,6444
+012i english.am.south  3  callfriend,6943
+012p hindi  3  callfriend,6620
+012s spanish.highland  3  callfriend,5638
+012v english.am.south  3  callfriend,6970
+012y mandarin.taiwan  3  callfriend,5960
+012z korean  3  callfriend,6753
+0131 spanish.carib  3  callfriend,6950
+0132 farsi  3  callfriend,6849
+0134 english.am.gen  3  callfriend,6899
+0135 japanese  3  callfriend,6738
+0138 english.am.gen  3  callfriend,6511
+013h english.am.gen  3
+013i french.canada  3  callfriend,5461
+013n farsi  3  callfriend,6859
+013q mandarin.north  3  callfriend,5806
+013r english.am.gen  3
+013s mandarin.taiwan  3  callfriend,5901
+013y english.am.gen  3
+013z german  3  callfriend,6832
+0143 french.canada  3  callfriend,5404
+0144 arabic.egyptian  3  callfriend,6254
+0145 english.am.gen  3
+0146 korean  3  callfriend,6762
+0147 hindi  3  callfriend,6620
+0148 german  3  callfriend,6972
+014b french.canada  3  callfriend,5500
+014g french.canada  3  callfriend,5499
+014i english.am.gen  3
+014k english.am.gen  3
+014s farsi  3  callfriend,6849
+014u spanish.highland  3  callfriend,5316
+014v spanish.highland  3  callfriend,5418
+014y hindi  3  callfriend,6495
+0150 english.am.gen  3
+0151 english.am.gen  3
+0158 english.am.gen  3
+0159 spanish.highland  3  callfriend,5112
+015a mandarin.north  3  callfriend,5821
+015d tamil  3  callfriend,6439
+015g spanish.highland  3  callfriend,4468
+015h farsi  3  callfriend,6842
+015i english.am.gen  3  callfriend,6507
+015k mandarin.north  3  callfriend,5800
+015l japanese  3  callfriend,6525
+015m german  3  callfriend,6421
+015n japanese  3  callfriend,6742
+015o vietnamese  3  callfriend,6827
+015q english.am.gen  3
+015s spanish.carib  3  callfriend,6959
+015t spanish.carib  3  callfriend,6851
+015v farsi  3  callfriend,6797
+015w vietnamese  3  callfriend,6850
+0161 mandarin.north  3  callfriend,5905
+0169 spanish.carib  3  callfriend,6851
+016e tamil  3  callfriend,6223
+016g english.am.gen  3
+016q tamil  3  callfriend,6287
+016w mandarin.north  3  callfriend,5821
+0170 arabic.egyptian  3  callfriend,5507
+0172 english.am.south  3  callfriend,6974
+0173 english.am.gen  3
+0177 english.am.gen  3
+0178 spanish.highland  3  callfriend,4468
+017a french.canada  3  callfriend,5508
+017e tamil  3  callfriend,6429
+017k english.am.gen  3
+017l english.am.south  3  callfriend,6933
+017m german  3  callfriend,6972
+017n english.am.south  3  callfriend,6968
+017t mandarin.taiwan  3  callfriend,5879
+017u japanese  3  callfriend,6761
+0181 arabic.egyptian  3  callfriend,5822
+0183 farsi  3  callfriend,6801
+0184 english.am.gen  3
+0188 vietnamese  3  callfriend,6670
+018c english.am.gen  3
+018f english.am.gen  3  callfriend,6278
+018h mandarin.north  3  callfriend,5773
+018l mandarin.taiwan  3  callfriend,5934
+018n mandarin.taiwan  3  callfriend,5972
+018q english.am.gen  3
+0194 vietnamese  3  callfriend,6657
+0195 japanese  3  callfriend,6759
+0196 vietnamese  3  callfriend,6906
+019a mandarin.north  3  callfriend,5930
+019e arabic.egyptian  3  callfriend,6052
+019i farsi  3  callfriend,6741
+019j english.am.south  3  callfriend,6955
+019l english.am.gen  3
+019q english.am.south  3  callfriend,6965
+019t spanish.highland  3  callfriend,5638
+019v arabic.egyptian  3  callfriend,5774
+019x spanish.highland  3  callfriend,5582
+01a1 japanese  3  callfriend,6630
+01a3 english.am.gen  3
+01a8 english.am.gen  3
+01ag japanese  3  callfriend,4905
+01ah spanish.carib  3  callfriend,6884
+01an english.am.gen  3
+01aq vietnamese  3  callfriend,6901
+01av english.am.gen  3
+01ax english.am.gen  3  callfriend,6938
+01b0 korean  3  callfriend,6730
+01b2 korean  3  callfriend,6753
+01b7 english.am.south  3  callfriend,6946
+01b8 german  3  callfriend,6548
+01b9 english.am.gen  3
+01bd english.am.gen  3
+01bf arabic.egyptian  3  callfriend,6496
+01bi arabic.egyptian  3  callfriend,6003
+01bj german  3  callfriend,6695
+01bp hindi  3  callfriend,6572
+01br english.am.gen  3
+01c0 english.am.gen  3
+01c5 korean  3  callfriend,6708
+01ca english.am.gen  3  callfriend,6402
+01ci spanish.highland  3  callfriend,5316
+01ck german  3  callfriend,6853
+01cn english.am.gen  3
+01cs spanish.highland  3  callfriend,5340
+01ct english.am.gen  3
+01cw hindi  3  callfriend,6523
+01cx english.am.gen  3
+01cz vietnamese  3  callfriend,6909
+01d3 korean  3  callfriend,6697
+01d4 hindi  3  callfriend,6572
+01d6 english.am.gen  3
+01da korean  3  callfriend,6774
+01db english.am.gen  3
+01df korean  3  callfriend,6762
+01dg german  3  callfriend,6918
+01dh farsi  3  callfriend,6818
+01di spanish.carib  3  callfriend,6948
+01dn spanish.highland  3  callfriend,5354
+01do mandarin.north  3  callfriend,5812
+01dq japanese  3  callfriend,6805
+01dw english.am.gen  3
+01e2 english.am.south  3  callfriend,6965
+01e5 english.am.gen  3  callfriend,6862
+01e6 japanese  3  callfriend,6616
+01e8 english.am.gen  3
+01e9 arabic.egyptian  3  callfriend,6003
+01ec arabic.egyptian  3  callfriend,5769
+01eh mandarin.north  3  callfriend,5916
+01ej farsi  3  callfriend,6788
+01ek english.am.south  3  callfriend,6975
+01el korean  3  callfriend,6773
+01en english.am.gen  3
+01er english.am.gen  3  callfriend,6649
+01ev mandarin.north  3  callfriend,5905
+01ex hindi  3  callfriend,6505
+01ey english.am.gen  3
+01f0 mandarin.taiwan  3  callfriend,5899
+01f3 farsi  3  callfriend,6768
+01f6 spanish.highland  3  callfriend,5418
+01f8 spanish.carib  3  callfriend,6878
+01fa english.am.gen  3
+01fc farsi  3  callfriend,6788
+01fd spanish.carib  3  callfriend,6856
+01fi tamil  3  callfriend,6223
+01fj english.am.gen  3
+01fl mandarin.taiwan  3  callfriend,5971
+01fm english.am.gen  3
+01fo spanish.carib  3  callfriend,6896
+01fq english.am.gen  3
+01fx tamil  3  callfriend,6519
+01g2 korean  3  callfriend,6648
+01g3 mandarin.taiwan  3  callfriend,5960
+01g5 farsi  3  callfriend,6818
+01g6 english.am.gen  3
+01g8 mandarin.north  3  callfriend,5195
+01ga vietnamese  3  callfriend,6901
+01gl english.am.gen  3
+01gm english.am.gen  3
+01gp vietnamese  3  callfriend,6657
+01gq arabic.egyptian  3  callfriend,5769
+01gt english.am.gen  3
+01gy japanese  3  callfriend,6525
+01h0 spanish.carib  3  callfriend,6851
+01h3 korean  3  callfriend,6633
+01h6 arabic.egyptian  3  callfriend,5781
+01h8 mandarin.north  3  callfriend,5824
+01hb arabic.egyptian  3  callfriend,6431
+01hc vietnamese  3  callfriend,6934
+01he english.am.south  3  callfriend,6927
+01hf english.am.gen  3
+01hh english.am.gen  3
+01hp french.canada  3  callfriend,5499
+01hr english.am.gen  3  callfriend,6952
+01hu english.am.gen  3
+01i1 english.am.south  3  callfriend,6968
+01i3 farsi  3  callfriend,6873
+01i5 french.canada  3  callfriend,5482
+01i6 vietnamese  3  callfriend,6909
+01ib arabic.egyptian  3  callfriend,6496
+01iq hindi  3  callfriend,6400
+01it japanese  3  callfriend,6587
+01iu spanish.highland  3  callfriend,5704
+01iv spanish.highland  3  callfriend,5704
+01ix english.am.gen  3
+01j3 vietnamese  3  callfriend,6909
+01j5 korean  3  callfriend,6648
+01j6 korean  3  callfriend,6704
+01jf english.am.gen  3
+01jk german  3  callfriend,6940
+01jm arabic.egyptian  3  callfriend,5507
+01jn tamil  3  callfriend,6223
+01jp english.am.south  3  callfriend,6947
+01js farsi  3  callfriend,6741
+01jx hindi  3  callfriend,6505
+01jz mandarin.taiwan  3  callfriend,5948
+01k2 german  3  callfriend,6481
+01k4 spanish.carib  3  callfriend,6834
+01k5 mandarin.north  3  callfriend,5905
+01k8 tamil  3  callfriend,6423
+01kb vietnamese  3  callfriend,6934
+01kc english.am.gen  3  callfriend,6201
+01kd farsi  3  callfriend,6879
+01kh korean  3  callfriend,6808
+01kj hindi  3  callfriend,6619
+01kp korean  3  callfriend,6704
+01kq farsi  3  callfriend,6849
+01kv english.am.gen  3
+01ky tamil  3  callfriend,6433
+01l0 english.am.gen  3  callfriend,6869
+01l6 german  3  callfriend,6780
+01l7 english.am.gen  3
+01lc german  3  callfriend,6831
+01lf english.am.gen  3
+01lk arabic.egyptian  3  callfriend,6210
+01lq hindi  3  callfriend,6441
+01ls english.am.gen  3
+01lt vietnamese  3  callfriend,6847
+01lx french.canada  3  callfriend,5410
+01lz english.am.gen  3
+01m2 mandarin.taiwan  3  callfriend,5895
+01m4 vietnamese  3  callfriend,6817
+01m8 tamil  3  callfriend,6330
+01md french.canada  3  callfriend,5505
+01mo vietnamese  3  callfriend,6934
+01mp mandarin.taiwan  3  callfriend,5983
+01mt farsi  3  callfriend,6873
+01mw english.am.south  3  callfriend,6975
+01n1 mandarin.north  3  callfriend,5010
+01n6 mandarin.north  3  callfriend,5779
+01nb english.am.south  3  callfriend,6968
+01ne english.am.gen  3
+01ng english.am.gen  3
+01nh arabic.egyptian  3  callfriend,5507
+01nq korean  3  callfriend,6792
+01nt spanish.highland  3  callfriend,5361
+01ny korean  3  callfriend,6673
+01o1 hindi  3  callfriend,6495
+01o5 tamil  3  callfriend,6591
+01oa english.am.gen  3  callfriend,6476
+01od german  3  callfriend,6548
+01oe arabic.egyptian  3  callfriend,5878
+01og english.am.gen  3
+01oj french.canada  3  callfriend,5506
+01ok japanese  3  callfriend,6763
+01ol english.am.gen  3  callfriend,6557
+01om arabic.egyptian  3  callfriend,5961
+01on english.am.gen  3
+01or spanish.carib  3  callfriend,6868
+01ow french.canada  3  callfriend,5498
+01ox german  3  callfriend,6695
+01oz english.am.south  3  callfriend,6927
+01p1 english.am.gen  3
+01p6 farsi  3  callfriend,6823
+01pa english.am.gen  3
+01pd spanish.highland  3  callfriend,4468
+01pe tamil  3  callfriend,6223
+01pk english.am.south  3  callfriend,6974
+01pp farsi  3  callfriend,6848
+01ps hindi  3  callfriend,6585
+01pu tamil  3  callfriend,6330
+01pz spanish.carib  3  callfriend,6851
+01q1 german  3  callfriend,6806
+01q3 japanese  3  callfriend,6414
+01q4 english.am.gen  3
+01q6 french.canada  3  callfriend,5464
+01q7 english.am.gen  3
+01qa english.am.gen  3
+01qc german  3  callfriend,6806
+01qj english.am.gen  3
+01ql farsi  3  callfriend,6772
+01qq hindi  3  callfriend,6505
+01qr mandarin.north  3  callfriend,5904
+01qy japanese  3  callfriend,6739
+01qz mandarin.taiwan  3  callfriend,5971
+01r0 farsi  3  callfriend,6772
+01r1 arabic.egyptian  3  callfriend,5409
+01r4 english.am.gen  3
+01rj spanish.carib  3  callfriend,6887
+01rl french.canada  3  callfriend,5460
+01rn mandarin.north  3  callfriend,5916
+01ro english.am.gen  3  callfriend,6476
+01rs english.am.south  3  callfriend,6962
+01s3 korean  3  callfriend,6773
+01s4 english.am.south  3  callfriend,6966
+01s7 spanish.carib  3  callfriend,6945
+01s8 vietnamese  3  callfriend,6898
+01sg mandarin.taiwan  3  callfriend,5879
+01sj arabic.egyptian  3  callfriend,6052
+01sm tamil  3  callfriend,6287
+01sp german  3  callfriend,6832
+01ss farsi  3  callfriend,6848
+01st english.am.gen  3
+01sv french.canada  3  callfriend,5460
+01sx english.am.gen  3
+01sy english.am.gen  3
+01t2 english.am.gen  3
+01t4 spanish.carib  3  callfriend,6876
+01t5 english.am.gen  3
+01t6 english.am.gen  3
+01t7 japanese  3  callfriend,6738
+01t8 mandarin.north  3  callfriend,5906
+01tg english.am.gen  3
+01ti spanish.highland  3  callfriend,5638
+01tj english.am.south  3  callfriend,6953
+01tn arabic.egyptian  3  callfriend,5878
+01tp korean  3  callfriend,6792
+01tr tamil  3  callfriend,6368
+01ts arabic.egyptian  3  callfriend,6254
+01tt farsi  3  callfriend,6842
+01tu mandarin.north  3  callfriend,5949
+01u1 spanish.carib  3  callfriend,6856
+01u4 mandarin.north  3  callfriend,5824
+01u6 english.am.gen  3
+01u7 vietnamese  3  callfriend,6847
+01u9 english.am.gen  3
+01ua english.am.gen  3
+01ub english.am.gen  3
+01ue english.am.gen  3
+01ug english.am.south  3  callfriend,6953
+01um english.am.gen  3
+01up japanese  3  callfriend,6739
+01uu arabic.egyptian  3  callfriend,5878
+01uw korean  3  callfriend,6645
+01ux english.am.gen  3
+01v4 arabic.egyptian  3  callfriend,6254
+01v6 vietnamese  3  callfriend,6898
+01vb english.am.gen  3
+01vc farsi  3  callfriend,6871
+01ve english.am.gen  3
+01vj french.canada  3  callfriend,5462
+01vo english.am.south  3  callfriend,6966
+01vq english.am.gen  3
+01vt mandarin.north  3  callfriend,5906
+01vu english.am.gen  3
+01vv english.am.gen  3  callfriend,6451
+01vy hindi  3  callfriend,6579
+01vz english.am.gen  3
+01w2 farsi  3  callfriend,6859
+01w3 spanish.carib  3  callfriend,6834
+01w5 arabic.egyptian  3  callfriend,5804
+01w6 arabic.egyptian  3  callfriend,5913
+01w8 vietnamese  3  callfriend,6756
+01wc korean  3  callfriend,6773
+01wh spanish.highland  3  callfriend,4500
+01wk english.am.gen  3
+01wl german  3  callfriend,6940
+01wn farsi  3  callfriend,6797
+01x0 english.am.gen  3  callfriend,6507
+01x1 farsi  3  callfriend,6797
+01x2 tamil  3  callfriend,6433
+01x4 japanese  3  callfriend,6763
+01x8 korean  3  callfriend,6696
+01xa japanese  3  callfriend,6766
+01xd french.canada  3  callfriend,5508
+01xi hindi  3  callfriend,6627
+01xl english.am.gen  3
+01xn english.am.gen  3
+01xp english.am.gen  3
+01xv french.canada  3  callfriend,5464
+01xx korean  3  callfriend,6633
+01y1 farsi  3  callfriend,6860
+01y6 english.am.gen  3  callfriend,6557
+01y8 english.am.gen  3
+01y9 english.am.gen  3  callfriend,6402
+01yb tamil  3  callfriend,6519
+01yf english.am.gen  3  callfriend,6278
+01yg english.am.gen  3
+01yh mandarin.taiwan  3  callfriend,5957
+01yj arabic.egyptian  3  callfriend,5759
+01yk english.am.gen  3
+01yn german  3  callfriend,6537
+01yo korean  3  callfriend,6757
+01yq mandarin.north  3  callfriend,5904
+01yr mandarin.taiwan  3  callfriend,5948
+01ys english.am.gen  3
+01yt german  3  callfriend,6695
+01yu japanese  3  callfriend,6465
+01yv english.am.gen  3
+01z0 tamil  3  callfriend,6368
+01z6 spanish.highland  3  callfriend,5418
+01zc french.canada  3  callfriend,5460
+01zm tamil  3  callfriend,6287
+01zp spanish.carib  3  callfriend,6949
+01zs english.am.gen  3
+01zt hindi  3  callfriend,6523
+01zu hindi  3  callfriend,6426
+01zz farsi  3  callfriend,6858
+0202 english.am.gen  3
+0203 german  3  callfriend,6481
+0204 arabic.egyptian  3  callfriend,5955
+0205 english.am.gen  3
+020a english.am.south  3  callfriend,6973
+020c tamil  3  callfriend,6357
+020f english.am.gen  3
+020k vietnamese  3  callfriend,6951
+020l vietnamese  3  callfriend,6657
+020n hindi  3  callfriend,6556
+020o farsi  3  callfriend,6881
+020p english.am.gen  3
+020s hindi  3  callfriend,6619
+020t vietnamese  3  callfriend,6764
+020z vietnamese  3  callfriend,6758
+0210 arabic.egyptian  3  callfriend,5759
+0211 hindi  3  callfriend,6426
+0212 english.am.gen  3  callfriend,6239
+0215 english.am.gen  3
+0216 farsi  3  callfriend,6823
+0217 english.am.gen  3
+021b spanish.highland  3  callfriend,5589
+021c vietnamese  3  callfriend,6779
+021g mandarin.north  3  callfriend,5010
+021j english.am.gen  3
+021o german  3  callfriend,6831
+021p english.am.gen  3
+021r japanese  3  callfriend,6632
+021t german  3  callfriend,6846
+021v english.am.gen  3
+021w korean  3  callfriend,6633
+021y mandarin.taiwan  3  callfriend,5901
+0220 french.canada  3  callfriend,5410
+0224 english.am.gen  3
+0225 vietnamese  3  callfriend,6906
+0226 german  3  callfriend,6573
+0229 french.canada  3  callfriend,5466
+022i tamil  3  callfriend,6287
+022j tamil  3  callfriend,6778
+022l arabic.egyptian  3  callfriend,6431
+022o hindi  3  callfriend,6580
+022t spanish.carib  3  callfriend,6877
+022u japanese  3  callfriend,6716
+022v vietnamese  3  callfriend,6779
+0235 german  3  callfriend,6972
+0237 english.am.gen  3
+0238 english.am.gen  3
+023c korean  3  callfriend,6753
+023e mandarin.taiwan  3  callfriend,5899
+023m farsi  3  callfriend,6801
+023v english.am.gen  3
+0241 mandarin.taiwan  3  callfriend,5983
+0249 hindi  3  callfriend,6617
+024a tamil  3  callfriend,6417
+024e spanish.carib  3  callfriend,6958
+024f tamil  3  callfriend,6471
+024p english.am.gen  3
+024v japanese  3  callfriend,6765
+0256 arabic.egyptian  3  callfriend,5961
+025a english.am.gen  3
+025e english.am.gen  3
+025m hindi  3  callfriend,6585
+025p english.am.south  3  callfriend,6933
+025q english.am.gen  3
+025t japanese  3  callfriend,6765
+025u english.am.gen  3
+025v english.am.south  3  callfriend,6890
+0263 english.am.gen  3
+0264 arabic.egyptian  3  callfriend,6254
+0266 mandarin.taiwan  3  callfriend,5894
+0268 english.am.gen  3
+0269 spanish.carib  3  callfriend,6949
+026a english.am.gen  3
+026d mandarin.north  3  callfriend,5773
+026p mandarin.taiwan  3  callfriend,5948
+026r farsi  3  callfriend,6842
+026s english.am.gen  3  callfriend,6511
+026t korean  3  callfriend,6673
+026v mandarin.taiwan  3  callfriend,5979
+0270 mandarin.taiwan  3  callfriend,5960
+0271 farsi  3  callfriend,6823
+0272 farsi  3  callfriend,6823
+0276 mandarin.taiwan  3  callfriend,5968
+0277 farsi  3  callfriend,6801
+0278 french.canada  3  callfriend,5481
+0279 hindi  3  callfriend,6627
+027b mandarin.north  3  callfriend,5773
+027n mandarin.taiwan  3  callfriend,5979
+027s mandarin.taiwan  3  callfriend,5979
+027t english.am.gen  3  callfriend,6503
+027u spanish.highland  3  callfriend,5607
+027w japanese  3  callfriend,6761
+0282 mandarin.taiwan  3  callfriend,5974
+0288 english.am.south  3  callfriend,6946
+028d tamil  3  callfriend,6429
+028f english.am.gen  3
+028g spanish.highland  3  callfriend,5354
+028i arabic.egyptian  3  callfriend,6301
+028l tamil  3  callfriend,6357
+028n japanese  3  callfriend,6434
+028o spanish.carib  3  callfriend,6875
+028p mandarin.taiwan  3  callfriend,5893
+028s german  3  callfriend,6537
+028u vietnamese  3  callfriend,6756
+028x tamil  3  callfriend,6547
+0290 german  3  callfriend,6610
+0291 japanese  3  callfriend,6739
+0292 german  3  callfriend,6684
+0297 vietnamese  3  callfriend,6901
+0298 english.am.gen  3
+029a farsi  3  callfriend,6858
+029d tamil  3  callfriend,6433
+029g farsi  3  callfriend,6835
+029h spanish.highland  3  callfriend,5589
+029k english.am.south  3  callfriend,6933
+029m mandarin.taiwan  3  callfriend,5899
+029p mandarin.north  3  callfriend,5904
+029x hindi  3  callfriend,6556
+029z spanish.carib  3  callfriend,6877
+02a0 english.am.south  3  callfriend,6946
+02a3 english.am.gen  3
+02a5 japanese  3  callfriend,6632
+02a9 spanish.highland  3  callfriend,5607
+02ab english.am.south  3  callfriend,6970
+02af farsi  3  callfriend,6859
+02ah tamil  3  callfriend,6439
+02ao spanish.highland  3  callfriend,5367
+02aq mandarin.north  3  callfriend,4972
+02ar english.am.gen  3
+02as arabic.egyptian  3  callfriend,5955
+02av korean  3  callfriend,6673
+02az english.am.gen  3
+02b4 tamil  3  callfriend,6591
+02b6 english.am.south  3  callfriend,6956
+02bb mandarin.taiwan  3  callfriend,5929
+02bh mandarin.taiwan  3  callfriend,5968
+02bq spanish.carib  3  callfriend,6950
+02br english.am.gen  3
+02bv english.am.gen  3
+02bw english.am.gen  3
+02bz english.am.gen  3
+02c1 spanish.highland  3  callfriend,5685
+02c3 vietnamese  3  callfriend,6850
+02cc tamil  3  callfriend,6417
+02ce arabic.egyptian  3  callfriend,6496
+02cg hindi  3  callfriend,6620
+02ci french.canada  3  callfriend,5500
+02cl vietnamese  3  callfriend,6764
+02cu english.am.gen  3  callfriend,6428
+02cv english.am.south  3  callfriend,6947
+02cx english.am.south  3  callfriend,6965
+02d1 english.am.gen  3  callfriend,6862
+02d5 english.am.gen  3
+02d6 spanish.carib  3  callfriend,6875
+02d7 english.am.gen  3
+02d8 spanish.highland  3  callfriend,5316
+02da english.am.gen  3
+02de korean  3  callfriend,6645
+02di spanish.highland  3  callfriend,5704
+02dl mandarin.north  3  callfriend,5905
+02dn tamil  3  callfriend,6547
+02do english.am.gen  3
+02dv mandarin.taiwan  3  callfriend,5879
+02dz vietnamese  3  callfriend,6898
+02e3 tamil  3  callfriend,6335
+02e4 arabic.egyptian  3  callfriend,5913
+02e8 german  3  callfriend,6610
+02ed english.am.gen  3
+02ee mandarin.north  3  callfriend,5930
+02ej english.am.gen  3
+02er korean  3  callfriend,6757
+02eu english.am.gen  3
+02ey tamil  3  callfriend,6439
+02f0 spanish.highland  3  callfriend,5258
+02f2 hindi  3  callfriend,6556
+02f9 vietnamese  3  callfriend,6951
+02fb japanese  3  callfriend,6738
+02fe mandarin.north  3  callfriend,5530
+02fi farsi  3  callfriend,6871
+02fn english.am.gen  3
+02fo vietnamese  3  callfriend,6758
+02fp german  3  callfriend,6831
+02fq korean  3  callfriend,6783
+02fr english.am.gen  3  callfriend,6508
+02fu mandarin.taiwan  3  callfriend,5912
+02g0 spanish.carib  3  callfriend,6875
+02g2 mandarin.taiwan  3  callfriend,5912
+02g4 french.canada  3  callfriend,5404
+02g6 hindi  3  callfriend,6523
+02g7 japanese  3  callfriend,4905
+02g8 mandarin.taiwan  3  callfriend,5948
+02ga mandarin.taiwan  3  callfriend,5901
+02gc english.am.south  3  callfriend,6953
+02gf english.am.gen  3
+02gg japanese  3  callfriend,6587
+02gh german  3  callfriend,6548
+02gi english.am.gen  3
+02gl vietnamese  3  callfriend,6930
+02gp farsi  3  callfriend,6772
+02gt english.am.gen  3
+02gu hindi  3  callfriend,6523
+02gy spanish.carib  3  callfriend,6884
+02h4 german  3  callfriend,6537
+02h5 spanish.carib  3  callfriend,6958
+02h6 english.am.gen  3
+02h8 spanish.highland  3  callfriend,5354
+02hc farsi  3  callfriend,6881
+02he mandarin.taiwan  3  callfriend,5957
+02hg japanese  3  callfriend,6630
+02hh japanese  3  callfriend,6490
+02hm english.am.gen  3  callfriend,6193
+02hq english.am.gen  3
+02hr tamil  3  callfriend,6335
+02hs english.am.south  3  callfriend,6962
+02ht farsi  3  callfriend,6811
+02hu english.am.gen  3
+02hw german  3  callfriend,6481
+02i1 english.am.gen  3
+02i4 french.canada  3  callfriend,5404
+02i5 german  3  callfriend,6918
+02i8 german  3  callfriend,6590
+02ii mandarin.north  3  callfriend,4972
+02ik english.am.gen  3
+02it korean  3  callfriend,6774
+02iv korean  3  callfriend,6682
+02ix spanish.carib  3  callfriend,6883
+02iz spanish.carib  3  callfriend,6884
+02j1 japanese  3  callfriend,6465
+02j2 korean  3  callfriend,6808
+02ja mandarin.north  3  callfriend,5973
+02jb farsi  3  callfriend,6873
+02jd spanish.carib  3  callfriend,6854
+02jo vietnamese  3  callfriend,6951
+02jp tamil  3  callfriend,6471
+02jr english.am.gen  3
+02jx english.am.south  3  callfriend,6890
+02jy tamil  3  callfriend,6330
+02k0 spanish.carib  3  callfriend,6874
+02k1 english.am.gen  3  callfriend,6402
+02k9 english.am.gen  3
+02ka arabic.egyptian  3  callfriend,5409
+02kc english.am.gen  3
+02ki tamil  3  callfriend,6471
+02kq german  3  callfriend,6577
+02ks english.am.gen  3
+02kv korean  3  callfriend,6762
+02kx mandarin.north  3  callfriend,5530
+02ky japanese  3  callfriend,6616
+02l0 korean  3  callfriend,6704
+02l1 arabic.egyptian  3  callfriend,5961
+02l2 english.am.gen  3
+02l7 english.am.gen  3
+02la french.canada  3  callfriend,5483
+02le mandarin.taiwan  3  callfriend,5968
+02lf mandarin.north  3  callfriend,5195
+02lj korean  3  callfriend,6753
+02ll spanish.highland  3  callfriend,5258
+02ln german  3  callfriend,6972
+02lo english.am.gen  3
+02lp korean  3  callfriend,6708
+02lw english.am.gen  3
+02lz tamil  3  callfriend,6439
+02m2 spanish.carib  3  callfriend,6868
+02m7 arabic.egyptian  3  callfriend,5804
+02ma english.am.south  3  callfriend,6973
+02mf french.canada  3  callfriend,5481
+02mm english.am.gen  3
+02mo arabic.egyptian  3  callfriend,6135
+02mx english.am.south  3  callfriend,6931
+02n0 french.canada  3  callfriend,5405
+02n4 arabic.egyptian  3  callfriend,5409
+02nc korean  3  callfriend,6696
+02nf english.am.gen  3
+02nk mandarin.north  3  callfriend,5904
+02nq tamil  3  callfriend,6444
+02nt spanish.carib  3  callfriend,6887
+02nx english.am.gen  3
+02o1 german  3  callfriend,6573
+02o3 english.am.gen  3
+02o4 english.am.gen  3
+02o7 farsi  3  callfriend,6842
+02o9 spanish.carib  3  callfriend,6958
+02oa mandarin.north  3  callfriend,5779
+02ob tamil  3  callfriend,6368
+02od german  3  callfriend,6940
+02oe english.am.gen  3
+02oh hindi  3  callfriend,6552
+02ok arabic.egyptian  3  callfriend,5781
+02oo english.am.gen  3
+02os vietnamese  3  callfriend,6817
+02ot french.canada  3  callfriend,5482
+02ow english.am.gen  3
+02p0 korean  3  callfriend,6725
+02pe german  3  callfriend,6780
+02pm english.am.gen  3
+02pq tamil  3  callfriend,6501
+02ps english.am.gen  3
+02pv tamil  3  callfriend,6454
+02q6 mandarin.taiwan  3  callfriend,5894
+02q8 german  3  callfriend,6548
+02q9 arabic.egyptian  3  callfriend,6135
+02qa mandarin.north  3  callfriend,5806
+02qc spanish.highland  3  callfriend,5258
+02qf english.am.gen  3
+02qi english.am.gen  3  callfriend,6507
+02qk french.canada  3  callfriend,5498
+02qp spanish.highland  3  callfriend,5367
+02qx english.am.south  3  callfriend,6956
+02r1 english.am.gen  3
+02r7 vietnamese  3  callfriend,6827
+02r8 japanese  3  callfriend,4905
+02ra english.am.south  3  callfriend,6943
+02rb arabic.egyptian  3  callfriend,6431
+02re mandarin.taiwan  3  callfriend,5912
+02rf vietnamese  3  callfriend,6895
+02ri english.am.gen  3
+02rj korean  3  callfriend,6725
+02rl english.am.gen  3
+02rm english.am.gen  3
+02ro korean  3  callfriend,6799
+02rp spanish.carib  3  callfriend,6878
+02rs spanish.carib  3  callfriend,6948
+02rw korean  3  callfriend,6697
+02s1 french.canada  3  callfriend,5405
+02s3 english.am.gen  3  callfriend,6428
+02s6 english.am.gen  3
+02s8 english.am.gen  3
+02s9 korean  3  callfriend,6808
+02sf mandarin.taiwan  3  callfriend,5894
+02si french.canada  3  callfriend,5410
+02sj farsi  3  callfriend,6859
+02sk vietnamese  3  callfriend,6898
+02sm mandarin.north  3  callfriend,5821
+02sq mandarin.taiwan  3  callfriend,5876
+02sr french.canada  3  callfriend,5505
+02st spanish.highland  3  callfriend,5354
+02sv english.am.gen  3
+02t0 english.am.gen  3
+02t3 mandarin.taiwan  3  callfriend,5983
+02t4 spanish.highland  3  callfriend,5582
+02t8 japanese  3  callfriend,6630
+02t9 english.am.gen  3
+02ta mandarin.north  3  callfriend,5973
+02tr spanish.carib  3  callfriend,6854
+02tu english.am.gen  3
+02tv vietnamese  3  callfriend,6758
+02tw english.am.gen  3
+02ty mandarin.north  3  callfriend,5773
+02u1 french.canada  3  callfriend,5466
+02u2 mandarin.north  3  callfriend,5530
+02u3 english.am.gen  3
+02ug mandarin.north  3  callfriend,5949
+02uo english.am.gen  3  callfriend,6899
+02up korean  3  callfriend,6799
+02ur german  3  callfriend,6522
+02ut english.am.gen  3
+02uw vietnamese  3  callfriend,6850
+02v1 farsi  3  callfriend,6871
+02v4 arabic.egyptian  3  callfriend,5804
+02va mandarin.north  3  callfriend,5800
+02vh english.am.gen  3
+02vi spanish.carib  3  callfriend,6877
+02vk english.am.gen  3
+02vm spanish.highland  3  callfriend,5582
+02vo tamil  3  callfriend,6454
+02vp mandarin.north  3  callfriend,5824
+02vs tamil  3  callfriend,6444
+02vw korean  3  callfriend,6682
+02vx mandarin.north  3  callfriend,5800
+02w1 english.am.south  3  callfriend,6974
+02w3 japanese  3  callfriend,6587
+02w5 spanish.highland  3  callfriend,5361
+02w6 vietnamese  3  callfriend,6901
+02wa english.am.south  3  callfriend,6966
+02wb english.am.gen  3
+02wd arabic.egyptian  3  callfriend,5913
+02wf spanish.carib  3  callfriend,6875
+02wk english.am.gen  3
+02wl english.am.south  3  callfriend,6890
+02wn japanese  3  callfriend,6739
+02wp farsi  3  callfriend,6818
+02wt mandarin.north  3  callfriend,5973
+02wu japanese  3  callfriend,6632
+02wv english.am.gen  3
+02ww hindi  3  callfriend,6665
+02wy hindi  3  callfriend,6627
+02x7 hindi  3  callfriend,6607
+02x8 arabic.egyptian  3  callfriend,6496
+02xe vietnamese  3  callfriend,6894
+02xg english.am.gen  3  callfriend,6869
+02xi french.canada  3  callfriend,5460
+02xk spanish.carib  3  callfriend,6876
+02xm arabic.egyptian  3  callfriend,6135
+02xo english.am.gen  3  callfriend,6508
+02xq korean  3  callfriend,6645
+02xt english.am.south  3  callfriend,6974
+02xw german  3  callfriend,6853
+02xx hindi  3  callfriend,6400
+02y0 hindi  3  callfriend,6505
+02y3 english.am.gen  3
+02y8 arabic.egyptian  3  callfriend,5955
+02ya german  3  callfriend,6846
+02yb mandarin.taiwan  3  callfriend,5979
+02yc german  3  callfriend,6537
+02yd tamil  3  callfriend,6547
+02yg korean  3  callfriend,6704
+02yi spanish.highland  3  callfriend,5361
+02yn mandarin.taiwan  3  callfriend,5901
+02yo spanish.highland  3  callfriend,5641
+02ys english.am.south  3  callfriend,6931
+02yy english.am.gen  3
+02z0 english.am.gen  3
+02z8 english.am.gen  3
+02z9 english.am.gen  3
+02zc hindi  3  callfriend,6572
+02zk english.am.south  3  callfriend,6932
+02zm english.am.gen  3
+02zn english.am.gen  3  callfriend,6193
+02zo vietnamese  3  callfriend,6670
+02zp mandarin.north  3  callfriend,5530
+02zq english.am.gen  3
+02zs english.am.gen  3
+02zx english.am.gen  3  callfriend,6869
+02zy english.am.gen  3
+0304 spanish.carib  3  callfriend,6884
+0306 japanese  3  callfriend,6766
+0307 french.canada  3  callfriend,5466
+0309 farsi  3  callfriend,6788
+030a english.am.gen  3
+030d hindi  3  callfriend,6607
+030h hindi  3  callfriend,6426
+030k farsi  3  callfriend,6835
+030o spanish.highland  3  callfriend,5641
+030p english.am.south  3  callfriend,6973
+030t vietnamese  3  callfriend,6827
+030x german  3  callfriend,6918
+030z vietnamese  3  callfriend,6817
+0312 english.am.gen  3
+0316 english.am.gen  3
+0317 english.am.gen  3
+0319 spanish.carib  3  callfriend,6959
+031b vietnamese  3  callfriend,6827
+031c mandarin.north  3  callfriend,5916
+031j spanish.carib  3  callfriend,6945
+031o english.am.gen  3
+031q english.am.gen  3  callfriend,6511
+031r french.canada  3  callfriend,5485
+031s english.am.south  3  callfriend,6947
+031t mandarin.north  3  callfriend,4972
+0326 arabic.egyptian  3  callfriend,5822
+0327 spanish.carib  3  callfriend,6856
+0328 arabic.egyptian  3  callfriend,6210
+032a english.am.gen  3  callfriend,6938
+032b english.am.gen  3
+032c tamil  3  callfriend,6417
+032d vietnamese  3  callfriend,6906
+032e english.am.gen  3
+032g english.am.gen  3
+032k japanese  3  callfriend,6763
+032p english.am.gen  3
+032r english.am.gen  3
+032u french.canada  3  callfriend,5462
+032v english.am.gen  3
+0332 hindi  3  callfriend,6563
+0336 farsi  3  callfriend,6881
+0339 french.canada  3  callfriend,5485
+033d german  3  callfriend,6590
+033e spanish.highland  3  callfriend,5558
+033h mandarin.north  3  callfriend,5812
+033i french.canada  3  callfriend,5466
+033j spanish.highland  3  callfriend,5361
+033k hindi  3  callfriend,6607
+033o tamil  3  callfriend,6444
+033q hindi  3  callfriend,6580
+033v arabic.egyptian  3  callfriend,5878
+033w mandarin.north  3  callfriend,5806
+033x english.am.gen  3  callfriend,6899
+033z spanish.carib  3  callfriend,6868
+0342 french.canada  3  callfriend,5500
+0343 english.am.gen  3
+0347 english.am.gen  3
+0348 mandarin.north  3  callfriend,5690
+0349 french.canada  3  callfriend,5499
+034a english.am.gen  3
+034k spanish.carib  3  callfriend,6874
+034l korean  3  callfriend,6697
+034m mandarin.north  3  callfriend,5784
+034q spanish.carib  3  callfriend,6854
+034s hindi  3  callfriend,6608
+034t mandarin.taiwan  3  callfriend,5951
+034u korean  3  callfriend,6696
+034v english.am.gen  3
+034w mandarin.taiwan  3  callfriend,5960
+034x english.am.gen  3
+034y hindi  3  callfriend,6426
+0354 english.am.south  3  callfriend,6932
+0355 japanese  3  callfriend,6414
+0358 mandarin.north  3  callfriend,5779
+035b spanish.highland  3  callfriend,5685
+035d mandarin.north  3  callfriend,5195
+035e mandarin.taiwan  3  callfriend,5934
+035f english.am.gen  3
+035j arabic.egyptian  3  callfriend,5409
+035k english.am.gen  3
+035l farsi  3  callfriend,6801
+035t english.am.gen  3
+035x vietnamese  3  callfriend,6909
+035z vietnamese  3  callfriend,6756
+0360 tamil  3  callfriend,6501
+0362 japanese  3  callfriend,6525
+0364 english.am.gen  3  callfriend,6428
+0366 mandarin.north  3  callfriend,5800
+0368 english.am.south  3  callfriend,6946
+0369 farsi  3  callfriend,6848
+036b german  3  callfriend,6832
+036i hindi  3  callfriend,6585
+036j korean  3  callfriend,6708
+036l tamil  3  callfriend,6591
+036n farsi  3  callfriend,6741
+036p arabic.egyptian  3  callfriend,5961
+036s mandarin.taiwan  3  callfriend,5957
+036t tamil  3  callfriend,6778
+036z hindi  3  callfriend,6552
+0375 english.am.south  3  callfriend,6931
+0377 spanish.carib  3  callfriend,6959
+037e english.am.gen  3
+037i french.canada  3  callfriend,5482
+037j english.am.gen  3
+037k spanish.carib  3  callfriend,6959
+037p german  3  callfriend,6940
+037r tamil  3  callfriend,6778
+037v french.canada  3  callfriend,5483
+037w english.am.gen  3
+037x spanish.carib  3  callfriend,6887
+037y farsi  3  callfriend,6818
+0384 english.am.gen  3
+0387 tamil  3  callfriend,6357
+038d mandarin.north  3  callfriend,5010
+038e french.canada  3  callfriend,5462
+038f mandarin.taiwan  3  callfriend,5929
+038i farsi  3  callfriend,6860
+038j vietnamese  3  callfriend,6906
+038o french.canada  3  callfriend,5505
+038p spanish.highland  3  callfriend,5502
+038q english.am.gen  3
+038r hindi  3  callfriend,6607
+038v english.am.gen  3
+038x english.am.gen  3
+038z vietnamese  3  callfriend,6951
+0392 korean  3  callfriend,6792
+0394 french.canada  3  callfriend,5482
+0395 german  3  callfriend,6780
+0396 german  3  callfriend,6481
+0398 hindi  3  callfriend,6665
+0399 mandarin.taiwan  3  callfriend,5974
+039c farsi  3  callfriend,6860
+039g arabic.egyptian  3  callfriend,5507
+039i german  3  callfriend,6846
+039m english.am.gen  3
+039p english.am.gen  3
+039r arabic.egyptian  3  callfriend,5822
+039t hindi  3  callfriend,6580
+039v arabic.egyptian  3  callfriend,5769
+039x english.am.gen  3  callfriend,6428
+039y english.am.south  3  callfriend,6966
+039z spanish.highland  3  callfriend,5650
+03a0 german  3  callfriend,6522
+03a3 french.canada  3  callfriend,5506
+03a4 german  3  callfriend,6610
+03a6 german  3  callfriend,6573
+03ac english.am.gen  3
+03ad japanese  3  callfriend,6763
+03af arabic.egyptian  3  callfriend,6301
+03ai english.am.gen  3  callfriend,6278
+03aj english.am.gen  3
+03am japanese  3  callfriend,6465
+03ao tamil  3  callfriend,6454
+03ap english.am.gen  3
+03aq english.am.south  3  callfriend,6954
+03as german  3  callfriend,6573
+03au english.am.gen  3
+03ax arabic.egyptian  3  callfriend,6431
+03ay mandarin.taiwan  3  callfriend,5929
+03az english.am.south  3  callfriend,6973
+03b1 farsi  3  callfriend,6879
+03b3 spanish.carib  3  callfriend,6950
+03b9 english.am.south  3  callfriend,6968
+03ba english.am.gen  3
+03bb vietnamese  3  callfriend,6817
+03be german  3  callfriend,6846
+03bh vietnamese  3  callfriend,6670
+03bj spanish.highland  3  callfriend,5502
+03bn german  3  callfriend,6918
+03bo tamil  3  callfriend,6335
+03bq vietnamese  3  callfriend,6850
+03bu japanese  3  callfriend,6765
+03bx french.canada  3  callfriend,5498
+03by japanese  3  callfriend,6434
+03bz mandarin.north  3  callfriend,5195
+03c0 english.am.gen  3
+03c1 arabic.egyptian  3  callfriend,6210
+03c3 french.canada  3  callfriend,5474
+03c4 english.am.gen  3
+03cc spanish.highland  3  callfriend,5112
+03cg mandarin.taiwan  3  callfriend,5972
+03ch english.am.gen  3
+03ci german  3  callfriend,6695
+03cl tamil  3  callfriend,6368
+03cm hindi  3  callfriend,6617
+03cn english.am.gen  3
+03cp spanish.highland  3  callfriend,5607
+03cq english.am.gen  3
+03cr mandarin.taiwan  3  callfriend,5895
+03ct german  3  callfriend,6853
+03cu spanish.carib  3  callfriend,6945
+03cv spanish.highland  3  callfriend,5502
+03cx english.am.gen  3
+03d0 english.am.gen  3
+03d3 arabic.egyptian  3  callfriend,5759
+03d6 vietnamese  3  callfriend,6894
+03dh mandarin.taiwan  3  callfriend,5876
+03di mandarin.north  3  callfriend,5784
+03dn arabic.egyptian  3  callfriend,5822
+03dq english.am.gen  3  callfriend,6201
+03dr spanish.carib  3  callfriend,6948
+03ds korean  3  callfriend,6783
+03dx french.canada  3  callfriend,5481
+03dz korean  3  callfriend,6673
+03e3 english.am.gen  3
+03e4 english.am.gen  3
+03e5 vietnamese  3  callfriend,6740
+03e9 english.am.south  3  callfriend,6943
+03ef farsi  3  callfriend,6811
+03ek english.am.south  3  callfriend,6954
+03em vietnamese  3  callfriend,6847
+03en mandarin.taiwan  3  callfriend,5895
+03eo vietnamese  3  callfriend,6779
+03eq spanish.carib  3  callfriend,6878
+03es korean  3  callfriend,6774
+03ev german  3  callfriend,6590
+03ew korean  3  callfriend,6774
+03f2 mandarin.taiwan  3  callfriend,5972
+03f5 farsi  3  callfriend,6788
+03f8 mandarin.north  3  callfriend,5949
+03fd mandarin.taiwan  3  callfriend,5971
+03fe farsi  3  callfriend,6768
+03fi farsi  3  callfriend,6768
+03fo korean  3  callfriend,6697
+03fr spanish.highland  3  callfriend,5316
+03fu french.canada  3  callfriend,5508
+03fv vietnamese  3  callfriend,6764
+03fx german  3  callfriend,6590
+03fz english.am.gen  3
+03g0 german  3  callfriend,6522
+03g3 french.canada  3  callfriend,5498
+03g5 english.am.gen  3  callfriend,6278
+03gc farsi  3  callfriend,6858
+03ge english.am.gen  3
+03gl japanese  3  callfriend,6632
+03gm hindi  3  callfriend,6619
+03gn vietnamese  3  callfriend,6894
+03gs english.am.gen  3
+03gt hindi  3  callfriend,6441
+03gv hindi  3  callfriend,6608
+0002 english.am.gen  30
+0008 english.am.south  30  callfriend,6947
+000b tamil  30  callfriend,6287
+000c english.am.gen  30
+000j korean  30  callfriend,6673
+000k english.am.gen  30
+000n english.am.gen  30
+000q german  30  callfriend,6522
+000z hindi  30  callfriend,6572
+0010 arabic.egyptian  30  callfriend,6210
+0016 spanish.highland  30  callfriend,5361
+0017 english.am.gen  30
+001b spanish.carib  30  callfriend,6874
+001e mandarin.north  30  callfriend,5812
+001f korean  30  callfriend,6708
+001h english.am.south  30  callfriend,6975
+001o english.am.gen  30  callfriend,6862
+001s arabic.egyptian  30  callfriend,5759
+001v spanish.carib  30  callfriend,6959
+0021 english.am.south  30  callfriend,6973
+0022 english.am.gen  30
+0029 english.am.gen  30
+002a english.am.gen  30  callfriend,6507
+002b english.am.gen  30
+002c hindi  30  callfriend,6607
+002e english.am.gen  30
+002f english.am.gen  30
+002g english.am.gen  30
+002h mandarin.north  30  callfriend,5930
+002j english.am.gen  30
+002k german  30  callfriend,6806
+002m english.am.gen  30
+002p english.am.gen  30  callfriend,6899
+002q english.am.gen  30
+002t german  30  callfriend,6610
+0032 german  30  callfriend,6610
+0033 german  30  callfriend,6831
+0034 english.am.gen  30
+0037 german  30  callfriend,6421
+0039 english.am.gen  30
+003a vietnamese  30  callfriend,6779
+003b japanese  30  callfriend,6632
+003f german  30  callfriend,6548
+003h english.am.gen  30
+003i tamil  30  callfriend,6433
+003j english.am.gen  30
+003k english.am.gen  30
+003l spanish.carib  30  callfriend,6896
+003r hindi  30  callfriend,6426
+003s german  30  callfriend,6846
+003w english.am.gen  30  callfriend,6869
+003x farsi  30  callfriend,6741
+003z spanish.highland  30  callfriend,5638
+0046 english.am.gen  30
+004a hindi  30  callfriend,6426
+004b english.am.gen  30  callfriend,6952
+004e japanese  30  callfriend,6742
+004i english.am.gen  30
+004t english.am.gen  30
+004w hindi  30  callfriend,6619
+004z german  30  callfriend,6573
+0050 spanish.highland  30  callfriend,5589
+0056 mandarin.north  30  callfriend,5800
+005b french.canada  30  callfriend,5462
+005f japanese  30  callfriend,6716
+005q english.am.gen  30
+005r french.canada  30  callfriend,5410
+005x farsi  30  callfriend,6849
+0061 spanish.highland  30  callfriend,5367
+0062 english.am.gen  30
+0063 english.am.gen  30
+006a mandarin.taiwan  30  callfriend,5971
+006b hindi  30  callfriend,6441
+006g english.am.gen  30
+006h vietnamese  30  callfriend,6657
+006j english.am.gen  30
+006k english.am.gen  30
+006l korean  30  callfriend,6704
+006s english.am.gen  30
+006v english.am.south  30  callfriend,6962
+006y mandarin.north  30  callfriend,5812
+006z korean  30  callfriend,6774
+0071 english.am.gen  30
+0073 vietnamese  30  callfriend,6930
+0076 english.am.gen  30
+0077 english.am.south  30  callfriend,6932
+0078 japanese  30  callfriend,6739
+007c english.am.gen  30
+007f english.am.south  30  callfriend,6933
+007w french.canada  30  callfriend,5500
+007z mandarin.north  30  callfriend,5916
+0080 english.am.gen  30
+0081 german  30  callfriend,6831
+0088 mandarin.north  30  callfriend,5973
+008a english.am.gen  30
+008b mandarin.north  30  callfriend,5916
+008d german  30  callfriend,6853
+008f mandarin.north  30  callfriend,5779
+008g english.am.gen  30
+008i french.canada  30  callfriend,5404
+008l vietnamese  30  callfriend,6930
+008m english.am.gen  30
+008q english.am.south  30  callfriend,6943
+008z english.am.gen  30
+009e english.am.gen  30
+009g hindi  30  callfriend,6665
+009i german  30  callfriend,6695
+009j japanese  30  callfriend,6525
+009q tamil  30  callfriend,6287
+009y farsi  30  callfriend,6848
+009z arabic.egyptian  30  callfriend,5822
+00a0 english.am.gen  30
+00a3 arabic.egyptian  30  callfriend,6496
+00a5 spanish.carib  30  callfriend,6884
+00a8 french.canada  30  callfriend,5481
+00a9 spanish.highland  30  callfriend,5316
+00aa mandarin.north  30  callfriend,5806
+00af spanish.highland  30  callfriend,5650
+00ag tamil  30  callfriend,6471
+00ah english.am.south  30  callfriend,6966
+00an german  30  callfriend,6940
+00ap spanish.highland  30  callfriend,5112
+00as vietnamese  30  callfriend,6906
+00at mandarin.taiwan  30  callfriend,5934
+00ax mandarin.north  30  callfriend,5905
+00az vietnamese  30  callfriend,6906
+00b1 korean  30  callfriend,6648
+00b5 spanish.highland  30  callfriend,5582
+00b8 arabic.egyptian  30  callfriend,5913
+00bb hindi  30  callfriend,6563
+00bc french.canada  30  callfriend,5410
+00bf vietnamese  30  callfriend,6894
+00bm english.am.gen  30
+00bn english.am.gen  30
+00br spanish.carib  30  callfriend,6868
+00bs french.canada  30  callfriend,5465
+00bv english.am.south  30  callfriend,6946
+00bx farsi  30  callfriend,6811
+00by farsi  30  callfriend,6811
+00c0 farsi  30  callfriend,6741
+00c2 farsi  30  callfriend,6848
+00c3 spanish.highland  30  callfriend,5112
+00c6 english.am.gen  30
+00c7 vietnamese  30  callfriend,6847
+00cb english.am.gen  30
+00ci german  30  callfriend,6940
+00cn vietnamese  30  callfriend,6817
+00cp spanish.highland  30  callfriend,4468
+00cw german  30  callfriend,6918
+00cx english.am.gen  30
+00d2 english.am.south  30  callfriend,6933
+00d8 mandarin.taiwan  30  callfriend,5912
+00dd hindi  30  callfriend,6523
+00dg korean  30  callfriend,6633
+00dj arabic.egyptian  30  callfriend,5804
+00dk japanese  30  callfriend,4905
+00dm spanish.highland  30  callfriend,5316
+00dn german  30  callfriend,6684
+00dv tamil  30  callfriend,6519
+00dx english.am.gen  30
+00e0 vietnamese  30  callfriend,6827
+00e4 english.am.south  30  callfriend,6946
+00e6 german  30  callfriend,6832
+00e7 english.am.gen  30  callfriend,6451
+00ec farsi  30  callfriend,6797
+00ee german  30  callfriend,6481
+00ei spanish.carib  30  callfriend,6876
+00eq korean  30  callfriend,6799
+00es korean  30  callfriend,6633
+00f2 english.am.gen  30
+00f3 english.am.gen  30
+00f4 english.am.south  30  callfriend,6955
+00f7 english.am.gen  30
+00f9 english.am.gen  30  callfriend,6557
+00fg english.am.gen  30
+00fj mandarin.north  30  callfriend,5824
+00fs spanish.carib  30  callfriend,6876
+00fv vietnamese  30  callfriend,6670
+00fw german  30  callfriend,6577
+00fx arabic.egyptian  30  callfriend,6431
+00fy japanese  30  callfriend,6414
+00fz spanish.highland  30  callfriend,5340
+00g5 spanish.highland  30  callfriend,5638
+00gc japanese  30  callfriend,4905
+00gd spanish.highland  30  callfriend,4500
+00gl mandarin.taiwan  30  callfriend,5934
+00gn spanish.highland  30  callfriend,5340
+00go english.am.gen  30
+00gt english.am.gen  30
+00gu spanish.carib  30  callfriend,6878
+00gx spanish.carib  30  callfriend,6950
+00h0 mandarin.taiwan  30  callfriend,5968
+00h3 spanish.carib  30  callfriend,6851
+00h5 english.am.gen  30
+00h7 english.am.gen  30
+00h8 english.am.gen  30
+00hb spanish.carib  30  callfriend,6945
+00hc korean  30  callfriend,6673
+00hd arabic.egyptian  30  callfriend,6254
+00hi vietnamese  30  callfriend,6847
+00hp english.am.gen  30
+00hq arabic.egyptian  30  callfriend,6301
+00hr vietnamese  30  callfriend,6827
+00ht mandarin.north  30  callfriend,5821
+00hx english.am.gen  30  callfriend,6508
+00i5 korean  30  callfriend,6673
+00i6 japanese  30  callfriend,6630
+00i7 english.am.gen  30
+00ie arabic.egyptian  30  callfriend,5955
+00if mandarin.taiwan  30  callfriend,5951
+00ig japanese  30  callfriend,6414
+00ih english.am.gen  30
+00in farsi  30  callfriend,6849
+00ip english.am.gen  30
+00it arabic.egyptian  30  callfriend,5769
+00iw spanish.carib  30  callfriend,6854
+00iz arabic.egyptian  30  callfriend,5781
+00j3 vietnamese  30  callfriend,6850
+00j6 english.am.gen  30
+00j7 spanish.carib  30  callfriend,6854
+00jb english.am.south  30  callfriend,6931
+00jd spanish.carib  30  callfriend,6877
+00je english.am.south  30  callfriend,6890
+00jf english.am.gen  30
+00jg english.am.gen  30
+00jk japanese  30  callfriend,6763
+00jl german  30  callfriend,6590
+00jr french.canada  30  callfriend,5405
+00jw mandarin.north  30  callfriend,5530
+00jz french.canada  30  callfriend,5461
+00k9 french.canada  30  callfriend,5499
+00kc japanese  30  callfriend,6739
+00kg german  30  callfriend,6481
+00kr english.am.gen  30
+00kw english.am.gen  30  callfriend,6862
+00kx japanese  30  callfriend,6465
+00l0 vietnamese  30  callfriend,6779
+00l1 korean  30  callfriend,6704
+00la mandarin.north  30  callfriend,5195
+00lb french.canada  30  callfriend,5481
+00lc arabic.egyptian  30  callfriend,5769
+00le english.am.south  30  callfriend,6965
+00lf spanish.carib  30  callfriend,6876
+00lh french.canada  30  callfriend,5498
+00li arabic.egyptian  30  callfriend,5955
+00ll japanese  30  callfriend,6805
+00ln korean  30  callfriend,6792
+00lp tamil  30  callfriend,6501
+00lq english.am.gen  30
+00lr mandarin.north  30  callfriend,5800
+00lt mandarin.north  30  callfriend,5821
+00lx english.am.south  30  callfriend,6953
+00ly spanish.carib  30  callfriend,6868
+00lz french.canada  30  callfriend,5500
+00m0 mandarin.north  30  callfriend,5906
+00m5 english.am.gen  30  callfriend,6428
+00mb english.am.gen  30
+00mf mandarin.taiwan  30  callfriend,5934
+00mh spanish.highland  30  callfriend,4500
+00mj english.am.south  30  callfriend,6943
+00ml english.am.gen  30
+00mn french.canada  30  callfriend,5505
+00mo english.am.south  30  callfriend,6970
+00mp french.canada  30  callfriend,5461
+00mq tamil  30  callfriend,6356
+00ms german  30  callfriend,6780
+00mu french.canada  30  callfriend,5462
+00my english.am.gen  30
+00n0 arabic.egyptian  30  callfriend,5878
+00n2 hindi  30  callfriend,6552
+00n7 mandarin.taiwan  30  callfriend,5895
+00nc spanish.carib  30  callfriend,6945
+00nd japanese  30  callfriend,6766
+00nf french.canada  30  callfriend,5506
+00ni vietnamese  30  callfriend,6756
+00nj english.am.south  30  callfriend,6947
+00nq hindi  30  callfriend,6552
+00nt english.am.gen  30  callfriend,6201
+00o1 mandarin.taiwan  30  callfriend,5899
+00o2 english.am.gen  30
+00o7 mandarin.north  30  callfriend,5773
+00o8 english.am.gen  30
+00o9 english.am.gen  30
+00oa hindi  30  callfriend,6495
+00ob english.am.gen  30
+00od korean  30  callfriend,6730
+00oi english.am.gen  30
+00ok english.am.gen  30
+00on english.am.gen  30
+00op korean  30  callfriend,6648
+00oq tamil  30  callfriend,6519
+00ot farsi  30  callfriend,6859
+00ou tamil  30  callfriend,6439
+00p0 spanish.carib  30  callfriend,6878
+00p5 english.am.gen  30  callfriend,6869
+00p7 hindi  30  callfriend,6617
+00pd french.canada  30  callfriend,5464
+00pe farsi  30  callfriend,6871
+00pf hindi  30  callfriend,6505
+00ph german  30  callfriend,6522
+00pi tamil  30  callfriend,6547
+00pm mandarin.taiwan  30  callfriend,5876
+00pn farsi  30  callfriend,6823
+00pp spanish.carib  30  callfriend,6884
+00pr spanish.carib  30  callfriend,6883
+00pt vietnamese  30  callfriend,6934
+00px mandarin.north  30  callfriend,5773
+00q3 hindi  30  callfriend,6585
+00q6 tamil  30  callfriend,6519
+00qc spanish.carib  30  callfriend,6851
+00qf korean  30  callfriend,6708
+00qi farsi  30  callfriend,6811
+00qm mandarin.north  30  callfriend,5906
+00qo farsi  30  callfriend,6879
+00qq english.am.gen  30
+00qs english.am.gen  30
+00qu english.am.south  30  callfriend,6933
+00qw english.am.gen  30
+00qz english.am.gen  30
+00r2 english.am.gen  30
+00r4 korean  30  callfriend,6645
+00r7 hindi  30  callfriend,6627
+00re mandarin.north  30  callfriend,5949
+00rj english.am.gen  30
+00rk english.am.gen  30
+00rl vietnamese  30  callfriend,6827
+00rq tamil  30  callfriend,6368
+00rw english.am.gen  30
+00rz spanish.highland  30  callfriend,5418
+00s0 english.am.gen  30
+00s4 english.am.south  30  callfriend,6932
+00s5 arabic.egyptian  30  callfriend,6052
+00s8 mandarin.taiwan  30  callfriend,5894
+00s9 german  30  callfriend,6806
+00sc vietnamese  30  callfriend,6901
+00sl vietnamese  30  callfriend,6740
+00sn english.am.gen  30
+00so english.am.gen  30  callfriend,6649
+00sq korean  30  callfriend,6753
+00sr spanish.highland  30  callfriend,5641
+00st english.am.gen  30
+00sv mandarin.north  30  callfriend,5812
+00sw korean  30  callfriend,6762
+00t3 english.am.gen  30
+00t6 hindi  30  callfriend,6585
+00tb english.am.south  30  callfriend,6943
+00td german  30  callfriend,6918
+00te english.am.gen  30
+00th german  30  callfriend,6806
+00tl vietnamese  30  callfriend,6827
+00tm english.am.gen  30
+00to english.am.gen  30
+00tp korean  30  callfriend,6774
+00tq hindi  30  callfriend,6556
+00ts korean  30  callfriend,6757
+00tu vietnamese  30  callfriend,6764
+00tw english.am.gen  30
+00ty english.am.gen  30
+00u0 german  30  callfriend,6684
+00u5 french.canada  30  callfriend,5466
+00u6 mandarin.north  30  callfriend,5930
+00ui english.am.gen  30  callfriend,6511
+00uk vietnamese  30  callfriend,6951
+00ul english.am.south  30  callfriend,6943
+00um mandarin.taiwan  30  callfriend,5901
+00ut english.am.gen  30
+00uu french.canada  30  callfriend,5466
+00uw english.am.gen  30  callfriend,6451
+00uy arabic.egyptian  30  callfriend,6210
+00v4 hindi  30  callfriend,6620
+00v5 english.am.gen  30
+00va mandarin.taiwan  30  callfriend,5974
+00vc english.am.gen  30
+00vi hindi  30  callfriend,6523
+00vo arabic.egyptian  30  callfriend,6431
+00vr english.am.gen  30  callfriend,6451
+00vu english.am.gen  30
+00vz spanish.highland  30  callfriend,5582
+00w2 vietnamese  30  callfriend,6847
+00w3 farsi  30  callfriend,6788
+00w5 german  30  callfriend,6972
+00wa farsi  30  callfriend,6881
+00wc german  30  callfriend,6537
+00we spanish.highland  30  callfriend,5607
+00wj arabic.egyptian  30  callfriend,6301
+00wk german  30  callfriend,6831
+00wn english.am.south  30  callfriend,6954
+00wq english.am.gen  30
+00ww farsi  30  callfriend,6849
+00wy mandarin.north  30  callfriend,4972
+00x1 french.canada  30  callfriend,5483
+00x2 english.am.gen  30
+00x4 arabic.egyptian  30  callfriend,6496
+00x5 korean  30  callfriend,6725
+00x7 english.am.gen  30
+00xb korean  30  callfriend,6708
+00xd tamil  30  callfriend,6287
+00xe hindi  30  callfriend,6523
+00xf tamil  30  callfriend,6444
+00xl english.am.gen  30
+00xm english.am.gen  30
+00xt arabic.egyptian  30  callfriend,6210
+00xw mandarin.north  30  callfriend,5824
+00y9 english.am.gen  30
+00yd vietnamese  30  callfriend,6758
+00ye korean  30  callfriend,6808
+00yf english.am.gen  30
+00yi english.am.gen  30  callfriend,6899
+00yq farsi  30  callfriend,6835
+00yr tamil  30  callfriend,6357
+00ys tamil  30  callfriend,6423
+00yv english.am.gen  30
+00yy japanese  30  callfriend,6761
+00z1 french.canada  30  callfriend,5461
+00z2 english.am.gen  30
+00z3 arabic.egyptian  30  callfriend,5961
+00z7 english.am.gen  30
+00za arabic.egyptian  30  callfriend,5774
+00zd english.am.gen  30
+00ze french.canada  30  callfriend,5499
+00zg arabic.egyptian  30  callfriend,5804
+00zk hindi  30  callfriend,6607
+00zm tamil  30  callfriend,6223
+00zn mandarin.north  30  callfriend,5010
+00zp vietnamese  30  callfriend,6657
+00zr english.am.south  30  callfriend,6927
+00zs english.am.gen  30
+00zw english.am.gen  30
+00zy english.am.gen  30
+0101 hindi  30  callfriend,6619
+0106 english.am.gen  30
+0108 vietnamese  30  callfriend,6901
+0109 spanish.carib  30  callfriend,6854
+010b english.am.gen  30
+010e english.am.gen  30
+010g english.am.gen  30
+010k farsi  30  callfriend,6871
+010m english.am.south  30  callfriend,6954
+010s english.am.gen  30
+010t tamil  30  callfriend,6417
+010v korean  30  callfriend,6792
+010x english.am.gen  30  callfriend,6476
+0115 spanish.carib  30  callfriend,6874
+0117 english.am.gen  30
+011c french.canada  30  callfriend,5462
+011l arabic.egyptian  30  callfriend,6052
+011n english.am.gen  30
+011p english.am.gen  30
+011s mandarin.taiwan  30  callfriend,5894
+011u farsi  30  callfriend,6801
+011y mandarin.taiwan  30  callfriend,5974
+0122 spanish.carib  30  callfriend,6856
+0128 spanish.highland  30  callfriend,5589
+0129 tamil  30  callfriend,6454
+012a spanish.carib  30  callfriend,6887
+012g english.am.gen  30
+012l english.am.gen  30
+012t french.canada  30  callfriend,5508
+012x mandarin.north  30  callfriend,5779
+0139 german  30  callfriend,6590
+013c japanese  30  callfriend,6525
+013d english.am.south  30  callfriend,6955
+013f english.am.gen  30
+013g korean  30  callfriend,6792
+013j farsi  30  callfriend,6858
+013k japanese  30  callfriend,6738
+013u hindi  30  callfriend,6627
+013v german  30  callfriend,6853
+013x japanese  30  callfriend,6490
+0141 japanese  30  callfriend,6805
+0142 english.am.gen  30
+0149 mandarin.north  30  callfriend,5010
+014e mandarin.north  30  callfriend,5824
+014f english.am.south  30  callfriend,6975
+014j french.canada  30  callfriend,5482
+014l english.am.gen  30
+014o english.am.gen  30
+014q mandarin.north  30  callfriend,5779
+014w english.am.gen  30
+014x spanish.carib  30  callfriend,6868
+015f korean  30  callfriend,6773
+015j french.canada  30  callfriend,5482
+015p english.am.gen  30
+015r tamil  30  callfriend,6330
+015z french.canada  30  callfriend,5505
+0162 french.canada  30  callfriend,5483
+0163 english.am.gen  30  callfriend,6193
+016d english.am.gen  30
+016f english.am.gen  30
+016i english.am.gen  30
+016m english.am.gen  30
+016p english.am.gen  30
+016r english.am.gen  30
+016x spanish.carib  30  callfriend,6875
+016y spanish.highland  30  callfriend,5641
+0175 english.am.gen  30
+0176 vietnamese  30  callfriend,6895
+0179 french.canada  30  callfriend,5474
+017f spanish.highland  30  callfriend,5502
+017g english.am.gen  30
+017h spanish.carib  30  callfriend,6877
+017r hindi  30  callfriend,6579
+017x mandarin.taiwan  30  callfriend,5929
+017z farsi  30  callfriend,6860
+0182 english.am.south  30  callfriend,6970
+0186 french.canada  30  callfriend,5464
+018a english.am.gen  30
+018e english.am.south  30  callfriend,6931
+018k spanish.carib  30  callfriend,6949
+018o spanish.highland  30  callfriend,5340
+018p german  30  callfriend,6577
+018t japanese  30  callfriend,6761
+018u english.am.gen  30  callfriend,6193
+018w vietnamese  30  callfriend,6894
+018y japanese  30  callfriend,6414
+018z english.am.gen  30
+0190 german  30  callfriend,6421
+0191 tamil  30  callfriend,6591
+0197 english.am.gen  30
+019b english.am.gen  30  callfriend,6239
+019c hindi  30  callfriend,6400
+019d hindi  30  callfriend,6619
+019g english.am.gen  30
+019h english.am.gen  30
+019m mandarin.taiwan  30  callfriend,5983
+019o arabic.egyptian  30  callfriend,5507
+019r english.am.gen  30
+019u spanish.carib  30  callfriend,6948
+019w vietnamese  30  callfriend,6934
+019y farsi  30  callfriend,6788
+019z english.am.gen  30
+01a0 vietnamese  30  callfriend,6758
+01a2 mandarin.north  30  callfriend,5812
+01a4 tamil  30  callfriend,6335
+01a6 english.am.south  30  callfriend,6931
+01a7 mandarin.north  30  callfriend,5930
+01ad spanish.highland  30  callfriend,5340
+01af farsi  30  callfriend,6860
+01ai korean  30  callfriend,6725
+01ak english.am.gen  30
+01ar mandarin.north  30  callfriend,5916
+01au spanish.highland  30  callfriend,5582
+01aw english.am.gen  30
+01ay arabic.egyptian  30  callfriend,5913
+01az korean  30  callfriend,6783
+01b1 english.am.south  30  callfriend,6946
+01b3 vietnamese  30  callfriend,6898
+01b6 mandarin.north  30  callfriend,5973
+01bb spanish.highland  30  callfriend,5258
+01bc farsi  30  callfriend,6858
+01be japanese  30  callfriend,6630
+01bg korean  30  callfriend,6753
+01bh english.am.gen  30
+01bk english.am.south  30  callfriend,6953
+01bl farsi  30  callfriend,6842
+01bm spanish.highland  30  callfriend,5650
+01bn vietnamese  30  callfriend,6850
+01bo spanish.carib  30  callfriend,6834
+01bu arabic.egyptian  30  callfriend,6135
+01bx korean  30  callfriend,6696
+01c1 farsi  30  callfriend,6873
+01c2 spanish.carib  30  callfriend,6868
+01c3 english.am.gen  30
+01c8 english.am.gen  30
+01c9 mandarin.taiwan  30  callfriend,5948
+01cc vietnamese  30  callfriend,6894
+01cf german  30  callfriend,6548
+01ch german  30  callfriend,6695
+01co tamil  30  callfriend,6356
+01cp english.am.south  30  callfriend,6953
+01cu german  30  callfriend,6832
+01cv korean  30  callfriend,6799
+01cy korean  30  callfriend,6704
+01d1 farsi  30  callfriend,6879
+01d7 arabic.egyptian  30  callfriend,5955
+01dd korean  30  callfriend,6792
+01dm spanish.highland  30  callfriend,5361
+01dp english.am.gen  30
+01dt english.am.gen  30  callfriend,6507
+01dx spanish.highland  30  callfriend,5638
+01dy spanish.highland  30  callfriend,5607
+01e0 english.am.south  30  callfriend,6966
+01e1 mandarin.north  30  callfriend,5904
+01e3 arabic.egyptian  30  callfriend,5913
+01e7 tamil  30  callfriend,6439
+01ea english.am.gen  30
+01eb english.am.south  30  callfriend,6954
+01ed tamil  30  callfriend,6501
+01ee german  30  callfriend,6548
+01eg english.am.gen  30
+01ei tamil  30  callfriend,6335
+01em mandarin.taiwan  30  callfriend,5934
+01et tamil  30  callfriend,6223
+01eu english.am.gen  30
+01ew mandarin.taiwan  30  callfriend,5957
+01ez mandarin.taiwan  30  callfriend,5901
+01f2 farsi  30  callfriend,6842
+01fe french.canada  30  callfriend,5485
+01ff farsi  30  callfriend,6818
+01fg hindi  30  callfriend,6523
+01fk tamil  30  callfriend,6471
+01fn french.canada  30  callfriend,5508
+01ft japanese  30  callfriend,6587
+01g0 arabic.egyptian  30  callfriend,5774
+01g1 spanish.carib  30  callfriend,6887
+01g7 english.am.gen  30
+01g9 english.am.gen  30
+01gb japanese  30  callfriend,6763
+01ge french.canada  30  callfriend,5483
+01gg japanese  30  callfriend,6434
+01gj english.am.gen  30
+01gn japanese  30  callfriend,6738
+01go english.am.south  30  callfriend,6947
+01gw english.am.gen  30
+01gz spanish.carib  30  callfriend,6875
+01h1 german  30  callfriend,6972
+01h2 spanish.highland  30  callfriend,5418
+01h5 hindi  30  callfriend,6627
+01ha spanish.highland  30  callfriend,5354
+01hi mandarin.taiwan  30  callfriend,5879
+01hj vietnamese  30  callfriend,6850
+01hk english.am.gen  30
+01hl spanish.carib  30  callfriend,6854
+01hs english.am.gen  30  callfriend,6503
+01hv spanish.carib  30  callfriend,6877
+01hx arabic.egyptian  30  callfriend,6431
+01hy mandarin.taiwan  30  callfriend,5957
+01hz english.am.gen  30
+01i2 english.am.gen  30
+01i7 german  30  callfriend,6780
+01i9 english.am.gen  30
+01ia japanese  30  callfriend,6766
+01ic tamil  30  callfriend,6223
+01id english.am.south  30  callfriend,6965
+01ig tamil  30  callfriend,6433
+01ih tamil  30  callfriend,6356
+01in korean  30  callfriend,6783
+01iy mandarin.taiwan  30  callfriend,5876
+01iz english.am.gen  30
+01j2 arabic.egyptian  30  callfriend,5759
+01j4 mandarin.north  30  callfriend,5784
+01j7 korean  30  callfriend,6696
+01j9 farsi  30  callfriend,6848
+01jb english.am.south  30  callfriend,6955
+01jc vietnamese  30  callfriend,6779
+01jd english.am.gen  30  callfriend,6508
+01je arabic.egyptian  30  callfriend,6052
+01jh mandarin.taiwan  30  callfriend,5899
+01ji korean  30  callfriend,6799
+01jt english.am.gen  30
+01ju tamil  30  callfriend,6778
+01jv german  30  callfriend,6780
+01jy japanese  30  callfriend,6414
+01k7 french.canada  30  callfriend,5405
+01ka mandarin.north  30  callfriend,5906
+01kf english.am.gen  30
+01kg japanese  30  callfriend,6759
+01ki english.am.south  30  callfriend,6946
+01kl farsi  30  callfriend,6768
+01km vietnamese  30  callfriend,6670
+01ks english.am.south  30  callfriend,6968
+01l4 english.am.gen  30
+01l8 french.canada  30  callfriend,5404
+01lb spanish.highland  30  callfriend,5361
+01le english.am.gen  30  callfriend,6865
+01lg hindi  30  callfriend,6579
+01lh english.am.gen  30
+01lj farsi  30  callfriend,6772
+01ll french.canada  30  callfriend,5485
+01lm english.am.gen  30  callfriend,6557
+01lo english.am.gen  30
+01lr german  30  callfriend,6522
+01lu spanish.highland  30  callfriend,4500
+01lv vietnamese  30  callfriend,6934
+01ly hindi  30  callfriend,6572
+01m0 english.am.gen  30
+01m1 french.canada  30  callfriend,5508
+01m3 french.canada  30  callfriend,5474
+01m5 english.am.south  30  callfriend,6954
+01m6 mandarin.taiwan  30  callfriend,5971
+01m7 arabic.egyptian  30  callfriend,5961
+01ma english.am.gen  30
+01mb spanish.carib  30  callfriend,6958
+01mh vietnamese  30  callfriend,6951
+01mi spanish.carib  30  callfriend,6878
+01mk korean  30  callfriend,6645
+01mn hindi  30  callfriend,6400
+01mq hindi  30  callfriend,6619
+01mr mandarin.north  30  callfriend,5905
+01ms french.canada  30  callfriend,5499
+01mx arabic.egyptian  30  callfriend,5774
+01n2 arabic.egyptian  30  callfriend,5878
+01n5 mandarin.taiwan  30  callfriend,5929
+01n8 english.am.gen  30
+01n9 hindi  30  callfriend,6552
+01na japanese  30  callfriend,6805
+01nd spanish.highland  30  callfriend,5112
+01nf farsi  30  callfriend,6858
+01nj spanish.carib  30  callfriend,6884
+01nn hindi  30  callfriend,6426
+01no french.canada  30  callfriend,5466
+01nr english.am.gen  30  callfriend,6557
+01ns korean  30  callfriend,6673
+01nu hindi  30  callfriend,6585
+01nv japanese  30  callfriend,6738
+01o3 spanish.highland  30  callfriend,5638
+01o8 korean  30  callfriend,6708
+01o9 english.am.gen  30
+01ob farsi  30  callfriend,6842
+01of hindi  30
+01oi english.am.gen  30
+01oo english.am.south  30  callfriend,6966
+01oq german  30  callfriend,6940
+01os vietnamese  30  callfriend,6847
+01ot tamil  30  callfriend,6368
+01ou arabic.egyptian  30  callfriend,5878
+01ov farsi  30  callfriend,6823
+01oy english.am.gen  30  callfriend,6952
+01p0 japanese  30  callfriend,6738
+01p3 german  30  callfriend,6940
+01p4 korean  30  callfriend,6696
+01p9 japanese  30  callfriend,6434
+01pc english.am.gen  30
+01pf mandarin.north  30  callfriend,5905
+01pg mandarin.north  30  callfriend,5821
+01pl french.canada  30  callfriend,5405
+01pn german  30  callfriend,6573
+01pr hindi  30  callfriend,6563
+01pv english.am.gen  30
+01pw spanish.highland  30  callfriend,5112
+01px korean  30  callfriend,6697
+01py arabic.egyptian  30  callfriend,6254
+01q2 french.canada  30  callfriend,5505
+01q8 mandarin.north  30  callfriend,4972
+01q9 english.am.gen  30
+01qb korean  30  callfriend,6697
+01qd tamil  30  callfriend,6330
+01qg english.am.gen  30
+01qh hindi  30  callfriend,6580
+01qi farsi  30  callfriend,6842
+01qk farsi  30  callfriend,6768
+01qn hindi  30  callfriend,6505
+01qo english.am.gen  30
+01qp vietnamese  30  callfriend,6901
+01qv mandarin.taiwan  30  callfriend,5974
+01qw vietnamese  30  callfriend,6898
+01qx japanese  30  callfriend,6587
+01r2 french.canada  30  callfriend,5482
+01r3 spanish.carib  30  callfriend,6945
+01r5 mandarin.north  30  callfriend,5806
+01r6 english.am.gen  30
+01rd english.am.gen  30  callfriend,6511
+01re farsi  30  callfriend,6873
+01rg spanish.carib  30  callfriend,6856
+01ri vietnamese  30  callfriend,6764
+01rk tamil  30  callfriend,6444
+01rm mandarin.taiwan  30  callfriend,5971
+01rp german  30  callfriend,6853
+01rq german  30  callfriend,6972
+01rr tamil  30  callfriend,6778
+01ru japanese  30  callfriend,6739
+01rx arabic.egyptian  30  callfriend,5961
+01ry english.am.gen  30  callfriend,6451
+01s1 vietnamese  30  callfriend,6756
+01s2 english.am.gen  30
+01sc vietnamese  30  callfriend,6779
+01sf hindi  30  callfriend,6585
+01si english.am.gen  30
+01sk english.am.gen  30
+01sl hindi  30  callfriend,6563
+01sn hindi  30  callfriend,6617
+01so spanish.highland  30  callfriend,5361
+01sq english.am.gen  30
+01sw spanish.carib  30  callfriend,6874
+01sz english.am.gen  30
+01t0 english.am.gen  30
+01t1 english.am.gen  30
+01t3 mandarin.north  30  callfriend,5690
+01tc farsi  30  callfriend,6835
+01td english.am.gen  30
+01th english.am.gen  30
+01to japanese  30  callfriend,6632
+01tv english.am.south  30  callfriend,6974
+01tw spanish.highland  30  callfriend,5354
+01ty english.am.gen  30  callfriend,6507
+01u0 english.am.gen  30  callfriend,6899
+01ud english.am.gen  30
+01uh korean  30  callfriend,6757
+01ul english.am.gen  30
+01uo german  30  callfriend,6853
+01ur english.am.gen  30
+01us korean  30  callfriend,6633
+01uz english.am.gen  30
+01v0 mandarin.taiwan  30  callfriend,5983
+01v1 spanish.carib  30  callfriend,6834
+01v3 english.am.south  30  callfriend,6932
+01v7 vietnamese  30  callfriend,6906
+01v8 japanese  30  callfriend,6765
+01va tamil  30  callfriend,6471
+01vd english.am.gen  30
+01vh tamil  30  callfriend,6778
+01vk japanese  30  callfriend,6765
+01vm farsi  30  callfriend,6788
+01vp japanese  30  callfriend,6616
+01vr mandarin.north  30  callfriend,5773
+01vs english.am.south  30  callfriend,6973
+01vx hindi  30  callfriend,6617
+01w0 vietnamese  30  callfriend,6898
+01w9 english.am.gen  30
+01wd english.am.south  30  callfriend,6973
+01we english.am.gen  30  callfriend,6508
+01wf mandarin.taiwan  30  callfriend,5972
+01wm spanish.highland  30  callfriend,5367
+01ws japanese  30  callfriend,6434
+01wu japanese  30  callfriend,6616
+01wv mandarin.north  30  callfriend,5806
+01ww arabic.egyptian  30  callfriend,5769
+01wx hindi  30  callfriend,6620
+01wy english.am.gen  30  callfriend,6938
+01x3 german  30  callfriend,6577
+01x6 german  30  callfriend,6610
+01x7 english.am.gen  30  callfriend,6511
+01xb english.am.south  30  callfriend,6974
+01xe german  30  callfriend,6684
+01xq spanish.highland  30  callfriend,5316
+01xu english.am.gen  30
+01xw mandarin.north  30  callfriend,5010
+01xz farsi  30  callfriend,6818
+01y0 english.am.gen  30
+01y4 english.am.gen  30  callfriend,6201
+01y5 japanese  30  callfriend,6465
+01y7 german  30  callfriend,6832
+01ya english.am.gen  30
+01yc tamil  30  callfriend,6335
+01yd japanese  30  callfriend,6761
+01ym farsi  30  callfriend,6859
+01yw tamil  30  callfriend,6454
+01yz german  30  callfriend,6684
+01z1 french.canada  30  callfriend,5506
+01z2 german  30  callfriend,6421
+01z5 spanish.highland  30  callfriend,4468
+01z9 spanish.carib  30  callfriend,6856
+01zd mandarin.taiwan  30  callfriend,5893
+01zh spanish.highland  30  callfriend,5258
+01zi japanese  30  callfriend,4905
+01zk english.am.gen  30
+01zo tamil  30  callfriend,6444
+01zq korean  30  callfriend,6783
+01zr arabic.egyptian  30  callfriend,5781
+01zv japanese  30  callfriend,6716
+01zw english.am.gen  30
+01zx english.am.gen  30
+01zy mandarin.north  30  callfriend,5806
+0206 english.am.south  30  callfriend,6955
+0207 mandarin.taiwan  30  callfriend,5948
+0208 vietnamese  30  callfriend,6930
+0209 arabic.egyptian  30  callfriend,6301
+020b spanish.highland  30  callfriend,5502
+020i farsi  30  callfriend,6797
+020j tamil  30  callfriend,6357
+020m tamil  30  callfriend,6417
+020q farsi  30  callfriend,6881
+020r farsi  30  callfriend,6788
+020u mandarin.north  30  callfriend,5949
+020x english.am.gen  30
+0213 english.am.south  30  callfriend,6973
+0214 english.am.gen  30
+0218 mandarin.taiwan  30  callfriend,5893
+0219 hindi  30  callfriend,6607
+021a hindi  30  callfriend,6579
+021d english.am.gen  30
+021e english.am.south  30  callfriend,6968
+021i english.am.gen  30  callfriend,6649
+021k german  30  callfriend,6972
+021u hindi  30  callfriend,6505
+021x french.canada  30  callfriend,5505
+0222 spanish.highland  30  callfriend,5641
+0223 spanish.carib  30  callfriend,6884
+0228 tamil  30  callfriend,6368
+022a vietnamese  30  callfriend,6764
+022b spanish.highland  30  callfriend,4500
+022c tamil  30  callfriend,6287
+022f mandarin.taiwan  30  callfriend,5983
+022g english.am.gen  30
+022h english.am.gen  30
+022n farsi  30  callfriend,6797
+022r mandarin.taiwan  30  callfriend,5876
+022z arabic.egyptian  30  callfriend,6210
+0230 english.am.gen  30  callfriend,6476
+0236 english.am.gen  30
+0239 korean  30  callfriend,6648
+023a tamil  30  callfriend,6357
+023b english.am.gen  30
+023f english.am.gen  30
+023h farsi  30  callfriend,6879
+023i farsi  30  callfriend,6818
+023j spanish.highland  30  callfriend,5354
+023l german  30  callfriend,6918
+023p mandarin.taiwan  30  callfriend,5912
+023q spanish.carib  30  callfriend,6950
+023r english.am.gen  30
+023u japanese  30  callfriend,6630
+023x japanese  30  callfriend,6525
+023z mandarin.taiwan  30  callfriend,5979
+0242 mandarin.north  30  callfriend,5973
+0243 mandarin.north  30  callfriend,5905
+0245 english.am.gen  30  callfriend,6865
+0247 japanese  30  callfriend,6759
+024g japanese  30  callfriend,6490
+024i mandarin.taiwan  30  callfriend,5960
+024j spanish.highland  30  callfriend,4468
+024k spanish.highland  30  callfriend,5558
+024q english.am.gen  30  callfriend,6507
+024r vietnamese  30  callfriend,6901
+024s arabic.egyptian  30  callfriend,6003
+024w english.am.south  30  callfriend,6927
+024y tamil  30  callfriend,6547
+024z korean  30  callfriend,6697
+0250 arabic.egyptian  30  callfriend,6135
+0253 japanese  30  callfriend,6742
+025b farsi  30  callfriend,6871
+025c japanese  30  callfriend,6765
+025d english.am.gen  30
+025g french.canada  30  callfriend,5508
+025h french.canada  30  callfriend,5461
+025l hindi  30  callfriend,6665
+025n korean  30  callfriend,6682
+025o english.am.gen  30  callfriend,6503
+025s mandarin.taiwan  30  callfriend,5948
+025w mandarin.north  30  callfriend,5773
+0261 arabic.egyptian  30  callfriend,5409
+026g english.am.gen  30
+026k mandarin.taiwan  30  callfriend,5968
+026l english.am.gen  30  callfriend,6511
+026n spanish.carib  30  callfriend,6875
+026o english.am.gen  30
+026q german  30  callfriend,6537
+026w farsi  30  callfriend,6823
+026z english.am.south  30  callfriend,6965
+0274 spanish.highland  30  callfriend,5502
+0275 arabic.egyptian  30  callfriend,5781
+027d english.am.gen  30  callfriend,6402
+027e english.am.south  30  callfriend,6962
+027f spanish.highland  30  callfriend,5607
+027g spanish.highland  30  callfriend,5316
+027i english.am.gen  30
+027j english.am.gen  30
+027k english.am.gen  30
+027l english.am.south  30  callfriend,6966
+027o english.am.gen  30  callfriend,6862
+027p english.am.south  30  callfriend,6956
+027q mandarin.north  30  callfriend,5530
+027v english.am.gen  30  callfriend,6557
+027x hindi  30  callfriend,6441
+027y vietnamese  30  callfriend,6909
+027z korean  30  callfriend,6725
+0280 english.am.gen  30
+0281 mandarin.north  30  callfriend,5916
+0286 spanish.highland  30  callfriend,5607
+0287 english.am.gen  30
+0289 spanish.carib  30  callfriend,6949
+028b japanese  30  callfriend,6630
+028c spanish.carib  30  callfriend,6875
+028h farsi  30  callfriend,6881
+028k arabic.egyptian  30  callfriend,5781
+028r mandarin.north  30  callfriend,5530
+028t tamil  30  callfriend,6417
+028v mandarin.north  30  callfriend,5904
+028w mandarin.north  30  callfriend,5904
+028y tamil  30  callfriend,6501
+0293 vietnamese  30  callfriend,6951
+0294 english.am.gen  30
+0296 english.am.gen  30
+029b korean  30  callfriend,6648
+029e japanese  30  callfriend,6616
+029i english.am.south  30  callfriend,6970
+029o english.am.gen  30
+029w english.am.gen  30
+029y mandarin.taiwan  30  callfriend,5960
+02a2 english.am.gen  30
+02a4 japanese  30  callfriend,6716
+02a6 arabic.egyptian  30  callfriend,6301
+02aa vietnamese  30  callfriend,6756
+02ag korean  30  callfriend,6633
+02ai english.am.gen  30
+02ak hindi  30  callfriend,6556
+02al english.am.south  30  callfriend,6974
+02ap french.canada  30  callfriend,5500
+02au vietnamese  30  callfriend,6934
+02aw korean  30  callfriend,6725
+02ax mandarin.taiwan  30  callfriend,5895
+02ay english.am.south  30  callfriend,6927
+02b1 english.am.gen  30  callfriend,6239
+02b2 mandarin.taiwan  30  callfriend,5894
+02b3 french.canada  30  callfriend,5460
+02b7 english.am.gen  30
+02b9 arabic.egyptian  30  callfriend,5409
+02bd japanese  30  callfriend,6742
+02bg german  30  callfriend,6846
+02bi english.am.gen  30
+02bl english.am.gen  30
+02bm english.am.gen  30
+02bn english.am.gen  30  callfriend,6649
+02bo spanish.highland  30  callfriend,5418
+02bp korean  30  callfriend,6762
+02bs english.am.gen  30
+02bx arabic.egyptian  30  callfriend,6052
+02c6 arabic.egyptian  30  callfriend,6431
+02c7 english.am.gen  30
+02c8 tamil  30  callfriend,6501
+02cd english.am.gen  30  callfriend,6899
+02cf arabic.egyptian  30  callfriend,5759
+02co spanish.highland  30  callfriend,5367
+02cr hindi  30  callfriend,6580
+02ct tamil  30  callfriend,6335
+02cy french.canada  30  callfriend,5460
+02d0 spanish.carib  30  callfriend,6950
+02d2 mandarin.north  30  callfriend,5010
+02d3 hindi  30  callfriend,6426
+02d4 farsi  30  callfriend,6848
+02d9 korean  30  callfriend,6808
+02dd korean  30  callfriend,6682
+02df vietnamese  30  callfriend,6817
+02dg korean  30  callfriend,6682
+02dj english.am.gen  30
+02dm spanish.highland  30  callfriend,5354
+02dp farsi  30  callfriend,6835
+02dq korean  30  callfriend,6774
+02dr japanese  30  callfriend,6525
+02ds mandarin.north  30  callfriend,5973
+02dt mandarin.north  30  callfriend,5904
+02e6 english.am.gen  30
+02e9 english.am.gen  30  callfriend,6239
+02eh tamil  30  callfriend,6433
+02ei english.am.south  30  callfriend,6956
+02el english.am.gen  30
+02em hindi  30  callfriend,6608
+02eo spanish.highland  30  callfriend,5650
+02eq english.am.gen  30
+02es tamil  30  callfriend,6591
+02et spanish.highland  30  callfriend,5558
+02ez hindi  30  callfriend,6400
+02f4 english.am.gen  30
+02f7 spanish.carib  30  callfriend,6896
+02fa english.am.gen  30  callfriend,6476
+02fd french.canada  30  callfriend,5498
+02ff english.am.gen  30
+02fh english.am.gen  30
+02fk english.am.gen  30
+02fs english.am.south  30  callfriend,6890
+02fv spanish.highland  30  callfriend,4468
+02fw english.am.gen  30
+02fy mandarin.north  30  callfriend,5949
+02g3 mandarin.north  30  callfriend,5195
+02g9 mandarin.north  30  callfriend,5195
+02gb hindi  30  callfriend,6580
+02gd german  30  callfriend,6522
+02ge mandarin.taiwan  30  callfriend,5983
+02gj english.am.gen  30
+02gm mandarin.taiwan  30  callfriend,5879
+02gv arabic.egyptian  30  callfriend,5913
+02gw arabic.egyptian  30  callfriend,5878
+02gx english.am.gen  30
+02gz english.am.gen  30
+02h2 mandarin.taiwan  30  callfriend,5979
+02h7 tamil  30  callfriend,6330
+02hb vietnamese  30  callfriend,6758
+02hl farsi  30  callfriend,6818
+02hn farsi  30  callfriend,6801
+02hx korean  30  callfriend,6773
+02i9 mandarin.taiwan  30  callfriend,5912
+02ia english.am.gen  30
+02ib farsi  30  callfriend,6811
+02id hindi  30  callfriend,6495
+02ie french.canada  30  callfriend,5460
+02if japanese  30  callfriend,6490
+02ig korean  30  callfriend,6757
+02ij english.am.gen  30  callfriend,6862
+02il arabic.egyptian  30  callfriend,6496
+02im tamil  30  callfriend,6417
+02io english.am.gen  30
+02ip tamil  30  callfriend,6471
+02ir spanish.carib  30  callfriend,6948
+02is hindi  30  callfriend,6607
+02iy tamil  30  callfriend,6330
+02j0 french.canada  30  callfriend,5500
+02j3 mandarin.north  30  callfriend,5800
+02j4 english.am.gen  30  callfriend,6938
+02j6 arabic.egyptian  30  callfriend,5822
+02j9 mandarin.north  30  callfriend,5824
+02je english.am.gen  30
+02jf farsi  30  callfriend,6741
+02jg english.am.gen  30
+02jk english.am.gen  30
+02jl english.am.south  30  callfriend,6965
+02jm english.am.gen  30  callfriend,6201
+02jq farsi  30  callfriend,6768
+02js vietnamese  30  callfriend,6895
+02jt mandarin.taiwan  30  callfriend,5899
+02jv hindi  30  callfriend,6556
+02jw spanish.carib  30  callfriend,6883
+02jz spanish.carib  30  callfriend,6876
+02k2 french.canada  30  callfriend,5499
+02k3 english.am.south  30  callfriend,6947
+02k6 vietnamese  30  callfriend,6758
+02kb english.am.south  30  callfriend,6932
+02kf vietnamese  30  callfriend,6894
+02kj english.am.gen  30
+02km english.am.gen  30
+02ko spanish.highland  30  callfriend,5418
+02kp spanish.carib  30  callfriend,6878
+02kt spanish.carib  30  callfriend,6834
+02kw hindi  30  callfriend,6505
+02kz spanish.highland  30  callfriend,5258
+02l3 japanese  30  callfriend,6761
+02l5 japanese  30  callfriend,6716
+02lb hindi  30  callfriend,6563
+02lg mandarin.taiwan  30  callfriend,5960
+02li vietnamese  30  callfriend,6817
+02lk tamil  30  callfriend,6454
+02lv arabic.egyptian  30  callfriend,6003
+02lx english.am.gen  30
+02ly korean  30  callfriend,6682
+02m0 tamil  30  callfriend,6444
+02m3 mandarin.taiwan  30  callfriend,5895
+02m4 german  30  callfriend,6846
+02m6 french.canada  30  callfriend,5464
+02m8 mandarin.north  30  callfriend,5949
+02mb english.am.gen  30
+02mc korean  30  callfriend,6757
+02md german  30  callfriend,6481
+02me korean  30  callfriend,6645
+02mh mandarin.north  30  callfriend,5530
+02mt tamil  30  callfriend,6454
+02mu tamil  30  callfriend,6439
+02mv korean  30  callfriend,6696
+02mw arabic.egyptian  30  callfriend,5409
+02n3 japanese  30  callfriend,6587
+02n5 french.canada  30  callfriend,5465
+02n6 english.am.gen  30
+02n9 mandarin.north  30  callfriend,5800
+02nb mandarin.north  30  callfriend,4972
+02ne english.am.gen  30
+02ng farsi  30  callfriend,6741
+02ni spanish.carib  30  callfriend,6949
+02nj vietnamese  30  callfriend,6930
+02nm arabic.egyptian  30  callfriend,6496
+02nn mandarin.north  30  callfriend,5779
+02no vietnamese  30  callfriend,6909
+02np english.am.gen  30
+02nv german  30  callfriend,6832
+02nz english.am.gen  30  callfriend,6402
+02o0 arabic.egyptian  30  callfriend,5804
+02o2 farsi  30  callfriend,6801
+02o5 english.am.gen  30
+02o8 tamil  30  callfriend,6429
+02of english.am.south  30  callfriend,6931
+02oi mandarin.taiwan  30  callfriend,5948
+02op tamil  30  callfriend,6223
+02oq german  30  callfriend,6577
+02oy arabic.egyptian  30  callfriend,6135
+02oz farsi  30  callfriend,6797
+02p1 hindi  30  callfriend,6665
+02p2 hindi  30  callfriend,6572
+02p4 spanish.highland  30  callfriend,5704
+02p5 english.am.gen  30  callfriend,6278
+02p6 english.am.gen  30
+02p8 english.am.gen  30
+02p9 english.am.gen  30
+02pd mandarin.taiwan  30  callfriend,5876
+02pf english.am.gen  30
+02pg mandarin.taiwan  30  callfriend,5972
+02ph english.am.gen  30
+02pi english.am.south  30  callfriend,6956
+02pk english.am.south  30  callfriend,6890
+02pl english.am.gen  30
+02pn english.am.gen  30  callfriend,6865
+02pp english.am.south  30  callfriend,6890
+02pr english.am.gen  30  callfriend,6428
+02pt english.am.gen  30
+02pu farsi  30  callfriend,6873
+02pw english.am.gen  30
+02py hindi  30  callfriend,6441
+02pz arabic.egyptian  30  callfriend,5804
+02q0 english.am.gen  30
+02q1 english.am.gen  30  callfriend,6865
+02q2 japanese  30  callfriend,6434
+02q5 mandarin.taiwan  30  callfriend,5901
+02qb spanish.highland  30  callfriend,5558
+02qd english.am.gen  30  callfriend,6869
+02qg english.am.gen  30
+02qh english.am.gen  30
+02ql mandarin.taiwan  30  callfriend,5895
+02qm english.am.south  30  callfriend,6956
+02qn mandarin.taiwan  30  callfriend,5929
+02qo french.canada  30  callfriend,5474
+02qr tamil  30  callfriend,6547
+02qs farsi  30  callfriend,6823
+02qu english.am.gen  30
+02qw spanish.highland  30  callfriend,5558
+02qy french.canada  30  callfriend,5404
+02qz arabic.egyptian  30  callfriend,5769
+02r3 french.canada  30  callfriend,5485
+02r5 english.am.gen  30
+02rc french.canada  30  callfriend,5481
+02rd japanese  30  callfriend,6742
+02rq spanish.highland  30  callfriend,5582
+02rv english.am.gen  30
+02rx english.am.gen  30
+02rz korean  30  callfriend,6730
+02s0 spanish.carib  30  callfriend,6887
+02s2 french.canada  30  callfriend,5405
+02s4 vietnamese  30  callfriend,6740
+02s5 arabic.egyptian  30  callfriend,5507
+02sa korean  30  callfriend,6774
+02sb english.am.gen  30  callfriend,6952
+02sc vietnamese  30  callfriend,6670
+02sg hindi  30  callfriend,6579
+02sh mandarin.taiwan  30  callfriend,5912
+02sl english.am.gen  30
+02ss mandarin.taiwan  30  callfriend,5879
+02sy arabic.egyptian  30  callfriend,6135
+02t1 vietnamese  30  callfriend,6909
+02t5 english.am.gen  30  callfriend,6938
+02t7 french.canada  30  callfriend,5506
+02tb farsi  30  callfriend,6873
+02tc english.am.gen  30
+02td german  30  callfriend,6610
+02te english.am.gen  30
+02tk english.am.gen  30  callfriend,6201
+02tl english.am.gen  30
+02tm hindi  30  callfriend,6441
+02to hindi  30  callfriend,6495
+02tp korean  30  callfriend,6762
+02tt tamil  30  callfriend,6433
+02u4 japanese  30  callfriend,6490
+02u5 tamil  30  callfriend,6778
+02u6 english.am.gen  30  callfriend,6428
+02u7 hindi  30  callfriend,6665
+02u9 japanese  30  callfriend,6632
+02ud english.am.gen  30
+02ue english.am.gen  30
+02uf english.am.gen  30
+02ui arabic.egyptian  30  callfriend,5507
+02uk arabic.egyptian  30  callfriend,5822
+02ul vietnamese  30  callfriend,6951
+02uv mandarin.taiwan  30  callfriend,5974
+02ux spanish.carib  30  callfriend,6877
+02uy german  30  callfriend,6695
+02uz french.canada  30  callfriend,5506
+02v0 farsi  30  callfriend,6859
+02v2 english.am.gen  30
+02vb english.am.south  30  callfriend,6962
+02vc spanish.carib  30  callfriend,6887
+02ve spanish.carib  30  callfriend,6949
+02vf vietnamese  30  callfriend,6898
+02vj english.am.south  30  callfriend,6968
+02vn english.am.gen  30  callfriend,6503
+02vq english.am.gen  30  callfriend,6649
+02vr english.am.south  30  callfriend,6927
+02vt arabic.egyptian  30  callfriend,6003
+02vy german  30  callfriend,6537
+02w2 korean  30  callfriend,6697
+02w7 farsi  30  callfriend,6849
+02w9 french.canada  30  callfriend,5482
+02wc farsi  30  callfriend,6858
+02we arabic.egyptian  30  callfriend,6254
+02wi english.am.south  30  callfriend,6974
+02wm english.am.south  30  callfriend,6968
+02wz hindi  30  callfriend,6620
+02x0 hindi  30  callfriend,6556
+02x3 hindi  30  callfriend,6552
+02x4 german  30  callfriend,6831
+02x5 english.am.gen  30  callfriend,6402
+02x9 english.am.gen  30
+02xa mandarin.taiwan  30  callfriend,5893
+02xb spanish.carib  30  callfriend,6851
+02xc vietnamese  30  callfriend,6756
+02xd french.canada  30  callfriend,5485
+02xf german  30  callfriend,6590
+02xh spanish.carib  30  callfriend,6834
+02xr spanish.carib  30  callfriend,6948
+02xs korean  30  callfriend,6808
+02xu mandarin.north  30  callfriend,5784
+02xy french.canada  30  callfriend,5483
+02xz vietnamese  30  callfriend,6740
+02y1 mandarin.taiwan  30  callfriend,5960
+02y2 english.am.gen  30
+02y6 japanese  30  callfriend,6465
+02y9 english.am.gen  30  callfriend,6952
+02yf mandarin.north  30  callfriend,5690
+02yl farsi  30  callfriend,6835
+02ym vietnamese  30  callfriend,6909
+02yp spanish.highland  30  callfriend,5685
+02yq farsi  30  callfriend,6859
+02yw english.am.gen  30
+02yz farsi  30  callfriend,6772
+02z1 tamil  30  callfriend,6439
+02z2 french.canada  30  callfriend,5462
+02z6 japanese  30  callfriend,6766
+02za english.am.gen  30
+02ze vietnamese  30  callfriend,6764
+02zg korean  30  callfriend,6762
+02zi english.am.gen  30  callfriend,6476
+02zl farsi  30  callfriend,6801
+02zr korean  30  callfriend,6753
+02zv japanese  30  callfriend,6765
+0300 english.am.gen  30
+0301 spanish.carib  30  callfriend,6856
+0303 mandarin.north  30  callfriend,5821
+0308 english.am.south  30  callfriend,6975
+030c english.am.south  30  callfriend,6953
+030e mandarin.taiwan  30  callfriend,5968
+030f german  30  callfriend,6780
+030i english.am.gen  30  callfriend,6503
+030l japanese  30  callfriend,6763
+030n german  30  callfriend,6573
+030r german  30  callfriend,6537
+030s english.am.gen  30
+030u english.am.gen  30
+030w french.canada  30  callfriend,5410
+0311 english.am.gen  30
+031a french.canada  30  callfriend,5498
+031g hindi  30  callfriend,6620
+031k english.am.gen  30  callfriend,6869
+031m english.am.gen  30
+031p farsi  30  callfriend,6772
+031u english.am.gen  30
+031x vietnamese  30  callfriend,6895
+0321 spanish.highland  30  callfriend,5589
+0324 spanish.carib  30  callfriend,6896
+032h english.am.gen  30
+032i korean  30  callfriend,6799
+032j korean  30  callfriend,6773
+032l farsi  30  callfriend,6772
+032m mandarin.taiwan  30  callfriend,5972
+032n spanish.carib  30  callfriend,6851
+032o spanish.carib  30  callfriend,6959
+032q japanese  30  callfriend,6805
+032w mandarin.taiwan  30  callfriend,5979
+032x vietnamese  30  callfriend,6850
+032y japanese  30  callfriend,6766
+032z german  30  callfriend,6481
+0331 hindi  30  callfriend,6495
+0333 farsi  30  callfriend,6860
+0334 tamil  30  callfriend,6519
+0338 farsi  30  callfriend,6768
+033c english.am.gen  30  callfriend,6239
+033f english.am.gen  30
+033g french.canada  30  callfriend,5404
+033m english.am.gen  30
+033p tamil  30  callfriend,6591
+033r arabic.egyptian  30  callfriend,5409
+033s german  30  callfriend,6421
+033t japanese  30  callfriend,6587
+033u english.am.gen  30
+033y vietnamese  30  callfriend,6906
+0340 german  30  callfriend,6548
+0341 spanish.carib  30  callfriend,6883
+0346 mandarin.north  30  callfriend,5784
+034b tamil  30  callfriend,6591
+034f korean  30  callfriend,6753
+034j spanish.highland  30  callfriend,5367
+034n spanish.carib  30  callfriend,6883
+034o english.am.gen  30
+034p farsi  30  callfriend,6881
+034z german  30  callfriend,6918
+0350 mandarin.north  30  callfriend,5784
+0351 english.am.south  30  callfriend,6962
+035a mandarin.taiwan  30  callfriend,5901
+035c english.am.gen  30  callfriend,6193
+035g german  30  callfriend,6846
+035i farsi  30  callfriend,6871
+035p english.am.gen  30
+035q french.canada  30  callfriend,5474
+035r vietnamese  30  callfriend,6895
+035s farsi  30  callfriend,6860
+035u mandarin.north  30  callfriend,5930
+036a arabic.egyptian  30  callfriend,5955
+036c japanese  30  callfriend,6616
+036d english.am.gen  30
+036h spanish.carib  30  callfriend,6959
+036m english.am.gen  30
+036o arabic.egyptian  30  callfriend,6254
+036r english.am.gen  30
+036u english.am.gen  30  callfriend,6508
+036v english.am.gen  30
+036w english.am.gen  30
+0373 spanish.carib  30  callfriend,6948
+0374 english.am.gen  30  callfriend,6278
+0376 spanish.highland  30  callfriend,5650
+037a japanese  30  callfriend,6763
+037b english.am.gen  30
+037c english.am.gen  30  callfriend,6938
+037f arabic.egyptian  30  callfriend,5507
+037g spanish.highland  30  callfriend,5258
+037h arabic.egyptian  30  callfriend,5822
+037o korean  30  callfriend,6808
+037q english.am.south  30  callfriend,6970
+037t english.am.gen  30
+037u tamil  30  callfriend,6357
+0380 english.am.gen  30
+0381 spanish.carib  30  callfriend,6874
+0385 vietnamese  30  callfriend,6657
+0386 german  30  callfriend,6806
+0388 vietnamese  30  callfriend,6817
+0389 german  30  callfriend,6695
+038h english.am.gen  30
+038l mandarin.taiwan  30  callfriend,5968
+038m english.am.gen  30
+038n english.am.gen  30
+038s english.am.gen  30
+038t korean  30  callfriend,6783
+038u tamil  30  callfriend,6547
+0397 farsi  30  callfriend,6879
+039a english.am.gen  30
+039h spanish.highland  30  callfriend,5704
+039j vietnamese  30  callfriend,6657
+039k english.am.gen  30  callfriend,6278
+039n french.canada  30  callfriend,5464
+039u mandarin.taiwan  30  callfriend,5979
+039w french.canada  30  callfriend,5466
+03a2 mandarin.taiwan  30  callfriend,5929
+03a5 english.am.gen  30
+03a7 japanese  30  callfriend,4905
+03a8 english.am.gen  30
+03a9 german  30  callfriend,6590
+03aa hindi  30  callfriend,6580
+03ab english.am.gen  30
+03ag mandarin.taiwan  30  callfriend,5951
+03av english.am.gen  30
+03b2 english.am.gen  30
+03b6 tamil  30  callfriend,6368
+03b8 spanish.carib  30  callfriend,6959
+03bd english.am.gen  30  callfriend,6193
+03bf english.am.gen  30  callfriend,6428
+03bm spanish.highland  30  callfriend,5502
+03bv french.canada  30  callfriend,5465
+03bw mandarin.taiwan  30  callfriend,5893
+03c2 french.canada  30  callfriend,5481
+03c8 english.am.gen  30
+03c9 mandarin.north  30  callfriend,5195
+03ca mandarin.taiwan  30  callfriend,5971
+03ce vietnamese  30  callfriend,6740
+03cs french.canada  30  callfriend,5465
+03cy arabic.egyptian  30  callfriend,5759
+03d2 english.am.gen  30
+03d4 hindi  30  callfriend,6400
+03d5 spanish.carib  30  callfriend,6945
+03d8 japanese  30  callfriend,6739
+03d9 mandarin.taiwan  30  callfriend,5972
+03dc mandarin.taiwan  30  callfriend,5894
+03dd spanish.highland  30  callfriend,5704
+03de japanese  30  callfriend,6465
+03df mandarin.north  30  callfriend,5906
+03dk english.am.gen  30
+03dl english.am.gen  30
+03dm mandarin.taiwan  30  callfriend,5899
+03dp english.am.gen  30
+03dy german  30  callfriend,6573
+03e1 korean  30  callfriend,6645
+03e2 french.canada  30  callfriend,5410
+03ea english.am.gen  30  callfriend,6402
+03eb english.am.gen  30
+03ee english.am.gen  30
+03el spanish.highland  30  callfriend,5704
+03eu mandarin.taiwan  30  callfriend,5957
+03f3 english.am.gen  30
+03f7 french.canada  30  callfriend,5460
+03fa spanish.carib  30  callfriend,6950
+03ff french.canada  30  callfriend,5498
+03fh arabic.egyptian  30  callfriend,6003
+03fl korean  30  callfriend,6773
+03fm arabic.egyptian  30  callfriend,5774
+03fn english.am.gen  30
+03fq english.am.gen  30
+03fs english.am.south  30  callfriend,6975
+03ft english.am.gen  30
+03fw english.am.gen  30
+03g4 arabic.egyptian  30  callfriend,5961
+03g6 hindi  30  callfriend,6627
+03g7 mandarin.north  30  callfriend,4972
+03g8 korean  30  callfriend,6704
+03ga english.am.gen  30
+03gg english.am.gen  30
+03gh mandarin.taiwan  30  callfriend,5957
+03gk spanish.carib  30  callfriend,6896
+03gp mandarin.taiwan  30  callfriend,5879
+03gq japanese  30  callfriend,6759
+03gr english.am.gen  30  callfriend,6278
+03gw japanese  30  callfriend,6632
+03gx spanish.highland  30  callfriend,5685

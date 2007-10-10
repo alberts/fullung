@@ -204,6 +204,14 @@ INVALID_FILES = set([
         ('lid05e1', 'lid09825', 'lid09825.sph'),
         ('lid05e1', 'lid10552', 'lid10552.sph'),
         ('lid05e1', 'lid10910', 'lid10910.sph'),
+        ('cslu22', 'AR-612', 'AR-612.story.1.3s.sph'),
+        ('fisher', '20040602_114846_A001253_B001252', '20040602_114846_A001253_B001252.sph.0.1.3s.sph'),
+        ('fisher', 'fsh_115674', 'fsh_115674.sph.0.1.10s.sph'),
+        ('lre07_tr', 'rus_008_b', 'lre07_tr_rus_008_b.2.3s.sph'),
+        ('lre07_tr', 'rus_013_b', 'lre07_tr_rus_013_b.2.3s.sph'),
+        ('lre07_tr', 'wuu_013_b', 'lre07_tr_wuu_013_b.2.3s.sph'),
+        ('MIXER', 'kckx', 'kckx.sph.1.1.3s.sph'),
+        ('MIXER', '15517', 'xaxk.sph.1.10s.sph'),
         ])
 
 def read_lid03e1_key(fp):
