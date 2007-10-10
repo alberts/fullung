@@ -221,8 +221,10 @@ def read_lid03e1_key(fp):
         lang = lang.lower()
         if lang == 'hindi':
             lang = 'hindustani'
+            dialect = 'hindi'
         elif lang == 'mandarin':
             lang = 'chinese'
+            dialect = 'mandarin'
         if not lang in LANGUAGES:
             raise ValueError, 'invalid language: %s' % lang
         convid = convid.lower()
@@ -262,6 +264,7 @@ def read_lid05d1_key(fp):
         filename, lang, convid, ign, ign = re.split('\s+', line)
         if lang == 'IE':
             lang = 'english'
+            dialect = 'indian'
         else:
             raise ValueError, 'invalid code: %s' % lang
         ign, duration, id = filename.split('/', 2)
@@ -297,8 +300,10 @@ def read_lid05e1_key(fp):
         assert duration in (3, 10, 30)
         if lang == 'hindi':
             lang = 'hindustani'
+            dialect = 'hindi'
         elif lang == 'mandarin':
             lang = 'chinese'
+            dialect = 'mandarin'
         if not lang in LANGUAGES:
             raise ValueError, 'invalid language: %s' % lang
         if corpus == 'CF':
@@ -335,8 +340,10 @@ def read_lid96_key(fp, corpus):
         lang = lang.split('.', 1)[0].lower()
         if lang == 'hindi':
             lang = 'hindustani'
+            dialect = 'hindi'
         elif lang == 'mandarin':
             lang = 'chinese'
+            dialect = 'mandarin'
         if not lang in LANGUAGES:
             raise ValueError, 'invalid language: %s' % lang
         duration = int(duration)
@@ -418,27 +425,29 @@ def read_ohsu(fp):
         id = line.strip()
         if id[:2] == 'AE':
             lang = 'english'
+            dialect = 'american'
         elif id[:2] == 'GE':
             lang = 'german'
         elif id[:2] == 'HI':
             lang = 'hindustani'
+            dialect = 'hindi'
         elif id[:2] == 'IE':
             lang = 'english'
+            dialect = 'indian'
         elif id[:2] == 'JA':
             lang = 'japanese'
         elif id[:2] == 'KO':
             lang = 'korean'
         elif id[:2] == 'MM':
-            # dialect: mainland
             lang = 'chinese'
+            dialect = 'mandarin'
         elif id[:2] == 'MS':
-            # dialect: mexican
             lang = 'spanish'
         elif id[:2] == 'TA':
             lang = 'tamil'
         elif id[:2] == 'TM':
-            # dialect: taiwan
             lang = 'chinese'
+            dialect = 'taiwan'
         else:
             raise ValueError, 'invalid id: %s' % id
         files = set(['%s-A-con.nis' % id, '%s-B-con.nis' % id])
@@ -459,26 +468,24 @@ def read_lre07_tr(fp):
         langcode, id, channel, gender, age, line = line.strip().split(',')
         if langcode == 'wuu':
             lang = 'chinese'
+            dialect = 'wu'
         elif langcode == 'arb':
             lang = 'arabic'
         elif langcode == 'ben':
             lang = 'bengali'
         elif langcode == 'cfr':
-            # dialect: Min Nan
             lang = 'chinese'
+            dialect = 'min'
         elif langcode == 'rus':
             lang = 'russian'
         elif langcode == 'tha':
             lang = 'thai'
         elif langcode == 'urd':
-            # urdu is a hindustani dialect
             lang = 'hindustani'
-        elif langcode == 'wuu':
-            # dialect: Wu
-            lang = 'chinese'
+            dialect = 'urdu'
         elif langcode == 'yuh':
-            # dialect: Cantonese
             lang = 'chinese'
+            dialect = 'cantonese'
         else:
             raise ValueError, 'invalid language/dialect: %s' % langcode
         key = 'lre07_tr', '%s_%s_%s' % (langcode, id, channel)
@@ -986,12 +993,19 @@ def create_subsets(groups, n):
     return subsets
 
 def create_splits(groups):
+    otherlang_filter = lambda x: x[3] not in FRONTEND_LANGUAGES
     frontend_filter = lambda x: x[3] in FRONTEND_LANGUAGES
     backend_filter = lambda x: x[4] in (3,10,30) and x[3] in FRONTEND_LANGUAGES and x[2].find('sre') == -1
     test_filter = lambda x: x[4] in (3,10,30) and x[3] in FRONTEND_LANGUAGES and x[2].find('sre') == -1
 
     test_splits, be_splits, fe_splits = {}, {}, {}
     testsubsets = create_subsets(groups, TEST_SPLITS)
+
+    all_files = set()
+    for g in groups:
+        all_files |= g
+    otherlang_files = frozenset(filter(otherlang_filter, all_files))
+
     for i, testsubset in enumerate(testsubsets):
         test_files = set()
         for x in testsubset: test_files |= x
@@ -1005,7 +1019,8 @@ def create_splits(groups):
             fesubset = be_groups - besubset
             fe_files = set()
             for x in fesubset: fe_files |= x
-            fe_splits[i,j] = frozenset(filter(frontend_filter, fe_files))
+            fesplit = frozenset(filter(frontend_filter, fe_files))
+            fe_splits[i,j] = frozenset(fesplit | otherlang_files)
     return test_splits, be_splits, fe_splits
 
 def check_splits(files, testsplits, besplits, fesplits):
@@ -1064,6 +1079,7 @@ def main():
     groups = files_to_groups(files)
     testsplits, besplits, fesplits = create_splits(groups)
 
+    print >>sys.stderr, 'writing splits...'
     write_key(os.path.join('output', 'key.txt'), files)
     for k, v in testsplits.iteritems():
         filename = os.path.join('output', 'test_%d.txt' % k)
