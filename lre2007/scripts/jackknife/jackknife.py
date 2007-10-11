@@ -934,6 +934,7 @@ def debug(segments, files):
 def files_to_groups(files):
     validfiles = set([x.strip() for x in open('validfiles.txt').readlines()])
     validcf = set([x.strip() for x in open('validcf.txt').readlines()])
+    longfiles = set([x.strip() for x in open('longfiles.txt').readlines()])
     for badfile in INVALID_FILES: assert badfile in files
     groups = set()
     for k, v in files.iteritems():
@@ -949,8 +950,15 @@ def files_to_groups(files):
         def valid_callfriend_filter(x):
             if x[0] != 'callfriend': return True
             return x[1] in validcf
+        def longfiles_filter(x):
+            duration = files[x]['duration']
+            if duration == -1 or x[2].find('sre') == 0:
+                return True
+            filekey = '%d/%s/%s' % (duration, x[0], x[2])
+            return filekey in longfiles
         o = filter(validfiles_filter,  o)
         o = filter(valid_callfriend_filter,  o)
+        o = filter(longfiles_filter,  o)
         # group might become empty if it only contained invalid files,
         # so check len before adding
         if len(o) > 0:
