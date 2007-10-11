@@ -66,4 +66,6 @@ public interface Handle2 extends Comparable<Handle2> {
     List<Score> getScores();
 
     void setScores(List<Score> scores);
+
+    int getDuration();
 }

@@ -54,4 +54,9 @@ public final class Handle3 implements Handle2, Serializable {
     public int compareTo(Handle2 o) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public int getDuration() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -1,5 +1,7 @@
 package net.lunglet.lre.lre07;
 
+import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
@@ -42,7 +44,9 @@ public final class CreateBigrams4 {
     }
 
     private static FloatDenseVector calculateNGrams(final List<FloatDenseVector> segments) {
-        FloatDenseMatrix posteriors = new FloatDenseMatrix(segments.get(0).rows(), segments.size());
+        int rows = segments.get(0).rows();
+        int cols = segments.size();
+        FloatDenseMatrix posteriors = new FloatDenseMatrix(rows, cols, Orientation.COLUMN, Storage.DIRECT);
         for (int j = 0; j < segments.size(); j++) {
             posteriors.setColumn(j, segments.get(j));
         }
@@ -77,12 +81,13 @@ public final class CreateBigrams4 {
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        CrossValidationSplits cvsplits = new CrossValidationSplits(1, 1);
-        Set<SplitEntry> splitFiles = cvsplits.getAllSplits();
+        CrossValidationSplits cvsplits = Constants.CVSPLITS;
+        Set<SplitEntry> splitEntries = cvsplits.getAllSplits();
         final String phonemePrefix = "cz";
-        H5File h5file = new H5File(new File("G:/", phonemePrefix + "ngrams.h5"));
+        String workingDir = Constants.WORKING_DIRECTORY;
+        H5File h5file = new H5File(new File(workingDir, phonemePrefix + "ngrams.h5"));
         Map<String, Group> groups = new HashMap<String, Group>();
-        for (SplitEntry splitFile : splitFiles) {
+        for (SplitEntry splitFile : splitEntries) {
             if (groups.containsKey(splitFile.getCorpus())) {
                 continue;
             }
@@ -90,22 +95,54 @@ public final class CreateBigrams4 {
             groups.put(splitFile.getCorpus(), group);
         }
         int index = 0;
-        List<SplitEntry> sortedfrontendFiles = new ArrayList<SplitEntry>(splitFiles);
-        Collections.sort(sortedfrontendFiles);
-        for (SplitEntry splitFile : sortedfrontendFiles) {
-            File zipFile = splitFile.getFile("_0.phnrec.zip");
-            List<FloatDenseVector> segments = readPhnRecZip(phonemePrefix, zipFile);
-            if (segments.size() < 2) {
-                System.out.println("too few segments for " + zipFile);
+        List<SplitEntry> splitEntriesList = new ArrayList<SplitEntry>(splitEntries);
+        Collections.sort(splitEntriesList);
+        for (SplitEntry splitEntry : splitEntriesList) {
+            File zipFile = splitEntry.getFile("_0.phnrec.zip");
+            if (!zipFile.exists()) {
                 continue;
             }
+            List<FloatDenseVector> segments = readPhnRecZip(phonemePrefix, zipFile);
             FloatDenseVector ngrams = calculateNGrams(segments);
-            Group group = groups.get(splitFile.getCorpus());
-            writeNGrams(splitFile.getName(), splitFile.getLanguage(), ngrams, group, index++);
+            Group group = groups.get(splitEntry.getCorpus());
+            writeNGrams(splitEntry.getName(), splitEntry.getLanguage(), ngrams, group, index++);
         }
         for (Group group : groups.values()) {
             group.close();
         }
         h5file.close();
     }
+
+//    public static void main2(final String[] args) throws UnsupportedAudioFileException, IOException {
+//        CrossValidationSplits cvsplits = Constants.CVSPLITS;
+//        Set<SplitEntry> splitFiles = cvsplits.getAllSplits();
+//        String workingDir = Constants.WORKING_DIRECTORY;
+//        H5File h5file = new H5File(new File(workingDir, "ngrams.h5"));
+//        Map<String, Group> groups = new HashMap<String, Group>();
+//        for (SplitEntry splitFile : splitFiles) {
+//            if (groups.containsKey(splitFile.getCorpus())) {
+//                continue;
+//            }
+//            Group group = h5file.getRootGroup().createGroup("/" + splitFile.getCorpus());
+//            groups.put(splitFile.getCorpus(), group);
+//        }
+//        int index = 0;
+//        List<SplitEntry> sortedfrontendFiles = new ArrayList<SplitEntry>(splitFiles);
+//        Collections.sort(sortedfrontendFiles);
+//        for (SplitEntry splitFile : sortedfrontendFiles) {
+//            List<FloatDenseVector> ngramsList = new ArrayList<FloatDenseVector>();
+//            for (String phonemePrefix : new String[]{"cz", "hu", "ru"}) {
+//                File zipFile = splitFile.getFile("_0.phnrec.zip");
+//                List<FloatDenseVector> segments = readPhnRecZip(phonemePrefix, zipFile);
+//                ngramsList.add(calculateNGrams(segments));
+//            }
+//            FloatDenseVector ngrams = FloatMatrixUtils.concatenate(ngramsList.toArray(new FloatDenseVector[0]));
+//            Group group = groups.get(splitFile.getCorpus());
+//            writeNGrams(splitFile.getName(), splitFile.getLanguage(), ngrams, group, index++);
+//        }
+//        for (Group group : groups.values()) {
+//            group.close();
+//        }
+//        h5file.close();
+//    }
 }

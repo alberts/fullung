@@ -65,7 +65,7 @@ public final class CrossValidationSplits {
         }
 
         public void setDuration(final int duration) {
-            if (duration != 3 && duration != 10 && duration != 30) {
+            if (duration != 3 && duration != 10 && duration != 30 && duration != -1) {
                 throw new IllegalArgumentException();
             }
             this.duration = duration;
@@ -100,6 +100,8 @@ public final class CrossValidationSplits {
 
     private final Map<String, Set<SplitEntry>> splits;
 
+    private final Map<String, SplitEntry> splitEntries;
+
     private final int testSplits;
 
     private final int backendSplits;
@@ -118,6 +120,7 @@ public final class CrossValidationSplits {
         this.dataDirectory = dataDirectory;
         this.testSplits = testSplits;
         this.backendSplits = backendSplits;
+        this.splitEntries = new HashMap<String, SplitEntry>();
         this.splits = readSplits();
     }
 
@@ -200,7 +203,9 @@ public final class CrossValidationSplits {
             for (int i = 0; i < indexes.length; i++) {
                 final int j = i;
                 final int index = indexes[i];
-                handles.add(new AbstractHandle2(name, index, label) {
+                handles.add(new AbstractHandle2(name, index, label, entry.getDuration()) {
+                    private static final long serialVersionUID = 1L;
+
                     @Override
                     public FloatVector<?> getData() {
                         return getHandleData(datah5, name, new long[]{j, 0});
@@ -211,24 +216,36 @@ public final class CrossValidationSplits {
         return handles;
     }
 
+    private boolean isEntryValid(final SplitEntry entry) {
+        return !entry.corpus.equals("callfriend") && !entry.filename.equals("tgtd.sph.2.30s.sph");
+//        return entry.duration != -1 && !entry.filename.startsWith("sre");
+//        return true;
+    }
+
     private Set<SplitEntry> readSplit(final String splitName) throws IOException {
         File splitFile = new File(splitsDirectory, splitName + ".txt");
+        System.out.println(splitFile);
         BufferedReader reader = new BufferedReader(new FileReader(splitFile), 1024 * 1024);
         String line = reader.readLine();
         Set<SplitEntry> entries = new HashSet<SplitEntry>();
         while (line != null) {
-            SplitEntry entry = new SplitEntry();
             String[] parts = line.split("\\s+");
             // TODO remove this toLowerCase call
-            entry.corpus = parts[0].toLowerCase();
-            entry.filename = parts[2];
-            entry.language = parts[3];
-            entry.setDuration(Integer.valueOf(parts[4]));
-
-            if (!entry.corpus.equals("callfriend") && !entry.filename.equals("tgtd.sph.2.30s.sph")) {
+            String corpus = parts[0].toLowerCase();
+            String filename = parts[2];
+            String id = String.format("/%s/%s", corpus, filename);
+            SplitEntry entry = splitEntries.get(id);
+            if (entry == null) {
+                entry = new SplitEntry();
+                entry.corpus = corpus;
+                entry.filename = filename;
+                entry.language = parts[3];
+                entry.setDuration(Integer.valueOf(parts[4]));
+                splitEntries.put(id, entry);
+            }
+            if (isEntryValid(entry)) {
                 entries.add(entry);
             }
-
             line = reader.readLine();
         }
         return entries;

@@ -196,8 +196,14 @@ public final class JackSVM2 implements Serializable {
             indexes[i] = handle.getIndex();
             uniqueLabels.add(handle.getLabel());
         }
+        // only train models for valid target labels
+        Set<String> validTargetLabels = new HashSet<String>();
+        Collections.addAll(validTargetLabels, "arabic", "bengali", "chinese", "english", "farsi", "german",
+            "hindustani", "japanese", "korean", "russian", "spanish", "tamil", "thai", "vietnamese");
+        uniqueLabels.retainAll(validTargetLabels);
         PrecomputedKernel kernel = createPrecomputedKernel(indexes);
         List<String> labelsList = new ArrayList<String>(uniqueLabels);
+        // sort labels so that scores are always in alphabetic order (by target label)
         Collections.sort(labelsList);
         int p = labelsList.size() <= 2 ? 1 : labelsList.size();
         this.targetLabels = new ArrayList<String>(p);

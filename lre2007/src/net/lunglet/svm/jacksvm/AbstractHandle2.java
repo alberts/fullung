@@ -18,11 +18,18 @@ public abstract class AbstractHandle2 implements Handle2, Serializable {
     private final String name;
 
     private List<Score> scores;
+    
+    private final int duration;
 
     public AbstractHandle2(final String name, final int index, final String label) {
+        this(name, index, label, Integer.MIN_VALUE);
+    }
+    
+    public AbstractHandle2(final String name, final int index, final String label, final int duration) {
         this.name = name;
         this.index = index;
         this.label = label;
+        this.duration = duration;
     }
 
     public final int compareTo(final Handle2 o) {
@@ -70,5 +77,12 @@ public abstract class AbstractHandle2 implements Handle2, Serializable {
 
     public final void setScores(final List<Score> scores) {
         this.scores = Collections.unmodifiableList(new ArrayList<Score>(scores));
+    }
+    
+    public int getDuration() {
+        if (duration == Integer.MIN_VALUE) {
+            throw new IllegalStateException();
+        }
+        return duration;
     }
 }
