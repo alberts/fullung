@@ -38,7 +38,7 @@ public final class PhnRec {
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        File inputDirectory = new File("G:/MIT/data");
+        File inputDirectory = new File("G:/lid07e1/data");
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         File[] inputFiles = FileUtils.listFiles(inputDirectory, filter, true);
         for (File inputFile : inputFiles) {
@@ -74,6 +74,7 @@ public final class PhnRec {
             File tempOutputFile = File.createTempFile("phnrec", ".zip");
             tempOutputFile.deleteOnExit();
             LOG.info("Temporary output file = " + tempOutputFile.getCanonicalPath());
+            // TODO can use a ByteArrayOutputStream instead
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tempOutputFile));
             out.setLevel(9);
             for (PhnRecSystem system : PHNREC_SYSTEMS) {

@@ -1,40 +1,40 @@
 package cz.vutbr.fit.speech.phnrec;
 
+import com.googlecode.array4j.FloatMatrixUtils;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseUtils;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.math.FloatMatrixMath;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.array4j.FloatMatrixUtils;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseUtils;
-import com.googlecode.array4j.dense.FloatDenseVector;
-import com.googlecode.array4j.math.FloatMatrixMath;
-
 public final class PhonemeUtil {
-    public static FloatDenseVector calculateNGrams(final FloatDenseMatrix posteriors) {
-        if (posteriors.columns() < 2) {
-            throw new IllegalArgumentException();
+    private static FloatDenseVector bigrams(final FloatDenseMatrix posteriors, final int n) {
+        if (posteriors.columns() <= n) {
+            return new FloatDenseVector(posteriors.rows() * posteriors.rows());
         }
+        FloatDenseMatrix b1 = FloatDenseUtils.subMatrixColumns(posteriors, 0, posteriors.columns() - n);
+        FloatDenseMatrix b2 = FloatDenseUtils.subMatrixColumns(posteriors, n, posteriors.columns());
+        FloatDenseMatrix bigrams = FloatMatrixMath.times(b1, b2.transpose());
+        bigrams.plusEquals(1.0f);
+        FloatMatrixMath.logEquals(bigrams);
+        bigrams.minusEquals(FloatMatrixUtils.mean(bigrams));
+        return FloatMatrixUtils.columnsVector(bigrams);
+    }
+
+    public static FloatDenseVector calculateNGrams(final FloatDenseMatrix posteriors) {
         FloatDenseVector monograms = FloatMatrixUtils.columnSum(posteriors);
         monograms.plusEquals(1.0f);
         monograms.divideEquals(FloatMatrixUtils.sum(monograms));
         FloatMatrixMath.logEquals(monograms);
         monograms.minusEquals(FloatMatrixUtils.mean(monograms));
-
-        FloatDenseMatrix b1 = FloatDenseUtils.subMatrixColumns(posteriors, 0, posteriors.columns() - 1);
-        FloatDenseMatrix b2 = FloatDenseUtils.subMatrixColumns(posteriors, 1, posteriors.columns());
-        FloatDenseMatrix bigrams = FloatMatrixMath.times(b1, b2.transpose());
-        bigrams.plusEquals(1.0f);
-        // TODO probably onnodig want die mean ding doen dit anyway
-//        bigrams.divideEquals(FloatMatrixUtils.sum(bigrams));
-        FloatMatrixMath.logEquals(bigrams);
-        bigrams.minusEquals(FloatMatrixUtils.mean(bigrams));
-        // TODO doen weer vektor normalisering
-        FloatDenseVector bigramsVec = FloatMatrixUtils.columnsVector(bigrams);
-        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigramsVec);
-        return ngrams;
+        FloatDenseVector bigrams1 = bigrams(posteriors, 1);
+        FloatDenseVector bigrams2 = bigrams(posteriors, 2);
+//        FloatDenseVector bigrams3 = bigrams(posteriors, 3);
+        return FloatMatrixUtils.concatenate(monograms, bigrams1, bigrams2);
     }
 
     public static List<MasterLabel> readMasterLabels(final Reader reader) throws IOException {
