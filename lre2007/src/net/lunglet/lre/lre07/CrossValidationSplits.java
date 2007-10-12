@@ -3,7 +3,6 @@ package net.lunglet.lre.lre07;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,6 +44,9 @@ public final class CrossValidationSplits {
         }
 
         public File getFile() {
+            if (corpus.equals("lid07e1")) {
+                return new File("G:/lid07e1/data", filename);
+            }
             return new File(dataDirectory, duration + "/" + corpus + "/" + filename);
         }
 
@@ -106,26 +108,14 @@ public final class CrossValidationSplits {
 
     private final int backendSplits;
 
-    public CrossValidationSplits() throws IOException {
-        this(10, 10, new File(Constants.SPLITS_DIRECTORY), new File(Constants.DATA_DIRECTORY));
-    }
-
-    public CrossValidationSplits(int testSplits, final int backendSplits) throws IOException {
-        this(testSplits, backendSplits, new File(Constants.SPLITS_DIRECTORY), new File(Constants.DATA_DIRECTORY));
-    }
-
     public CrossValidationSplits(final int testSplits, final int backendSplits, final File splitsDirectory,
-            final File dataDirectory) throws IOException {
+            final File dataDirectory, final boolean includeEval) throws IOException {
         this.splitsDirectory = splitsDirectory;
         this.dataDirectory = dataDirectory;
         this.testSplits = testSplits;
         this.backendSplits = backendSplits;
         this.splitEntries = new HashMap<String, SplitEntry>();
-        this.splits = readSplits();
-    }
-
-    public CrossValidationSplits(final String splitsDirectory, final String dataDirectory) throws IOException {
-        this(10, 10, new File(splitsDirectory), new File(dataDirectory));
+        this.splits = readSplits(includeEval);
     }
 
     public int getTestSplits() {
@@ -159,18 +149,6 @@ public final class CrossValidationSplits {
         memSpace.close();
         dataset.close();
         return data;
-    }
-
-    private FloatDenseMatrix getData(final H5File datah5, final Set<SplitEntry> splits) {
-        return null;
-    }
-
-    public FloatDenseMatrix getBackendData(final H5File datah5) {
-        return getData(datah5, splits.get("backend"));
-    }
-
-    public FloatDenseMatrix getTestData(final H5File datah5) {
-        return getData(datah5, splits.get("test"));
     }
 
     public Map<String, Handle2> getDataMap(final String splitName, final H5File datah5) {
@@ -251,7 +229,7 @@ public final class CrossValidationSplits {
         return entries;
     }
 
-    private Map<String, Set<SplitEntry>> readSplits() throws IOException {
+    private Map<String, Set<SplitEntry>> readSplits(final boolean includeEval) throws IOException {
         Map<String, Set<SplitEntry>> splits = new HashMap<String, Set<SplitEntry>>();
         Set<SplitEntry> frontend = new HashSet<SplitEntry>();
         Set<SplitEntry> backend = new HashSet<SplitEntry>();
@@ -279,6 +257,10 @@ public final class CrossValidationSplits {
         all.addAll(frontend);
         all.addAll(backend);
         all.addAll(test);
+        if (includeEval) {
+            splits.put("eval", readSplit("eval"));
+            all.addAll(splits.get("eval"));
+        }
         splits.put("all", all);
         return splits;
     }

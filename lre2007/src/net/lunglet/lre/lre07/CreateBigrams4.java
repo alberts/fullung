@@ -55,10 +55,10 @@ public final class CreateBigrams4 {
         }
         FloatDenseVector monograms = PhonemeUtil.calculateMonograms(posteriors);
         FloatDenseVector bigrams = PhonemeUtil.calculateBigrams(posteriors, 1);
-//        FloatDenseVector stagbi = PhonemeUtil.calculateBigrams(posteriors, 2);
-        FloatDenseVector trigrams = PhonemeUtil.calculateTrigrams(posteriors, bigramIndexes);
-        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, trigrams);
-//        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, stagbi);
+        FloatDenseVector stagbi = PhonemeUtil.calculateBigrams(posteriors, 2);
+//        FloatDenseVector trigrams = PhonemeUtil.calculateTrigrams(posteriors, bigramIndexes);
+//        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, trigrams);
+        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, stagbi);
         return ngrams;
     }
 
@@ -92,7 +92,7 @@ public final class CreateBigrams4 {
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
         Set<SplitEntry> splitEntries = cvsplits.getAllSplits();
-        final String phonemePrefix = "cz";
+        final String phonemePrefix = "ru";
         BitSet bigramIndexes = PhonemeUtil.getBigramIndexes(phonemePrefix, 75);
         String workingDir = Constants.WORKING_DIRECTORY;
         H5File h5file = new H5File(new File(workingDir, phonemePrefix + "ngrams.h5"));
@@ -122,37 +122,4 @@ public final class CreateBigrams4 {
         }
         h5file.close();
     }
-
-//    public static void main2(final String[] args) throws UnsupportedAudioFileException, IOException {
-//        CrossValidationSplits cvsplits = Constants.CVSPLITS;
-//        Set<SplitEntry> splitFiles = cvsplits.getAllSplits();
-//        String workingDir = Constants.WORKING_DIRECTORY;
-//        H5File h5file = new H5File(new File(workingDir, "ngrams.h5"));
-//        Map<String, Group> groups = new HashMap<String, Group>();
-//        for (SplitEntry splitFile : splitFiles) {
-//            if (groups.containsKey(splitFile.getCorpus())) {
-//                continue;
-//            }
-//            Group group = h5file.getRootGroup().createGroup("/" + splitFile.getCorpus());
-//            groups.put(splitFile.getCorpus(), group);
-//        }
-//        int index = 0;
-//        List<SplitEntry> sortedfrontendFiles = new ArrayList<SplitEntry>(splitFiles);
-//        Collections.sort(sortedfrontendFiles);
-//        for (SplitEntry splitFile : sortedfrontendFiles) {
-//            List<FloatDenseVector> ngramsList = new ArrayList<FloatDenseVector>();
-//            for (String phonemePrefix : new String[]{"cz", "hu", "ru"}) {
-//                File zipFile = splitFile.getFile("_0.phnrec.zip");
-//                List<FloatDenseVector> segments = readPhnRecZip(phonemePrefix, zipFile);
-//                ngramsList.add(calculateNGrams(segments));
-//            }
-//            FloatDenseVector ngrams = FloatMatrixUtils.concatenate(ngramsList.toArray(new FloatDenseVector[0]));
-//            Group group = groups.get(splitFile.getCorpus());
-//            writeNGrams(splitFile.getName(), splitFile.getLanguage(), ngrams, group, index++);
-//        }
-//        for (Group group : groups.values()) {
-//            group.close();
-//        }
-//        h5file.close();
-//    }
 }

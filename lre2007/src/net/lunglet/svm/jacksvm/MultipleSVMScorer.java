@@ -19,6 +19,7 @@ import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
+import net.lunglet.lre.lre07.Constants;
 import net.lunglet.lre.lre07.CrossValidationSplits;
 import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
 
@@ -89,7 +90,7 @@ public final class MultipleSVMScorer {
     }
 
     public static void main(final String[] args) throws IOException {
-        CrossValidationSplits cvsplits = new CrossValidationSplits(1, 1);
+        CrossValidationSplits cvsplits = Constants.CVSPLITS;
         H5File modelsh5 = new H5File(MODELS_FILENAME, H5File.H5F_ACC_RDONLY);
         for (int tidx = 0; tidx < cvsplits.getTestSplits(); tidx++) {
             for (int beidx = 0; beidx < cvsplits.getBackendSplits(); beidx++) {

@@ -1,5 +1,6 @@
 package net.lunglet.lre.lre07;
 
+import java.io.File;
 import java.io.IOException;
 
 public final class Constants {
@@ -22,7 +23,9 @@ public final class Constants {
         try {
             int testSplits = 10;
             int backendSplits = 10;
-            CVSPLITS = new CrossValidationSplits(testSplits, backendSplits);
+            boolean includeEval = true;
+            CVSPLITS = new CrossValidationSplits(testSplits, backendSplits, new File(SPLITS_DIRECTORY), new File(
+                    DATA_DIRECTORY), includeEval);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

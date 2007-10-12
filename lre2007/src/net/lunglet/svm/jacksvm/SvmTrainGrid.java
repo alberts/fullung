@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import net.lunglet.gridgain.GridTaskFactory;
 import net.lunglet.gridgain.GridTaskManager;
 import net.lunglet.hdf.H5File;
+import net.lunglet.lre.lre07.Constants;
 import net.lunglet.lre.lre07.CrossValidationSplits;
 import org.gridgain.grid.Grid;
 import org.gridgain.grid.GridConfigurationAdapter;
@@ -63,7 +64,7 @@ public final class SvmTrainGrid {
 
     public static void main(final String[] args) throws Exception {
         final String dataFile = "E:/albert/hungrams.h5";
-        final CrossValidationSplits cvsplits = new CrossValidationSplits(1, 1);
+        final CrossValidationSplits cvsplits = Constants.CVSPLITS;
         final List<String> modelNames = new ArrayList<String>();
         for (int i = 0; i < cvsplits.getTestSplits(); i++) {
             for (int j = 0; j < cvsplits.getBackendSplits(); j++) {

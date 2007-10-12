@@ -19,7 +19,7 @@ public final class CalculateKernel {
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
         Set<SplitEntry> frontend = cvsplits.getSplit("frontend");
         LOG.info("frontend splits contain " + frontend.size() + " supervectors");
-        int bufferSize = 3000;
+        int bufferSize = 1000;
         LinearKernelPrecomputer kernelComputer = new LinearKernelPrecomputer(datah5, kernelh5, bufferSize);
         kernelComputer.compute(frontend);
         kernelh5.close();

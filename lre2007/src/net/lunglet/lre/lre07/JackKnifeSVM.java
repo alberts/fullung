@@ -128,7 +128,8 @@ public final class JackKnifeSVM {
             FloatDenseVector backendRhos = new FloatDenseVector(rows);
             for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
                 String modelName = "frontend_" + ts + "_" + bs;
-                JackSVM2 svm = models.get(modelName);
+                // remove model here because it won't be needed again
+                JackSVM2 svm = models.remove(modelName);
                 String splitName = "backend_" + ts + "_" + bs;
                 List<Handle2> data = cvsplits.getData(splitName, datah5);
                 LOG.info("scoring " + data.size() + " backend segments");
@@ -194,9 +195,15 @@ public final class JackKnifeSVM {
             Collections.sort(scores);
             StringBuilder lineBuilder = new StringBuilder();
             String name = handle.getName();
-            lineBuilder.append(handle.getDuration() + name.substring(0, name.lastIndexOf(".sph")));
-            lineBuilder.append(" ");
-            lineBuilder.append(handle.getLabel());
+            if (name.startsWith("/lid07e1/")) {
+                String id = name.substring(name.lastIndexOf("/") + 1, name.lastIndexOf(".sph"));
+                lineBuilder.append(id);
+                lineBuilder.append(" unknown");
+            } else {
+                lineBuilder.append(handle.getDuration() + name.substring(0, name.lastIndexOf(".sph")));
+                lineBuilder.append(" ");
+                lineBuilder.append(handle.getLabel());
+            }
             lineBuilder.append(" ");
             for (Handle2.Score score : scores) {
                 lineBuilder.append(score.getScore());
@@ -227,7 +234,9 @@ public final class JackKnifeSVM {
         jacksvm.scoreBackend(models, datah5);
         jacksvm.scoreTest(models, datah5);
         jacksvm.scoreSanity(models, datah5);
-//        jacksvm.scoreEval(models, datah5);
+        if (cvsplits.getSplit("eval") != null) {
+            jacksvm.scoreEval(models, datah5);
+        }
         datah5.close();
         LOG.info("done");
     }
