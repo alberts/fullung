@@ -109,13 +109,13 @@ public final class CrossValidationSplits {
     private final int backendSplits;
 
     public CrossValidationSplits(final int testSplits, final int backendSplits, final File splitsDirectory,
-            final File dataDirectory, final boolean includeEval) throws IOException {
+            final File dataDirectory, final boolean scoreEval) throws IOException {
         this.splitsDirectory = splitsDirectory;
         this.dataDirectory = dataDirectory;
         this.testSplits = testSplits;
         this.backendSplits = backendSplits;
         this.splitEntries = new HashMap<String, SplitEntry>();
-        this.splits = readSplits(includeEval);
+        this.splits = readSplits(scoreEval);
     }
 
     public int getTestSplits() {
@@ -170,6 +170,33 @@ public final class CrossValidationSplits {
         return handles;
     }
 
+    public Handle2 getData(final SplitEntry entry, final H5File datah5) {
+        final String name = entry.getName();
+        DataSet ds = datah5.getRootGroup().openDataSet(name);
+        int[] indexes = ds.getIntArrayAttribute("indexes");
+        String label = ds.getStringAttribute("label");
+        // TODO read some duration attribute here to include in the handle
+        ds.close();
+        if (indexes.length != 1) {
+            // getting data this way is only going to work if there is a single
+            // supervector associated with the entry
+            throw new AssertionError();
+        }
+        return new AbstractHandle2(name, indexes[0], label, entry.getDuration()) {
+            private static final long serialVersionUID = 1L;
+
+            private FloatVector<?> data = null;
+
+            @Override
+            public FloatVector<?> getData() {
+                if (data == null) {
+                    data = getHandleData(datah5, name, new long[]{0, 0});
+                }
+                return data;
+            }
+        };
+    }
+
     public List<Handle2> getData(final String splitName, final H5File datah5) {
         List<Handle2> handles = new ArrayList<Handle2>();
         for (SplitEntry entry : splits.get(splitName)) {
@@ -194,13 +221,50 @@ public final class CrossValidationSplits {
         return handles;
     }
 
-    private boolean isEntryValid(final SplitEntry entry) {
-        return !entry.corpus.equals("callfriend") && !entry.filename.equals("tgtd.sph.2.30s.sph");
-//        return entry.duration != -1 && !entry.filename.startsWith("sre");
-//        return true;
+    private interface SplitEntryFilter {
+        boolean filter(SplitEntry entry);
+    }
+
+    private static final class DefaultSplitEntryFilter implements SplitEntryFilter {
+        @Override
+        public boolean filter(SplitEntry entry) {
+            return true;
+        }
+    }
+
+    private static final class MitPart2Filter implements SplitEntryFilter {
+        @Override
+        public boolean filter(SplitEntry entry) {
+            return !entry.corpus.equals("callfriend") && !entry.filename.equals("tgtd.sph.2.30s.sph");
+        }
+    }
+
+    private static final class MitPart6FrontendFilter implements SplitEntryFilter {
+        @Override
+        public boolean filter(SplitEntry entry) {
+            return entry.duration == 30 && !entry.filename.startsWith("sre");
+        }
+    }
+
+    private static final class MitPart6BackendFilter implements SplitEntryFilter {
+        @Override
+        public boolean filter(SplitEntry entry) {
+            return entry.duration != -1 && !entry.filename.startsWith("sre");
+        }
+    }
+
+    private static final class MitPart6TestFilter implements SplitEntryFilter {
+        @Override
+        public boolean filter(SplitEntry entry) {
+            return entry.duration != -1 && !entry.filename.startsWith("sre");
+        }
     }
 
     private Set<SplitEntry> readSplit(final String splitName) throws IOException {
+        return readSplit(splitName, new DefaultSplitEntryFilter());
+    }
+
+    private Set<SplitEntry> readSplit(final String splitName, final SplitEntryFilter filter) throws IOException {
         File splitFile = new File(splitsDirectory, splitName + ".txt");
         System.out.println(splitFile);
         BufferedReader reader = new BufferedReader(new FileReader(splitFile), 1024 * 1024);
@@ -221,7 +285,7 @@ public final class CrossValidationSplits {
                 entry.setDuration(Integer.valueOf(parts[4]));
                 splitEntries.put(id, entry);
             }
-            if (isEntryValid(entry)) {
+            if (filter.filter(entry)) {
                 entries.add(entry);
             }
             line = reader.readLine();
@@ -229,23 +293,27 @@ public final class CrossValidationSplits {
         return entries;
     }
 
-    private Map<String, Set<SplitEntry>> readSplits(final boolean includeEval) throws IOException {
+    private Map<String, Set<SplitEntry>> readSplits(final boolean scoreEval) throws IOException {
+        SplitEntryFilter frontendFilter = new MitPart6FrontendFilter();
+        SplitEntryFilter backendFilter = new MitPart6BackendFilter();
+        SplitEntryFilter testFilter = new MitPart6TestFilter();
+        SplitEntryFilter evalFilter = new DefaultSplitEntryFilter();
         Map<String, Set<SplitEntry>> splits = new HashMap<String, Set<SplitEntry>>();
         Set<SplitEntry> frontend = new HashSet<SplitEntry>();
         Set<SplitEntry> backend = new HashSet<SplitEntry>();
         Set<SplitEntry> test = new HashSet<SplitEntry>();
         for (int i = 0; i < testSplits; i++) {
             String testname = "test_" + i;
-            Set<SplitEntry> testi = readSplit(testname);
+            Set<SplitEntry> testi = readSplit(testname, testFilter);
             splits.put(testname, testi);
             test.addAll(testi);
             for (int j = 0; j < backendSplits; j++) {
                 final String fename = "frontend_" + i + "_" + j;
-                Set<SplitEntry> feij = readSplit(fename);
+                Set<SplitEntry> feij = readSplit(fename, frontendFilter);
                 splits.put(fename, feij);
                 frontend.addAll(feij);
                 final String bename = "backend_" + i + "_" + j;
-                Set<SplitEntry> beij = readSplit(bename);
+                Set<SplitEntry> beij = readSplit(bename, backendFilter);
                 splits.put(bename, beij);
                 backend.addAll(beij);
             }
@@ -253,13 +321,23 @@ public final class CrossValidationSplits {
         splits.put("frontend", frontend);
         splits.put("backend", backend);
         splits.put("test", test);
+        for (int i = 0; i < testSplits; i++) {
+            splits.put("sanity_" + i, test);
+        }
         Set<SplitEntry> all = new HashSet<SplitEntry>();
         all.addAll(frontend);
         all.addAll(backend);
         all.addAll(test);
-        if (includeEval) {
-            splits.put("eval", readSplit("eval"));
-            all.addAll(splits.get("eval"));
+        if (scoreEval) {
+            Set<SplitEntry> eval = readSplit("eval", evalFilter);
+            all.addAll(eval);
+            for (int i = 0; i < testSplits; i++) {
+                splits.put("eval_" + i, eval);
+            }
+        } else {
+            for (int i = 0; i < testSplits; i++) {
+                splits.put("eval_" + i, Collections.<SplitEntry>emptySet());
+            }
         }
         splits.put("all", all);
         return splits;

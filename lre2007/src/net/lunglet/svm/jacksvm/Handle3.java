@@ -1,9 +1,7 @@
 package net.lunglet.svm.jacksvm;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.googlecode.array4j.FloatVector;
+import java.io.Serializable;
 
 public final class Handle3 implements Handle2, Serializable {
     private static final long serialVersionUID = 1L;
@@ -38,16 +36,6 @@ public final class Handle3 implements Handle2, Serializable {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public List<Score> getScores() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setScores(List<Score> scores) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

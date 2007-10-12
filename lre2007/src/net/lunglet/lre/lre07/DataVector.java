@@ -8,6 +8,8 @@ import net.lunglet.hdf.SelectionOperator;
 
 import com.googlecode.array4j.dense.FloatDenseVector;
 
+// TODO get rid of this class
+
 class DataVector implements Comparable<DataVector> {
     private final int id;
 

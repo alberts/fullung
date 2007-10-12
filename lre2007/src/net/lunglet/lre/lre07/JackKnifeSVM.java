@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import net.lunglet.hdf.H5File;
+import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
 import net.lunglet.svm.jacksvm.CompactJackSVM2Builder;
 import net.lunglet.svm.jacksvm.H5KernelReader2;
 import net.lunglet.svm.jacksvm.Handle2;
@@ -31,8 +33,8 @@ import org.apache.commons.logging.LogFactory;
 
 public final class JackKnifeSVM {
     private static final Log LOG = LogFactory.getLog(JackKnifeSVM.class);
-    
-    private static final int NTHREADS = 8;
+
+    private static final int NTHREADS = 2;
 
     private final CrossValidationSplits cvsplits;
 
@@ -88,7 +90,7 @@ public final class JackKnifeSVM {
         List<Future<?>> futures = new ArrayList<Future<?>>();
         for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
             for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
-                final String modelName = "frontend_" + ts + "_" + bs;
+                final String modelName = "backend_" + ts + "_" + bs;
                 final List<Handle2> trainData = cvsplits.getData(modelName, trainDataMap);
                 Future<?> future = executor.submit(new Runnable() {
                     public void run() {
@@ -117,8 +119,32 @@ public final class JackKnifeSVM {
         return models;
     }
 
-    public void scoreBackend(final Map<String, JackSVM2> models, final H5File datah5) throws IOException {
-        JackSVM2 firstModel = models.get("frontend_0_0");
+    private static void writeScore(final BufferedWriter writer, final Handle2 handle, final List<Handle2.Score> scores)
+            throws IOException {
+        List<Handle2.Score> sortedScores = new ArrayList<Handle2.Score>(scores);
+        Collections.sort(sortedScores);
+        StringBuilder lineBuilder = new StringBuilder();
+        String name = handle.getName();
+        if (name.startsWith("/lid07e1/")) {
+            String id = name.substring(name.lastIndexOf("/") + 1, name.lastIndexOf(".sph"));
+            lineBuilder.append(id);
+            lineBuilder.append(" unknown");
+        } else {
+            lineBuilder.append(handle.getDuration() + name.substring(0, name.lastIndexOf(".sph")));
+            lineBuilder.append(" ");
+            lineBuilder.append(handle.getLabel());
+        }
+        lineBuilder.append(" ");
+        for (Handle2.Score score : sortedScores) {
+            lineBuilder.append(score.getScore());
+            lineBuilder.append(" ");
+        }
+        lineBuilder.append("\n");
+        writer.write(lineBuilder.toString());
+    }
+
+    private void averageModels(final Map<String, JackSVM2> models) {
+        JackSVM2 firstModel = models.get("backend_0_0");
         FloatDenseMatrix firstSVs = firstModel.getSupportVectors();
         List<String> targetLabels = firstModel.getTargetLabels();
         int rows = firstSVs.rows();
@@ -127,15 +153,8 @@ public final class JackKnifeSVM {
             FloatDenseMatrix backendSVs = new FloatDenseMatrix(rows, cols, Orientation.COLUMN, Storage.DIRECT);
             FloatDenseVector backendRhos = new FloatDenseVector(rows);
             for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
-                String modelName = "frontend_" + ts + "_" + bs;
-                // remove model here because it won't be needed again
-                JackSVM2 svm = models.remove(modelName);
-                String splitName = "backend_" + ts + "_" + bs;
-                List<Handle2> data = cvsplits.getData(splitName, datah5);
-                LOG.info("scoring " + data.size() + " backend segments");
-                svm.score(data);
-                LOG.info("scoring done");
-                writeScores("back." + ts + "." + bs, data);
+                String modelName = "backend_" + ts + "_" + bs;
+                JackSVM2 svm = models.get(modelName);
                 FloatMatrixMath.plusEquals(backendSVs, svm.getSupportVectors());
                 FloatMatrixMath.plusEquals(backendRhos, svm.getRhos());
                 if (!targetLabels.equals(svm.getTargetLabels())) {
@@ -145,79 +164,20 @@ public final class JackKnifeSVM {
             // create models averaged over frontend splits
             backendSVs.divideEquals(cvsplits.getBackendSplits());
             backendRhos.divideEquals(cvsplits.getBackendSplits());
-            models.put("frontend_" + ts, new JackSVM2(backendSVs, backendRhos, targetLabels));
+            JackSVM2 averageSvm = new JackSVM2(backendSVs, backendRhos, targetLabels);
+            models.put("test_" + ts, averageSvm);
+            models.put("sanity_" + ts, averageSvm);
+            models.put("eval_" + ts, averageSvm);
         }
     }
 
-    public void scoreTest(final Map<String, JackSVM2> models, final H5File datah5) throws IOException {
-        for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
-            String modelName = "frontend_" + ts;
-            JackSVM2 svm = models.get(modelName);
-            String splitName = "test_" + ts;
-            List<Handle2> data = cvsplits.getData(splitName, datah5);
-            LOG.info("scoring " + data.size() + " test segments");
-            svm.score(data);
-            LOG.info("scoring done");
-            writeScores("test." + ts, data);
+    private static void addScoreWriter(final CrossValidationSplits cvsplits,
+            final Map<String, BufferedWriter> scoreWriters, final String splitName, final String filename)
+            throws IOException {
+        Set<SplitEntry> split = cvsplits.getSplit(splitName);
+        if (split != null && split.size() > 0) {
+            scoreWriters.put(splitName, new BufferedWriter(new FileWriter(filename + ".wide"), 16384));
         }
-    }
-
-    public void scoreSanity(final Map<String, JackSVM2> models, final H5File datah5) throws IOException {
-        for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
-            String modelName = "frontend_" + ts;
-            JackSVM2 svm = models.get(modelName);
-            List<Handle2> data = cvsplits.getData("test", datah5);
-            LOG.info("scoring " + data.size() + " test segments (sanity check)");
-            svm.score(data);
-            LOG.info("scoring done");
-            writeScores("sanity." + ts, data);
-        }
-    }
-
-    public void scoreEval(final Map<String, JackSVM2> models, final H5File datah5) throws IOException {
-        for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
-            String modelName = "frontend_" + ts;
-            JackSVM2 svm = models.get(modelName);
-            List<Handle2> data = cvsplits.getData("eval", datah5);
-            LOG.info("scoring " + data.size() + " evaluation segments");
-            svm.score(data);
-            LOG.info("scoring done");
-            writeScores("eval." + ts, data);
-        }
-    }
-
-    private static void writeScores(final String splitName, final List<Handle2> data) throws IOException {
-        String fileName = splitName + ".wide";
-        LOG.info("writing scores to " + fileName);
-        List<String> lines = new ArrayList<String>();
-        for (Handle2 handle : data) {
-            List<Handle2.Score> scores = new ArrayList<Handle2.Score>(handle.getScores());
-            Collections.sort(scores);
-            StringBuilder lineBuilder = new StringBuilder();
-            String name = handle.getName();
-            if (name.startsWith("/lid07e1/")) {
-                String id = name.substring(name.lastIndexOf("/") + 1, name.lastIndexOf(".sph"));
-                lineBuilder.append(id);
-                lineBuilder.append(" unknown");
-            } else {
-                lineBuilder.append(handle.getDuration() + name.substring(0, name.lastIndexOf(".sph")));
-                lineBuilder.append(" ");
-                lineBuilder.append(handle.getLabel());
-            }
-            lineBuilder.append(" ");
-            for (Handle2.Score score : scores) {
-                lineBuilder.append(score.getScore());
-                lineBuilder.append(" ");
-            }
-            lineBuilder.append("\n");
-            lines.add(lineBuilder.toString());
-        }
-        Collections.sort(lines);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        for (String line : lines) {
-            writer.write(line);
-        }
-        writer.close();
     }
 
     public static void main(final String[] args) throws IOException, InterruptedException, ExecutionException {
@@ -231,11 +191,38 @@ public final class JackKnifeSVM {
         Map<String, JackSVM2> models = jacksvm.trainModels();
         LOG.info("training done");
         kernelh5.close();
-        jacksvm.scoreBackend(models, datah5);
-        jacksvm.scoreTest(models, datah5);
-        jacksvm.scoreSanity(models, datah5);
-        if (cvsplits.getSplit("eval") != null) {
-            jacksvm.scoreEval(models, datah5);
+        LOG.info("averaging backend models -> test models");
+        jacksvm.averageModels(models);
+        // map from split name to writer for its scores
+        LOG.info("creating score writers");
+        Map<String, BufferedWriter> scoreWriters = new HashMap<String, BufferedWriter>();
+        for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
+            for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
+                addScoreWriter(cvsplits, scoreWriters, "backend_" + ts + "_" + bs, "back." + ts + "." + bs);
+            }
+            addScoreWriter(cvsplits, scoreWriters, "test_" + ts, "test." + ts);
+            addScoreWriter(cvsplits, scoreWriters, "sanity_" + ts, "sanity." + ts);
+            addScoreWriter(cvsplits, scoreWriters, "eval_" + ts, "eval." + ts);
+        }
+        LOG.info("scoring everything");
+        List<SplitEntry> splitEntriesList = new ArrayList<SplitEntry>(cvsplits.getAllSplits());
+        Collections.sort(splitEntriesList);
+        for (SplitEntry splitEntry : splitEntriesList) {
+            LOG.info("scoring " + splitEntry.getName());
+            Handle2 handle = cvsplits.getData(splitEntry, datah5);
+            for (Map.Entry<String, BufferedWriter> scoreWriterEntry : scoreWriters.entrySet()) {
+                String splitName = scoreWriterEntry.getKey();
+                JackSVM2 svm = models.get(splitName);
+                Set<SplitEntry> writerSplit  = cvsplits.getSplit(splitName);
+                if (writerSplit.contains(splitEntry)) {
+                    List<Handle2.Score> scores = svm.score(handle);
+                    writeScore(scoreWriterEntry.getValue(), handle, scores);
+                }
+            }
+        }
+        LOG.info("closing score writers");
+        for (BufferedWriter writer : scoreWriters.values()) {
+            writer.close();
         }
         datah5.close();
         LOG.info("done");

@@ -1,6 +1,5 @@
 package net.lunglet.lre.lre07;
 
-import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
@@ -54,12 +53,13 @@ public final class CreateBigrams4 {
             posteriors.setColumn(j, segments.get(j));
         }
         FloatDenseVector monograms = PhonemeUtil.calculateMonograms(posteriors);
-        FloatDenseVector bigrams = PhonemeUtil.calculateBigrams(posteriors, 1);
-        FloatDenseVector stagbi = PhonemeUtil.calculateBigrams(posteriors, 2);
+//        FloatDenseVector bigrams = PhonemeUtil.calculateBigrams(posteriors, 1);
+//        FloatDenseVector stagbi = PhonemeUtil.calculateBigrams(posteriors, 2);
 //        FloatDenseVector trigrams = PhonemeUtil.calculateTrigrams(posteriors, bigramIndexes);
 //        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, trigrams);
-        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, stagbi);
-        return ngrams;
+//        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, stagbi);
+//        return ngrams;
+        return monograms;
     }
 
     private static void writeNGrams(final String name, final String label, final FloatDenseVector ngrams,
@@ -85,6 +85,7 @@ public final class CreateBigrams4 {
         memSpace.close();
         fileSpace.close();
         ds.createAttribute("label", label);
+        // TODO add duration attribute that is calculated from MLF
         System.out.println(ds.getName() + " " + label + " -> " + Arrays.toString(indexes));
         ds.close();
     }
@@ -92,7 +93,7 @@ public final class CreateBigrams4 {
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
         Set<SplitEntry> splitEntries = cvsplits.getAllSplits();
-        final String phonemePrefix = "ru";
+        final String phonemePrefix = "cz";
         BitSet bigramIndexes = PhonemeUtil.getBigramIndexes(phonemePrefix, 75);
         String workingDir = Constants.WORKING_DIRECTORY;
         H5File h5file = new H5File(new File(workingDir, phonemePrefix + "ngrams.h5"));

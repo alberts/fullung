@@ -1,8 +1,6 @@
 package net.lunglet.svm.jacksvm;
 
 import com.googlecode.array4j.FloatVector;
-import java.util.List;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 // TODO another thing user might want to get via the handle is the
@@ -62,10 +60,6 @@ public interface Handle2 extends Comparable<Handle2> {
     String getLabel();
 
     String getName();
-
-    List<Score> getScores();
-
-    void setScores(List<Score> scores);
 
     int getDuration();
 }

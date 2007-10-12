@@ -130,7 +130,8 @@ public final class JackSVM2Test {
     private Map<String, List<Score>> createScoresMap(final List<Handle2> data) {
         Map<String, List<Score>> scoresMap = new HashMap<String, List<Score>>();
         for (Handle2 handle : data) {
-            scoresMap.put(handle.getName(), handle.getScores());
+//            scoresMap.put(handle.getName(), handle.getScores());
+            throw new UnsupportedOperationException();
         }
         return scoresMap;
     }
@@ -159,7 +160,7 @@ public final class JackSVM2Test {
             svmBuilder.present(x.getData(), x.getIndex());
         }
         JackSVM2 compactSvm = svmBuilder.build();
-        compactSvm.score(data);
+//        compactSvm.score(data);
         Map<String, List<Score>> expectedScoresMap = createScoresMap(data);
 
         // serialize svm before and after compaction
@@ -186,14 +187,14 @@ public final class JackSVM2Test {
             svmBuilder.present(x.getData(), x.getIndex());
         }
         JackSVM2 compactSvm2 = svmBuilder.build();
-        compactSvm2.score(data);
+//        compactSvm2.score(data);
         Map<String, List<Score>> scoresMap2 = createScoresMap(data);
         // TODO do an almostEquals comparison on the scores
 //        assertEquals(expectedScoresMap, scoresMap2);
         System.out.println(expectedScoresMap);
         System.out.println(scoresMap2);
 
-        svm3.score(data);
+//        svm3.score(data);
         Map<String, List<Score>> scoresMap3 = createScoresMap(data);
         assertEquals(expectedScoresMap, scoresMap3);
 

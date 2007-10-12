@@ -28,6 +28,9 @@ import org.apache.commons.logging.LogFactory;
 public final class JackSVM2 implements Serializable {
     private static final long serialVersionUID = 1L;
 
+//    private static final double SVM_COST = 100.0;
+    private static final double SVM_COST = 1.0e-4;
+
     private final transient KernelReader kernelReader;
 
     // XXX this logger is transient, so with the code as-is, it's not going to
@@ -119,23 +122,19 @@ public final class JackSVM2 implements Serializable {
         return rhos;
     }
 
-    public void score(final List<Handle2> testData) {
+    public List<Score> score(final Handle2 handle) {
         if (supportVectors == null || rhos == null) {
             throw new IllegalStateException();
         }
-        for (int i = 0; i < testData.size(); i++) {
-            Handle2 handle = testData.get(i);
-            // TODO read testData into buffer so that we can score with a gemm
-            FloatDenseMatrix result = FloatMatrixMath.times(supportVectors, handle.getData());
-            List<Score> scores = new ArrayList<Score>(supportVectors.rows());
-            for (int j = 0; j < Math.min(targetLabels.size(), result.rows()); j++) {
-                float score = result.get(j, 0) - rhos.get(j);
-                scores.add(new Score(targetLabels.get(j), score));
-            }
-            handle.setScores(scores);
+        FloatDenseMatrix result = FloatMatrixMath.times(supportVectors, handle.getData());
+        List<Score> scores = new ArrayList<Score>(supportVectors.rows());
+        for (int j = 0; j < Math.min(targetLabels.size(), result.rows()); j++) {
+            float score = result.get(j, 0) - rhos.get(j);
+            scores.add(new Score(targetLabels.get(j), score));
         }
+        return scores;
     }
-    
+
     public CompactJackSVM2Builder getCompactBuilder() {
         return new CompactJackSVM2Builder(originalSvms, targetLabels);
     }
@@ -184,7 +183,7 @@ public final class JackSVM2 implements Serializable {
             });
         }
         SimpleSvm svm = new SimpleSvm(dataList, kernel);
-        svm.train(100.0);
+        svm.train(SVM_COST);
         return svm;
     }
 
