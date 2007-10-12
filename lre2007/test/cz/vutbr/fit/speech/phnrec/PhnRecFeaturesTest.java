@@ -1,5 +1,7 @@
 package cz.vutbr.fit.speech.phnrec;
 
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,11 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
-
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
 
 public final class PhnRecFeaturesTest {
     @Test
@@ -35,7 +33,8 @@ public final class PhnRecFeaturesTest {
             FloatDenseMatrix posteriors = features.getPosteriors();
             System.out.println(posteriors.column(0));
             System.out.println(posteriors.rows() + " " + posteriors.columns());
-            FloatDenseVector ngrams = PhonemeUtil.calculateNGrams(posteriors);
+//            FloatDenseVector ngrams = PhonemeUtil.calculateMonoBigrams(posteriors, 1);
+            FloatDenseVector ngrams = null;
             System.out.println(ngrams.length());
 
             Segment[] validSegments = features.getValidSegments().toArray(new Segment[0]);

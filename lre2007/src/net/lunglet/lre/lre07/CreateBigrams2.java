@@ -1,5 +1,9 @@
 package net.lunglet.lre.lre07;
 
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import cz.vutbr.fit.speech.phnrec.MasterLabel;
+import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.DataType;
@@ -18,13 +21,6 @@ import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.io.FileUtils;
 import net.lunglet.io.FilenameSuffixFilter;
-
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
-
-import cz.vutbr.fit.speech.phnrec.MasterLabel;
-import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
-import cz.vutbr.fit.speech.phnrec.PhonemeUtil;
 
 public final class CreateBigrams2 {
     public static void main(final String[] args) throws IOException {
@@ -50,7 +46,8 @@ public final class CreateBigrams2 {
                 for (int j = 0; j < segment.size(); j++) {
                     posteriors.setColumn(j, segment.get(j));
                 }
-                FloatDenseVector ngrams = PhonemeUtil.calculateNGrams(posteriors);
+//                FloatDenseVector ngrams = PhonemeUtil.calculateMonoBigrams(posteriors, 1);
+                FloatDenseVector ngrams = null;
                 if (ngrams == null) {
                     continue;
                 }

@@ -1,5 +1,9 @@
 package net.lunglet.lre.lre07;
 
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import cz.vutbr.fit.speech.phnrec.MasterLabel;
+import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,11 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-
 import net.lunglet.hdf.Attribute;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
@@ -30,13 +32,6 @@ import net.lunglet.hdf.IntType;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.io.FileUtils;
 import net.lunglet.io.FilenameSuffixFilter;
-
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
-
-import cz.vutbr.fit.speech.phnrec.MasterLabel;
-import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
-import cz.vutbr.fit.speech.phnrec.PhonemeUtil;
 
 public final class CreateBigrams3 {
     private static final String PHONEME_PREFIX = "cz";
@@ -50,7 +45,8 @@ public final class CreateBigrams3 {
         for (int j = 0; j < segment.size(); j++) {
             posteriors.setColumn(j, segment.get(j));
         }
-        return PhonemeUtil.calculateNGrams(posteriors);
+//        return PhonemeUtil.calculateMonoBigrams(posteriors, 1);
+        return null;
     }
 
     private static List<List<FloatDenseVector>> readPhnRec(final File zipFile) throws IOException {

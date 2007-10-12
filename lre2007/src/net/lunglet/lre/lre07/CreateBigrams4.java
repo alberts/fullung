@@ -1,5 +1,6 @@
 package net.lunglet.lre.lre07;
 
+import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,14 +45,21 @@ public final class CreateBigrams4 {
         return segment;
     }
 
-    private static FloatDenseVector calculateNGrams(final List<FloatDenseVector> segments) {
+    private static FloatDenseVector calculateNGrams(final List<FloatDenseVector> segments,
+            final BitSet bigramIndexes) {
         int rows = segments.get(0).rows();
         int cols = segments.size();
         FloatDenseMatrix posteriors = new FloatDenseMatrix(rows, cols, Orientation.COLUMN, Storage.DIRECT);
         for (int j = 0; j < segments.size(); j++) {
             posteriors.setColumn(j, segments.get(j));
         }
-        return PhonemeUtil.calculateNGrams(posteriors);
+        FloatDenseVector monograms = PhonemeUtil.calculateMonograms(posteriors);
+        FloatDenseVector bigrams = PhonemeUtil.calculateBigrams(posteriors, 1);
+//        FloatDenseVector stagbi = PhonemeUtil.calculateBigrams(posteriors, 2);
+        FloatDenseVector trigrams = PhonemeUtil.calculateTrigrams(posteriors, bigramIndexes);
+        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, trigrams);
+//        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, stagbi);
+        return ngrams;
     }
 
     private static void writeNGrams(final String name, final String label, final FloatDenseVector ngrams,
@@ -84,6 +93,7 @@ public final class CreateBigrams4 {
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
         Set<SplitEntry> splitEntries = cvsplits.getAllSplits();
         final String phonemePrefix = "cz";
+        BitSet bigramIndexes = PhonemeUtil.getBigramIndexes(phonemePrefix, 75);
         String workingDir = Constants.WORKING_DIRECTORY;
         H5File h5file = new H5File(new File(workingDir, phonemePrefix + "ngrams.h5"));
         Map<String, Group> groups = new HashMap<String, Group>();
@@ -103,7 +113,7 @@ public final class CreateBigrams4 {
                 continue;
             }
             List<FloatDenseVector> segments = readPhnRecZip(phonemePrefix, zipFile);
-            FloatDenseVector ngrams = calculateNGrams(segments);
+            FloatDenseVector ngrams = calculateNGrams(segments, bigramIndexes);
             Group group = groups.get(splitEntry.getCorpus());
             writeNGrams(splitEntry.getName(), splitEntry.getLanguage(), ngrams, group, index++);
         }

@@ -31,6 +31,8 @@ import org.apache.commons.logging.LogFactory;
 
 public final class JackKnifeSVM {
     private static final Log LOG = LogFactory.getLog(JackKnifeSVM.class);
+    
+    private static final int NTHREADS = 8;
 
     private final CrossValidationSplits cvsplits;
 
@@ -82,7 +84,7 @@ public final class JackKnifeSVM {
         final H5KernelReader2 kernelReader = new H5KernelReader2(kernelh5);
         final Map<String, Handle2> trainDataMap = cvsplits.getDataMap("frontend", datah5);
 
-        ExecutorService executor = Executors.newFixedThreadPool(Constants.NTHREADS);
+        ExecutorService executor = Executors.newFixedThreadPool(NTHREADS);
         List<Future<?>> futures = new ArrayList<Future<?>>();
         for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
             for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
@@ -147,13 +149,6 @@ public final class JackKnifeSVM {
     }
 
     public void scoreTest(final Map<String, JackSVM2> models, final H5File datah5) throws IOException {
-        JackSVM2 firstModel = models.get("frontend_0");
-        FloatDenseMatrix firstSVs = firstModel.getSupportVectors();
-        List<String> targetLabels = firstModel.getTargetLabels();
-        final int rows = firstSVs.rows();
-        final int cols = firstSVs.columns();
-        FloatDenseMatrix finalSVs = new FloatDenseMatrix(rows, cols, Orientation.COLUMN, Storage.DIRECT);
-        FloatDenseVector finalRhos = new FloatDenseVector(rows);
         for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
             String modelName = "frontend_" + ts;
             JackSVM2 svm = models.get(modelName);
@@ -163,15 +158,31 @@ public final class JackKnifeSVM {
             svm.score(data);
             LOG.info("scoring done");
             writeScores("test." + ts, data);
-            FloatMatrixMath.plusEquals(finalSVs, svm.getSupportVectors());
-            FloatMatrixMath.plusEquals(finalRhos, svm.getRhos());
-            if (!targetLabels.equals(svm.getTargetLabels())) {
-                throw new AssertionError();
-            }
         }
-        finalSVs.divideEquals(cvsplits.getTestSplits());
-        finalRhos.divideEquals(cvsplits.getTestSplits());
-        models.put("final", new JackSVM2(finalSVs, finalRhos, targetLabels));
+    }
+
+    public void scoreSanity(final Map<String, JackSVM2> models, final H5File datah5) throws IOException {
+        for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
+            String modelName = "frontend_" + ts;
+            JackSVM2 svm = models.get(modelName);
+            List<Handle2> data = cvsplits.getData("test", datah5);
+            LOG.info("scoring " + data.size() + " test segments (sanity check)");
+            svm.score(data);
+            LOG.info("scoring done");
+            writeScores("sanity." + ts, data);
+        }
+    }
+
+    public void scoreEval(final Map<String, JackSVM2> models, final H5File datah5) throws IOException {
+        for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
+            String modelName = "frontend_" + ts;
+            JackSVM2 svm = models.get(modelName);
+            List<Handle2> data = cvsplits.getData("eval", datah5);
+            LOG.info("scoring " + data.size() + " evaluation segments");
+            svm.score(data);
+            LOG.info("scoring done");
+            writeScores("eval." + ts, data);
+        }
     }
 
     private static void writeScores(final String splitName, final List<Handle2> data) throws IOException {
@@ -214,7 +225,9 @@ public final class JackKnifeSVM {
         LOG.info("training done");
         kernelh5.close();
         jacksvm.scoreBackend(models, datah5);
-//        jacksvm.scoreTest(models, datah5);
+        jacksvm.scoreTest(models, datah5);
+        jacksvm.scoreSanity(models, datah5);
+//        jacksvm.scoreEval(models, datah5);
         datah5.close();
         LOG.info("done");
     }

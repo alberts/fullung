@@ -1,5 +1,8 @@
 package net.lunglet.lre.lre07;
 
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataType;
 import net.lunglet.hdf.FloatType;
@@ -18,12 +20,6 @@ import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.io.FileUtils;
 import net.lunglet.io.FilenameSuffixFilter;
-
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
-
-import cz.vutbr.fit.speech.phnrec.PhnRecFeatures;
-import cz.vutbr.fit.speech.phnrec.PhonemeUtil;
 
 public final class CreateBigrams {
     private static FloatDenseVector calculateNGrams(final File file) throws IOException {
@@ -36,7 +32,8 @@ public final class CreateBigrams {
             System.out.println("No posteriors for " + file);
             return null;
         }
-        FloatDenseVector ngrams = PhonemeUtil.calculateNGrams(posteriors);
+//        FloatDenseVector ngrams = PhonemeUtil.calculateMonoBigrams(posteriors, 1);
+        FloatDenseVector ngrams = null;
         return ngrams;
     }
 
