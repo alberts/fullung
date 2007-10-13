@@ -140,7 +140,7 @@ public final class CrossValidationSplits {
         int len = (int) fileSpace.getDim(1);
         DataSpace memSpace = new DataSpace(len);
         // TODO investigate effect of heap vs direct storage here
-        FloatDenseVector data = new FloatDenseVector(len, Orientation.COLUMN, Storage.HEAP);
+        FloatDenseVector data = new FloatDenseVector(len, Orientation.COLUMN, Storage.DIRECT);
         long[] count = {1, 1};
         long[] block = {1, fileSpace.getDim(1)};
         fileSpace.selectHyperslab(SelectionOperator.SET, start, null, count, block);
@@ -162,10 +162,14 @@ public final class CrossValidationSplits {
     public List<Handle2> getData(final String splitName, final Map<String, Handle2> data) {
         List<Handle2> handles = new ArrayList<Handle2>();
         for (SplitEntry entry : getSplit(splitName)) {
-            handles.add(data.get(entry.getName()));
+            String name = entry.getName();
+            Handle2 handle = data.get(name);
+            if (handle == null) {
+                throw new RuntimeException("handle for " + name + " is null (split=" + splitName + ")");
+            }
+            handles.add(handle);
         }
-        // sort handles here so that indexes into handle list always retrieve
-        // the same data
+        // sort so indexes into list always retrieve the same data
         Collections.sort(handles);
         return handles;
     }
@@ -199,7 +203,9 @@ public final class CrossValidationSplits {
 
     public List<Handle2> getData(final String splitName, final H5File datah5) {
         List<Handle2> handles = new ArrayList<Handle2>();
-        for (SplitEntry entry : splits.get(splitName)) {
+        List<SplitEntry> splitList = new ArrayList<SplitEntry>(splits.get(splitName));
+        Collections.sort(splitList);
+        for (SplitEntry entry : splitList) {
             final String name = entry.getName();
             DataSet ds = datah5.getRootGroup().openDataSet(name);
             int[] indexes = ds.getIntArrayAttribute("indexes");
@@ -239,10 +245,24 @@ public final class CrossValidationSplits {
         }
     }
 
-    private static final class MitPart6FrontendFilter implements SplitEntryFilter {
+    private static final class MitPart6FrontendLongFilter implements SplitEntryFilter {
         @Override
         public boolean filter(SplitEntry entry) {
             return entry.duration == 30 && !entry.filename.startsWith("sre");
+        }
+    }
+
+    private static final class MitPart6FrontendShortFilter implements SplitEntryFilter {
+        @Override
+        public boolean filter(SplitEntry entry) {
+            return (entry.duration == 3 || entry.duration == 10) && !entry.filename.startsWith("sre");
+        }
+    }
+    
+    private static final class MitPart6FrontendAllFilter implements SplitEntryFilter {
+        @Override
+        public boolean filter(SplitEntry entry) {
+            return entry.duration != -1 && !entry.filename.startsWith("sre");
         }
     }
 
@@ -294,7 +314,10 @@ public final class CrossValidationSplits {
     }
 
     private Map<String, Set<SplitEntry>> readSplits(final boolean scoreEval) throws IOException {
-        SplitEntryFilter frontendFilter = new MitPart6FrontendFilter();
+        SplitEntryFilter frontendFilter = new MitPart6FrontendLongFilter();
+//        SplitEntryFilter frontendFilter = new MitPart6FrontendShortFilter();
+//        SplitEntryFilter frontendFilter = new MitPart6FrontendAllFilter();
+//        SplitEntryFilter frontendFilter = new MitPart2Filter();
         SplitEntryFilter backendFilter = new MitPart6BackendFilter();
         SplitEntryFilter testFilter = new MitPart6TestFilter();
         SplitEntryFilter evalFilter = new DefaultSplitEntryFilter();

@@ -28,13 +28,14 @@ import net.lunglet.svm.jacksvm.CompactJackSVM2Builder;
 import net.lunglet.svm.jacksvm.H5KernelReader2;
 import net.lunglet.svm.jacksvm.Handle2;
 import net.lunglet.svm.jacksvm.JackSVM2;
+import net.lunglet.svm.jacksvm.Score;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public final class JackKnifeSVM {
     private static final Log LOG = LogFactory.getLog(JackKnifeSVM.class);
 
-    private static final int NTHREADS = 2;
+    private static final int NTHREADS = 1;
 
     private final CrossValidationSplits cvsplits;
 
@@ -90,12 +91,13 @@ public final class JackKnifeSVM {
         List<Future<?>> futures = new ArrayList<Future<?>>();
         for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
             for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
+                final String trainDataSplitName = "frontend_" + ts + "_" + bs;
                 final String modelName = "backend_" + ts + "_" + bs;
-                final List<Handle2> trainData = cvsplits.getData(modelName, trainDataMap);
+                final List<Handle2> trainData = cvsplits.getData(trainDataSplitName, trainDataMap);
                 Future<?> future = executor.submit(new Runnable() {
                     public void run() {
                         JackSVM2 svm = new JackSVM2(kernelReader);
-                        LOG.info("training " + modelName);
+                        LOG.info("training model to score " + modelName + " on " + trainData.size() + " supervectors");
                         svm.train(trainData);
                         synchronized (svmBuilders) {
                             svmBuilders.put(modelName, svm.getCompactBuilder());
@@ -119,9 +121,9 @@ public final class JackKnifeSVM {
         return models;
     }
 
-    private static void writeScore(final BufferedWriter writer, final Handle2 handle, final List<Handle2.Score> scores)
+    private static void writeScore(final BufferedWriter writer, final Handle2 handle, final List<Score> scores)
             throws IOException {
-        List<Handle2.Score> sortedScores = new ArrayList<Handle2.Score>(scores);
+        List<Score> sortedScores = new ArrayList<Score>(scores);
         Collections.sort(sortedScores);
         StringBuilder lineBuilder = new StringBuilder();
         String name = handle.getName();
@@ -135,7 +137,7 @@ public final class JackKnifeSVM {
             lineBuilder.append(handle.getLabel());
         }
         lineBuilder.append(" ");
-        for (Handle2.Score score : sortedScores) {
+        for (Score score : sortedScores) {
             lineBuilder.append(score.getScore());
             lineBuilder.append(" ");
         }
@@ -215,7 +217,7 @@ public final class JackKnifeSVM {
                 JackSVM2 svm = models.get(splitName);
                 Set<SplitEntry> writerSplit  = cvsplits.getSplit(splitName);
                 if (writerSplit.contains(splitEntry)) {
-                    List<Handle2.Score> scores = svm.score(handle);
+                    List<Score> scores = svm.score(handle);
                     writeScore(scoreWriterEntry.getValue(), handle, scores);
                 }
             }

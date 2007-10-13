@@ -19,7 +19,6 @@ import net.lunglet.svm.Handle;
 import net.lunglet.svm.PrecomputedKernel;
 import net.lunglet.svm.SimpleSvm;
 import net.lunglet.svm.SvmNode;
-import net.lunglet.svm.jacksvm.Handle2.Score;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,8 +27,8 @@ import org.apache.commons.logging.LogFactory;
 public final class JackSVM2 implements Serializable {
     private static final long serialVersionUID = 1L;
 
-//    private static final double SVM_COST = 100.0;
-    private static final double SVM_COST = 1.0e-4;
+    private static final double SVM_COST = 100.0;
+//    private static final double SVM_COST = 1.0e-6;
 
     private final transient KernelReader kernelReader;
 

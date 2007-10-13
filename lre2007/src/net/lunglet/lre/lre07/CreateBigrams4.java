@@ -1,5 +1,6 @@
 package net.lunglet.lre.lre07;
 
+import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
@@ -53,13 +54,14 @@ public final class CreateBigrams4 {
             posteriors.setColumn(j, segments.get(j));
         }
         FloatDenseVector monograms = PhonemeUtil.calculateMonograms(posteriors);
-//        FloatDenseVector bigrams = PhonemeUtil.calculateBigrams(posteriors, 1);
+        FloatDenseVector bigrams = PhonemeUtil.calculateBigrams(posteriors, 1);
 //        FloatDenseVector stagbi = PhonemeUtil.calculateBigrams(posteriors, 2);
 //        FloatDenseVector trigrams = PhonemeUtil.calculateTrigrams(posteriors, bigramIndexes);
 //        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, trigrams);
 //        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, stagbi);
-//        return ngrams;
-        return monograms;
+        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams);
+        return ngrams;
+//        return monograms;
     }
 
     private static void writeNGrams(final String name, final String label, final FloatDenseVector ngrams,
@@ -108,6 +110,7 @@ public final class CreateBigrams4 {
         int index = 0;
         List<SplitEntry> splitEntriesList = new ArrayList<SplitEntry>(splitEntries);
         Collections.sort(splitEntriesList);
+        System.out.println("calculating supervectors for " + splitEntriesList.size() + " entries");
         for (SplitEntry splitEntry : splitEntriesList) {
             File zipFile = splitEntry.getFile("_0.phnrec.zip");
             if (!zipFile.exists()) {
