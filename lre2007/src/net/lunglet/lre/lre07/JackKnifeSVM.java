@@ -85,6 +85,7 @@ public final class JackKnifeSVM {
         final Map<String, CompactJackSVM2Builder> svmBuilders = new HashMap<String, CompactJackSVM2Builder>();
         LOG.info("reading kernel");
         final H5KernelReader2 kernelReader = new H5KernelReader2(kernelh5);
+        // get map of handles that discard their data after every read
         final Map<String, Handle2> trainDataMap = cvsplits.getDataMap("frontend", datah5);
 
         ExecutorService executor = Executors.newFixedThreadPool(NTHREADS);
@@ -211,6 +212,7 @@ public final class JackKnifeSVM {
         Collections.sort(splitEntriesList);
         for (SplitEntry splitEntry : splitEntriesList) {
             LOG.info("scoring " + splitEntry.getName());
+            // get a handle that retains its data after the first read
             Handle2 handle = cvsplits.getData(splitEntry, datah5);
             for (Map.Entry<String, BufferedWriter> scoreWriterEntry : scoreWriters.entrySet()) {
                 String splitName = scoreWriterEntry.getKey();

@@ -1,6 +1,7 @@
 package net.lunglet.svm.jacksvm;
 
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.dense.FloatDenseVector;
 
 // TODO another thing user might want to get via the handle is the
 // dimensions of the data it points to, without loading the data
@@ -12,6 +13,8 @@ import com.googlecode.array4j.FloatVector;
 
 public interface Handle2 extends Comparable<Handle2> {
     FloatVector<?> getData();
+
+    void getData(FloatDenseVector x);
 
     int getIndex();
 

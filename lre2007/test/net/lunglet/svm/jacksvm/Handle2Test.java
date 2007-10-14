@@ -2,17 +2,13 @@ package net.lunglet.svm.jacksvm;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import net.lunglet.svm.jacksvm.AbstractHandle2;
-import net.lunglet.svm.jacksvm.Handle2;
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
-
 import org.junit.Test;
-
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.dense.FloatDenseVector;
 
 public final class Handle2Test {
     @Test
@@ -32,6 +28,11 @@ public final class Handle2Test {
                 cache.put(new Element(this, new FloatDenseVector(0)));
                 return null;
             }
+
+            @Override
+            public void getData(final FloatDenseVector x) {
+                throw new UnsupportedOperationException();
+            }
         };
 
         assertNull(handle.getData());
@@ -47,6 +48,11 @@ public final class Handle2Test {
                 }
                 cache.put(new Element(this, new FloatDenseVector(0)));
                 return null;
+            }
+
+            @Override
+            public void getData(final FloatDenseVector x) {
+                throw new UnsupportedOperationException();
             }
         };
 

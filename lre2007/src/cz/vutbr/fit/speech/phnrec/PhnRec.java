@@ -1,26 +1,22 @@
 package cz.vutbr.fit.speech.phnrec;
 
+import cz.vutbr.fit.speech.phnrec.PhnRecSystem.PhnRecSystemId;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.zip.ZipOutputStream;
-
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioFormat.Encoding;
-
 import net.lunglet.io.FileUtils;
 import net.lunglet.io.FilenameSuffixFilter;
 import net.lunglet.sound.sampled.RawAudioFileWriter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import cz.vutbr.fit.speech.phnrec.PhnRecSystem.PhnRecSystemId;
 
 public final class PhnRec {
     private static final Log LOG = LogFactory.getLog(PhnRec.class);

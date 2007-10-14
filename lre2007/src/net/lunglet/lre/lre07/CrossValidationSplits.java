@@ -151,6 +151,24 @@ public final class CrossValidationSplits {
         return data;
     }
 
+    private static void getHandleData(final FloatDenseVector x, final H5File datah5, final String name,
+            final long[] start) {
+        DataSet dataset = datah5.getRootGroup().openDataSet(name);
+        DataSpace fileSpace = dataset.getSpace();
+        int len = (int) fileSpace.getDim(1);
+        DataSpace memSpace = new DataSpace(len);
+        if (x.stride() != 1 || x.length() != len) {
+            throw new IllegalArgumentException();
+        }
+        long[] count = {1, 1};
+        long[] block = {1, fileSpace.getDim(1)};
+        fileSpace.selectHyperslab(SelectionOperator.SET, start, null, count, block);
+        dataset.read(x.data(), FloatType.IEEE_F32LE, memSpace, fileSpace);
+        fileSpace.close();
+        memSpace.close();
+        dataset.close();
+    }
+
     public Map<String, Handle2> getDataMap(final String splitName, final H5File datah5) {
         Map<String, Handle2> data = new HashMap<String, Handle2>();
         for (Handle2 handle : getData(splitName, datah5)) {
@@ -198,6 +216,11 @@ public final class CrossValidationSplits {
                 }
                 return data;
             }
+
+            @Override
+            public void getData(FloatDenseVector x) {
+                throw new UnsupportedOperationException();
+            }
         };
     }
 
@@ -220,6 +243,11 @@ public final class CrossValidationSplits {
                     @Override
                     public FloatVector<?> getData() {
                         return getHandleData(datah5, name, new long[]{j, 0});
+                    }
+
+                    @Override
+                    public void getData(final FloatDenseVector x) {
+                        getHandleData(x, datah5, name, new long[]{j, 0});
                     }
                 });
             }
@@ -258,7 +286,7 @@ public final class CrossValidationSplits {
             return (entry.duration == 3 || entry.duration == 10) && !entry.filename.startsWith("sre");
         }
     }
-    
+
     private static final class MitPart6FrontendAllFilter implements SplitEntryFilter {
         @Override
         public boolean filter(SplitEntry entry) {

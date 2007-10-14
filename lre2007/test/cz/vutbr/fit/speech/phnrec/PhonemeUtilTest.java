@@ -15,7 +15,7 @@ public final class PhonemeUtilTest {
         int n = 100;
         FloatDenseMatrix posteriors = new FloatDenseMatrix(m, n, Orientation.COLUMN, Storage.DIRECT);
         MatrixTestSupport.populateMatrix(posteriors);
-        
+
         BitSet bigramIndexes = new BitSet();
         bigramIndexes.set(0, posteriors.rows() * posteriors.rows());
 

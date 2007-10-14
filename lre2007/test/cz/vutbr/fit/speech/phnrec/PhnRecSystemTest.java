@@ -1,10 +1,8 @@
 package cz.vutbr.fit.speech.phnrec;
 
-import java.io.IOException;
-
-import org.junit.Test;
-
 import cz.vutbr.fit.speech.phnrec.PhnRecSystem.PhnRecSystemId;
+import java.io.IOException;
+import org.junit.Test;
 
 public final class PhnRecSystemTest {
     @Test

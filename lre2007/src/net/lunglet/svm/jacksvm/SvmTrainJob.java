@@ -1,6 +1,7 @@
 package net.lunglet.svm.jacksvm;
 
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public final class SvmTrainJob implements GridJob {
     private final String modelName;
 
     private final transient List<Handle2> localTrainData;
-    
+
     private final List<Handle2> remoteTrainData;
 
     public SvmTrainJob(final String modelName, final List<Handle2> trainData) {
@@ -29,10 +30,15 @@ public final class SvmTrainJob implements GridJob {
                 public FloatVector<?> getData() {
                     throw new UnsupportedOperationException();
                 }
+
+                @Override
+                public void getData(final FloatDenseVector x) {
+                    throw new UnsupportedOperationException();
+                }
             });
         }
     }
-    
+
     public List<Handle2> getLocalData() {
         return localTrainData;
     }

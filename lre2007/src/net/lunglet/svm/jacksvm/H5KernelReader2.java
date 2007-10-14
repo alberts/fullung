@@ -1,14 +1,12 @@
 package net.lunglet.svm.jacksvm;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.lunglet.hdf.DataSet;
-import net.lunglet.hdf.H5File;
-
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.io.HDFReader;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
+import java.util.HashMap;
+import java.util.Map;
+import net.lunglet.hdf.DataSet;
+import net.lunglet.hdf.H5File;
 
 /**
  * Kernel reader that reads the whole kernel up front.

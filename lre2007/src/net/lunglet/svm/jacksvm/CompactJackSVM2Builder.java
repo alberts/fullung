@@ -12,14 +12,14 @@ import net.lunglet.svm.SimpleSvm;
 
 public final class CompactJackSVM2Builder {
     private final List<CompactSimpleSvmBuilder> svmBuilders;
-    
+
     private final List<String> targetLabels;
 
     public CompactJackSVM2Builder(final SimpleSvm[] svms, final List<String> targetLabels) {
         this.svmBuilders = new ArrayList<CompactSimpleSvmBuilder>();
         for (SimpleSvm svm : svms) {
             if (svm != null) {
-                svmBuilders.add(svm.getCompactBuilder());     
+                svmBuilders.add(svm.getCompactBuilder());
             } else {
                 svmBuilders.add(null);
             }

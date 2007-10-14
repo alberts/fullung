@@ -26,8 +26,12 @@ import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.hdf.DataSetCreatePropListBuilder.FillTime;
 import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
 import net.lunglet.svm.jacksvm.Handle2;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public final class CalculateKernel2 {
+    private static final Log LOG = LogFactory.getLog(CalculateKernel2.class);
+
     private static DataSet createKernelDataSet(final H5File kernelh5, final long size) {
         DataType dtype = FloatType.IEEE_F32LE;
         long dim = size * (size + 1L) / 2L;
@@ -60,8 +64,19 @@ public final class CalculateKernel2 {
         }
     }
 
+    private static void readBlock(final Map<String, Handle2> dataMap, final List<SplitEntry> block,
+            final FloatDenseMatrix buf) {
+        if (block.size() > buf.columns()) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < block.size(); i++) {
+            dataMap.get(block.get(i).getName()).getData(buf.column(i));
+        }
+    }
+
     public static void main(final String[] args) {
         final int bufferColumns = 2000;
+        LOG.info("kernel calculator starting with " + bufferColumns + " buffer columns");
         H5File datah5 = new H5File(new File(Constants.WORKING_DIRECTORY, "czngrams.h5"), H5File.H5F_ACC_RDONLY);
         H5File kernelh5 = new H5File(new File(Constants.WORKING_DIRECTORY, "czkernel.h5"));
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
@@ -69,15 +84,18 @@ public final class CalculateKernel2 {
         if (data.size() == 0) {
             throw new AssertionError();
         }
+        LOG.info("reading data map");
+        // get map of handles that discard their data after every read
         Map<String, Handle2> dataMap = cvsplits.getDataMap("frontend", datah5);
         Collections.sort(data);
+        LOG.info("creating kernel dataset");
         DataSet kernelds = createKernelDataSet(kernelh5, data.size());
         List<List<SplitEntry>> blocks = new ArrayList<List<SplitEntry>>();
         for (int i = 0; i < data.size(); i += bufferColumns) {
             List<SplitEntry> block = data.subList(i, Math.min(data.size(), i + bufferColumns));
             blocks.add(block);
         }
-        System.out.println("data split into " + blocks.size() + " blocks");
+        LOG.info("data split into " + blocks.size() + " blocks");
         int[] blockColumns = new int[blocks.size()];
         for (int i = 1; i < blockColumns.length; i++) {
             blockColumns[i] = blocks.get(i - 1).size();
@@ -94,18 +112,19 @@ public final class CalculateKernel2 {
         for (int[] ij : new BlockPairs(blocks.size())) {
             final int i = ij[0];
             final int j = ij[1];
-            System.out.println("before: i=" + i + ", j=" + j + ", blockInA=" + blockInA + ", blockInB=" + blockInB);
+            LOG.info("before: i=" + i + ", j=" + j + ", blockInA=" + blockInA + ", blockInB=" + blockInB);
             final FloatDenseMatrix x;
             final FloatDenseMatrix y;
             if (i == j) {
                 List<SplitEntry> block = blocks.get(i);
-                final FloatDenseMatrix z; 
+                final FloatDenseMatrix z;
                 if (i == blockInA) {
                     z = a;
                 } else if (i == blockInB) {
                     z = b;
                 } else {
-                    System.out.println("read block " + i + " into buffer a");
+                    LOG.info("read block " + i + " into buffer a");
+                    readBlock(dataMap, block, a);
                     z = a;
                     blockInA = i;
                 }
@@ -115,28 +134,34 @@ public final class CalculateKernel2 {
                 if (i == blockInA || i == blockInB) {
                     List<SplitEntry> block = blocks.get(j);
                     if (i == blockInA) {
-                        System.out.println("read block " + j + " into buffer b");
+                        LOG.info("read block " + j + " into buffer b");
+                        readBlock(dataMap, block, b);
                         blockInB = j;
                     } else {
-                        System.out.println("read block " + j + " into buffer a");
+                        LOG.info("read block " + j + " into buffer a");
+                        readBlock(dataMap, block, a);
                         blockInA = j;
                     }
                 } else {
                     List<SplitEntry> block = blocks.get(i);
                     if (j == blockInA) {
-                        System.out.println("read block " + i + " into buffer b");
+                        LOG.info("read block " + i + " into buffer b");
+                        readBlock(dataMap, block, b);
                         blockInB = i;
                     } else {
-                        System.out.println("read block " + i + " into buffer a");
+                        LOG.info("read block " + i + " into buffer a");
+                        readBlock(dataMap, block, a);
                         blockInA = i;
                     }
                 }
                 x = FloatDenseUtils.subMatrixColumns(a, 0, blocks.get(blockInA).size());
                 y = FloatDenseUtils.subMatrixColumns(b, 0, blocks.get(blockInB).size());
             }
-            System.out.println("after: i=" + i + ", j=" + j + ", blockInA=" + blockInA + ", blockInB=" + blockInB);
+            LOG.info("after: i=" + i + ", j=" + j + ", blockInA=" + blockInA + ", blockInB=" + blockInB);
             FloatDenseMatrix kernelBlock = new FloatDenseMatrix(cbuf, x.columns(), y.columns(), 0, 1, orient);
+            LOG.info("calling gemm");
             FloatDenseBLAS.DEFAULT.gemm(1.0f, x.transpose(), y, 0.0f, kernelBlock);
+            LOG.info("gemm done");
             writeKernelBlock(kernelds, kernelBlock, blockColumns[i], blockColumns[j]);
         }
         int[] order = new int[data.size()];
@@ -150,6 +175,7 @@ public final class CalculateKernel2 {
         kernelds.close();
         kernelh5.close();
         datah5.close();
+        LOG.info("kernel calculation done");
     }
 
     private static long elementOffset(final long m, final long n) {

@@ -1,6 +1,7 @@
 package net.lunglet.svm.jacksvm;
 
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import java.io.Serializable;
 
 public final class Handle3 implements Handle2, Serializable {
@@ -45,6 +46,11 @@ public final class Handle3 implements Handle2, Serializable {
 
     @Override
     public int getDuration() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void getData(final FloatDenseVector x) {
         throw new UnsupportedOperationException();
     }
 }

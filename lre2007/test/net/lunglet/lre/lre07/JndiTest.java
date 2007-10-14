@@ -3,7 +3,6 @@ package net.lunglet.lre.lre07;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import org.junit.Test;
 
 public final class JndiTest {

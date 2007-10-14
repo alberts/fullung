@@ -1,17 +1,14 @@
 package cz.vutbr.fit.speech.phnrec;
 
+import cz.vutbr.fit.speech.phnrec.PhnRecSystem.PhnRecSystemId;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.zip.ZipOutputStream;
-
 import net.lunglet.sound.util.SoundUtils;
-
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
-
-import cz.vutbr.fit.speech.phnrec.PhnRecSystem.PhnRecSystemId;
 
 public class PhnRecJob implements GridJob {
     private static final long serialVersionUID = 1L;

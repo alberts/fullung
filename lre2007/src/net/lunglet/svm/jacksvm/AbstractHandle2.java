@@ -1,14 +1,12 @@
 package net.lunglet.svm.jacksvm;
 
+import com.googlecode.array4j.FloatVector;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-
-import com.googlecode.array4j.FloatVector;
 
 public abstract class AbstractHandle2 implements Handle2, Serializable {
     private final int index;
@@ -18,13 +16,13 @@ public abstract class AbstractHandle2 implements Handle2, Serializable {
     private final String name;
 
     private List<Score> scores;
-    
+
     private final int duration;
 
     public AbstractHandle2(final String name, final int index, final String label) {
         this(name, index, label, Integer.MIN_VALUE);
     }
-    
+
     public AbstractHandle2(final String name, final int index, final String label, final int duration) {
         this.name = name;
         this.index = index;
@@ -78,7 +76,7 @@ public abstract class AbstractHandle2 implements Handle2, Serializable {
     public final void setScores(final List<Score> scores) {
         this.scores = Collections.unmodifiableList(new ArrayList<Score>(scores));
     }
-    
+
     public int getDuration() {
         if (duration == Integer.MIN_VALUE) {
             throw new IllegalStateException();

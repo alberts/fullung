@@ -86,6 +86,7 @@ public final class SvmTrainGrid {
         discoverySpi.setTimeToLive(8);
         cfg.setDiscoverySpi(discoverySpi);
         H5File datah5 = new H5File(dataFile, H5File.H5F_ACC_RDONLY);
+        // get map of handles that discard their data after every read
         final Map<String, Handle2> trainDataMap = cvsplits.getDataMap("frontend", datah5);
         try {
             final Grid grid = GridFactory.start(cfg);

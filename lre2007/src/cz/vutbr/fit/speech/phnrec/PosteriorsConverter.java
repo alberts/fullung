@@ -1,5 +1,10 @@
 package cz.vutbr.fit.speech.phnrec;
 
+import com.googlecode.array4j.FloatMatrixUtils;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseUtils;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.io.MatrixOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,12 +16,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import com.googlecode.array4j.FloatMatrixUtils;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseUtils;
-import com.googlecode.array4j.dense.FloatDenseVector;
-import com.googlecode.array4j.io.MatrixOutputStream;
 
 public final class PosteriorsConverter {
     // 10ms frame period in the HTK time unit

@@ -1,12 +1,11 @@
 package cz.vutbr.fit.speech.phnrec;
 
+import cz.vutbr.fit.speech.phnrec.PhnRecGrid.PhnRecJobParameters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import net.lunglet.gridgain.GridTaskFactory;
-import cz.vutbr.fit.speech.phnrec.PhnRecGrid.PhnRecJobParameters;
 
 public final class PhnRecTaskFactory implements GridTaskFactory<PhnRecJob> {
     private List<PhnRecJobParameters> jobParamsList;
