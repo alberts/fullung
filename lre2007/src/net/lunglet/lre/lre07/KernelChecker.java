@@ -172,7 +172,7 @@ public final class KernelChecker {
                 float k = FloatMatrixMath.dot(x, y);
                 float delta = Math.abs((kread - k) / k);
                 if (delta > 1e-3) {
-                    LOG.error(String.format("invalid value for K(%d, %d): %.15e vs %.15e, delta = %.15e",
+                    LOG.error(String.format("invalid value for K(%d, %d): expected=%.15e, actual=%.15e, delta = %.15e",
                         veci.getIndex(), vecj.getIndex(), k, kread, delta));
                     errorCount++;
                     if (errorCount > 20) {

@@ -70,13 +70,14 @@ public final class CalculateKernel2 {
             throw new IllegalArgumentException();
         }
         for (int i = 0; i < block.size(); i++) {
+//            System.out.println("reading " + block.get(i).getName() + " into column " + i);
             dataMap.get(block.get(i).getName()).getData(buf.column(i));
         }
     }
 
     public static void main(final String[] args) {
-        final int bufferColumns = 2000;
-        LOG.info("kernel calculator starting with " + bufferColumns + " buffer columns");
+        final int bufferColumns = 1000;
+        LOG.info("starting kernel calculator with " + bufferColumns + " buffer columns");
         H5File datah5 = new H5File(new File(Constants.WORKING_DIRECTORY, "czngrams.h5"), H5File.H5F_ACC_RDONLY);
         H5File kernelh5 = new H5File(new File(Constants.WORKING_DIRECTORY, "czkernel.h5"));
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
@@ -88,6 +89,7 @@ public final class CalculateKernel2 {
         // get map of handles that discard their data after every read
         Map<String, Handle2> dataMap = cvsplits.getDataMap("frontend", datah5);
         Collections.sort(data);
+//        System.out.println(data);
         LOG.info("creating kernel dataset");
         DataSet kernelds = createKernelDataSet(kernelh5, data.size());
         List<List<SplitEntry>> blocks = new ArrayList<List<SplitEntry>>();
@@ -98,7 +100,7 @@ public final class CalculateKernel2 {
         LOG.info("data split into " + blocks.size() + " blocks");
         int[] blockColumns = new int[blocks.size()];
         for (int i = 1; i < blockColumns.length; i++) {
-            blockColumns[i] = blocks.get(i - 1).size();
+            blockColumns[i] = blockColumns[i - 1] + blocks.get(i - 1).size();
         }
         int bufferRows = dataMap.get(data.get(0).getName()).getData().length();
         Orientation orient = Orientation.COLUMN;
@@ -154,14 +156,22 @@ public final class CalculateKernel2 {
                         blockInA = i;
                     }
                 }
-                x = FloatDenseUtils.subMatrixColumns(a, 0, blocks.get(blockInA).size());
-                y = FloatDenseUtils.subMatrixColumns(b, 0, blocks.get(blockInB).size());
+                if (blockInA <= blockInB) {
+                    x = FloatDenseUtils.subMatrixColumns(a, 0, blocks.get(blockInA).size());
+                    y = FloatDenseUtils.subMatrixColumns(b, 0, blocks.get(blockInB).size());
+                } else {
+                    x = FloatDenseUtils.subMatrixColumns(b, 0, blocks.get(blockInB).size());
+                    y = FloatDenseUtils.subMatrixColumns(a, 0, blocks.get(blockInA).size());
+                }
             }
+//            System.out.println("x shape = " + Arrays.toString(x.shape()));
+//            System.out.println("y shape = " + Arrays.toString(y.shape()));
             LOG.info("after: i=" + i + ", j=" + j + ", blockInA=" + blockInA + ", blockInB=" + blockInB);
             FloatDenseMatrix kernelBlock = new FloatDenseMatrix(cbuf, x.columns(), y.columns(), 0, 1, orient);
             LOG.info("calling gemm");
             FloatDenseBLAS.DEFAULT.gemm(1.0f, x.transpose(), y, 0.0f, kernelBlock);
             LOG.info("gemm done");
+//            System.out.println(kernelBlock);
             writeKernelBlock(kernelds, kernelBlock, blockColumns[i], blockColumns[j]);
         }
         int[] order = new int[data.size()];
@@ -176,6 +186,9 @@ public final class CalculateKernel2 {
         kernelh5.close();
         datah5.close();
         LOG.info("kernel calculation done");
+//        kernelh5 = new H5File(new File(Constants.WORKING_DIRECTORY, "czkernel.h5"), H5File.H5F_ACC_RDONLY);
+//        System.out.println(new H5KernelReader2(kernelh5).read(order));
+//        kernelh5.close();
     }
 
     private static long elementOffset(final long m, final long n) {

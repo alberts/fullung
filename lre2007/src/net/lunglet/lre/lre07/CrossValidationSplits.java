@@ -39,6 +39,11 @@ public final class CrossValidationSplits {
             return String.format("/%s/%s", corpus, filename);
         }
 
+        @Override
+        public String toString() {
+            return getName();
+        }
+
         public File getFile(final String suffix) {
             return new File(getFile().getPath() + suffix);
         }
