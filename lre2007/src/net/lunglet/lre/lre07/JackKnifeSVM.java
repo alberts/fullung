@@ -35,7 +35,9 @@ import org.apache.commons.logging.LogFactory;
 public final class JackKnifeSVM {
     private static final Log LOG = LogFactory.getLog(JackKnifeSVM.class);
 
-    private static final int NTHREADS = 1;
+    private static final int NTHREADS = 8;
+
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NTHREADS);
 
     private final CrossValidationSplits cvsplits;
 
@@ -49,12 +51,16 @@ public final class JackKnifeSVM {
         this.kernelh5 = kernelh5;
     }
 
-    private Map<String, JackSVM2> compact(final ExecutorService executor,
-            final Map<String, CompactJackSVM2Builder> svmBuilders, final Map<String, Handle2> trainDataMap)
-            throws InterruptedException, ExecutionException {
+    private Map<String, JackSVM2> compact(final Map<String, CompactJackSVM2Builder> svmBuilders,
+            final Map<String, Handle2> trainDataMap) throws InterruptedException, ExecutionException {
         LOG.info("compacting");
+        LOG.info("presenting data to compact svm builders");
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
-        for (Handle2 handle : trainDataMap.values()) {
+        // present handles in sorted order
+        // TODO only read data that are needed by at least one model
+        List<Handle2> handles = new ArrayList<Handle2>(trainDataMap.values());
+        Collections.sort(handles);
+        for (Handle2 handle : handles) {
             final FloatVector<?> data = handle.getData();
             final int index = handle.getIndex();
             for (final CompactJackSVM2Builder svmBuilder : svmBuilders.values()) {
@@ -66,12 +72,13 @@ public final class JackKnifeSVM {
                     }
                 });
             }
-            List<Future<Void>> futures = executor.invokeAll(tasks);
+            List<Future<Void>> futures = EXECUTOR.invokeAll(tasks);
             for (Future<Void> future : futures) {
                 future.get();
             }
             tasks.clear();
         }
+        LOG.info("building compacted svms");
         Map<String, JackSVM2> models = new HashMap<String, JackSVM2>();
         for (Map.Entry<String, CompactJackSVM2Builder> entry : svmBuilders.entrySet()) {
             String modelName = entry.getKey();
@@ -85,17 +92,17 @@ public final class JackKnifeSVM {
         final Map<String, CompactJackSVM2Builder> svmBuilders = new HashMap<String, CompactJackSVM2Builder>();
         LOG.info("reading kernel");
         final H5KernelReader2 kernelReader = new H5KernelReader2(kernelh5);
+        LOG.info("reading data map");
         // get map of handles that discard their data after every read
         final Map<String, Handle2> trainDataMap = cvsplits.getDataMap("frontend", datah5);
 
-        ExecutorService executor = Executors.newFixedThreadPool(NTHREADS);
         List<Future<?>> futures = new ArrayList<Future<?>>();
         for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
             for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
                 final String trainDataSplitName = "frontend_" + ts + "_" + bs;
                 final String modelName = "backend_" + ts + "_" + bs;
                 final List<Handle2> trainData = cvsplits.getData(trainDataSplitName, trainDataMap);
-                Future<?> future = executor.submit(new Runnable() {
+                Future<?> future = EXECUTOR.submit(new Runnable() {
                     public void run() {
                         JackSVM2 svm = new JackSVM2(kernelReader);
                         LOG.info("training model to score " + modelName + " on " + trainData.size() + " supervectors");
@@ -109,16 +116,13 @@ public final class JackKnifeSVM {
                 futures.add(future);
             }
         }
+        LOG.info("getting futures of training tasks");
         for (Future<?> future : futures) {
             future.get();
         }
+        LOG.info("got all training task futures");
         futures.clear();
-
-        Map<String, JackSVM2> models = compact(executor, svmBuilders, trainDataMap);
-
-        executor.shutdown();
-        executor.awaitTermination(0L, TimeUnit.MILLISECONDS);
-
+        Map<String, JackSVM2> models = compact(svmBuilders, trainDataMap);
         return models;
     }
 
@@ -186,8 +190,8 @@ public final class JackKnifeSVM {
     public static void main(final String[] args) throws IOException, InterruptedException, ExecutionException {
         LOG.info("starting");
         String workingDir = Constants.WORKING_DIRECTORY;
-        H5File datah5 = new H5File(new File(workingDir, "czngrams.h5"), H5File.H5F_ACC_RDONLY);
-        H5File kernelh5 = new H5File(new File(workingDir, "czkernel.h5"), H5File.H5F_ACC_RDONLY);
+        H5File datah5 = new H5File(new File(workingDir, "rungrams.h5"), H5File.H5F_ACC_RDONLY);
+        H5File kernelh5 = new H5File(new File(workingDir, "rukernel.h5"), H5File.H5F_ACC_RDONLY);
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
         JackKnifeSVM jacksvm = new JackKnifeSVM(cvsplits, datah5, kernelh5);
         LOG.info("training frontend models");
@@ -229,6 +233,8 @@ public final class JackKnifeSVM {
             writer.close();
         }
         datah5.close();
-        LOG.info("done");
+        LOG.info("done. shutting down executor.");
+        EXECUTOR.shutdown();
+        EXECUTOR.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }
 }
