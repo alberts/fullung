@@ -3,14 +3,18 @@ package net.lunglet.lre.lre07;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.blas.FloatDenseBLAS;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.io.HDFReader;
 import com.googlecode.array4j.math.FloatMatrixMath;
+import com.googlecode.array4j.util.AssertUtils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,12 +26,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import net.lunglet.hdf.DataSet;
+import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.H5File;
 import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
 import net.lunglet.svm.jacksvm.CompactJackSVM2Builder;
 import net.lunglet.svm.jacksvm.H5KernelReader2;
+import net.lunglet.svm.jacksvm.H5NAPKernelReader;
 import net.lunglet.svm.jacksvm.Handle2;
 import net.lunglet.svm.jacksvm.JackSVM2;
+import net.lunglet.svm.jacksvm.KernelReader;
 import net.lunglet.svm.jacksvm.Score;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +43,9 @@ import org.apache.commons.logging.LogFactory;
 public final class JackKnifeSVM {
     private static final Log LOG = LogFactory.getLog(JackKnifeSVM.class);
 
-    private static final int NTHREADS = 8;
+    private static final boolean NAP_ENABLED = true;
+
+    private static final int NTHREADS = Math.max(8, Constants.CVSPLITS.getBackendSplits());
 
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NTHREADS);
 
@@ -53,7 +63,6 @@ public final class JackKnifeSVM {
 
     private Map<String, JackSVM2> compact(final Map<String, CompactJackSVM2Builder> svmBuilders,
             final Map<String, Handle2> trainDataMap) throws InterruptedException, ExecutionException {
-        LOG.info("compacting");
         LOG.info("presenting data to compact svm builders");
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
         // present handles in sorted order
@@ -88,22 +97,60 @@ public final class JackKnifeSVM {
         return models;
     }
 
-    public Map<String, JackSVM2> trainModels() throws IOException, InterruptedException, ExecutionException {
+    public Map<String, JackSVM2> trainModels(final H5File naph5) throws IOException, InterruptedException,
+            ExecutionException {
         final Map<String, CompactJackSVM2Builder> svmBuilders = new HashMap<String, CompactJackSVM2Builder>();
+        final Map<String, FloatDenseMatrix> napMap = new HashMap<String, FloatDenseMatrix>();
         LOG.info("reading kernel");
-        final H5KernelReader2 kernelReader = new H5KernelReader2(kernelh5);
+        final H5KernelReader2 origKernelReader;
+        final H5NAPKernelReader napKernelReader;
+        if (naph5 == null) {
+            origKernelReader = new H5KernelReader2(kernelh5);
+            napKernelReader = null;
+        } else {
+            origKernelReader = null;
+            napKernelReader = new H5NAPKernelReader(kernelh5);
+        }
         LOG.info("reading data map");
         // get map of handles that discard their data after every read
         final Map<String, Handle2> trainDataMap = cvsplits.getDataMap("frontend", datah5);
-
-        List<Future<?>> futures = new ArrayList<Future<?>>();
         for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
+            final KernelReader kernelReader;
+            if (napKernelReader != null) {
+                String napDsName = "/nap_" + ts;
+                LOG.info("reading dataset " + napDsName + " to get nap vectors");
+                DataSet napds = naph5.getRootGroup().openDataSet(napDsName);
+                DataSpace napspace = napds.getSpace();
+                long[] napdims = napspace.getDims();
+                final int napdim0;
+                final int napdim1;
+                if (napdims.length == 1) {
+                    napdim0 = (int) napdims[0];
+                    napdim1 = 1;
+                } else {
+                    AssertUtils.assertEquals(2, napdims.length);
+                    napdim0 = (int) napdims[0];
+                    napdim1 = (int) napdims[1];
+                }
+                napspace.close();
+                napds.close();
+                FloatDenseMatrix nap = new FloatDenseMatrix(napdim0, napdim1, Orientation.ROW, Storage.DIRECT);
+                new HDFReader(naph5).read(napDsName, nap);
+                napMap.put("nap_" + ts, nap);
+                LOG.info("preparing napped kernel using nap_" + ts + " with shape = " + Arrays.toString(nap.shape()));
+                List<Handle2> allTrainData = cvsplits.getData("frontend_" + ts, trainDataMap);
+                kernelReader = napKernelReader.getKernelReader(allTrainData, nap);
+            } else {
+                kernelReader = origKernelReader;
+            }
+            // manage the futures in the inner loop so that we don't make too many kernels
+            List<Future<?>> futures = new ArrayList<Future<?>>();
             for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
                 final String trainDataSplitName = "frontend_" + ts + "_" + bs;
                 final String modelName = "backend_" + ts + "_" + bs;
-                final List<Handle2> trainData = cvsplits.getData(trainDataSplitName, trainDataMap);
                 Future<?> future = EXECUTOR.submit(new Runnable() {
                     public void run() {
+                        List<Handle2> trainData = cvsplits.getData(trainDataSplitName, trainDataMap);
                         JackSVM2 svm = new JackSVM2(kernelReader);
                         LOG.info("training model to score " + modelName + " on " + trainData.size() + " supervectors");
                         svm.train(trainData);
@@ -115,14 +162,34 @@ public final class JackKnifeSVM {
                 });
                 futures.add(future);
             }
+            LOG.info("getting futures of training tasks");
+            for (Future<?> future : futures) {
+                future.get();
+            }
+            LOG.info("got all training task futures");
+            futures.clear();
         }
-        LOG.info("getting futures of training tasks");
-        for (Future<?> future : futures) {
-            future.get();
-        }
-        LOG.info("got all training task futures");
-        futures.clear();
+
         Map<String, JackSVM2> models = compact(svmBuilders, trainDataMap);
+        if (naph5 == null) {
+            return models;
+        }
+        final Orientation orient = Orientation.COLUMN;
+        final Storage storage = Storage.DIRECT;
+        for (int ts = 0; ts < cvsplits.getTestSplits(); ts++) {
+            FloatDenseMatrix nap = napMap.get("nap_" + ts);
+            FloatDenseMatrix napTrans = nap.transpose();
+            for (int bs = 0; bs < cvsplits.getBackendSplits(); bs++) {
+                String modelName = "backend_" + ts + "_" + bs;
+                LOG.info("applying nap transform to " + modelName + " model");
+                JackSVM2 svm = models.get(modelName);
+                // get transposed support vectors, because they are stored as rows
+                FloatDenseMatrix sv = svm.getSupportVectors().transpose();
+                FloatDenseMatrix temp = new FloatDenseMatrix(napTrans.rows(), sv.columns(), orient, storage);
+                FloatDenseBLAS.DEFAULT.gemm(1.0f, napTrans, sv, 0.0f, temp);
+                FloatDenseBLAS.DEFAULT.gemm(-1.0f, nap, temp, 1.0f, sv);
+            }
+        }
         return models;
     }
 
@@ -190,14 +257,23 @@ public final class JackKnifeSVM {
     public static void main(final String[] args) throws IOException, InterruptedException, ExecutionException {
         LOG.info("starting");
         String workingDir = Constants.WORKING_DIRECTORY;
-        H5File datah5 = new H5File(new File(workingDir, "rungrams.h5"), H5File.H5F_ACC_RDONLY);
-        H5File kernelh5 = new H5File(new File(workingDir, "rukernel.h5"), H5File.H5F_ACC_RDONLY);
+        H5File datah5 = new H5File(new File(workingDir, "czngrams.h5"), H5File.H5F_ACC_RDONLY);
+        H5File kernelh5 = new H5File(new File(workingDir, "czkernel.h5"), H5File.H5F_ACC_RDONLY);
+        final H5File naph5;
+        if (NAP_ENABLED) {
+            naph5 = new H5File(new File(workingDir, "cznap.h5"), H5File.H5F_ACC_RDONLY);
+        } else {
+            naph5 = null;
+        }
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
         JackKnifeSVM jacksvm = new JackKnifeSVM(cvsplits, datah5, kernelh5);
         LOG.info("training frontend models");
-        Map<String, JackSVM2> models = jacksvm.trainModels();
-        LOG.info("training done");
+        Map<String, JackSVM2> models = jacksvm.trainModels(naph5);
+        if (naph5 != null) {
+            naph5.close();
+        }
         kernelh5.close();
+        LOG.info("training done");
         LOG.info("averaging backend models -> test models");
         jacksvm.averageModels(models);
         // map from split name to writer for its scores
@@ -208,8 +284,8 @@ public final class JackKnifeSVM {
                 addScoreWriter(cvsplits, scoreWriters, "backend_" + ts + "_" + bs, "back." + ts + "." + bs);
             }
             addScoreWriter(cvsplits, scoreWriters, "test_" + ts, "test." + ts);
-            addScoreWriter(cvsplits, scoreWriters, "sanity_" + ts, "sanity." + ts);
-            addScoreWriter(cvsplits, scoreWriters, "eval_" + ts, "eval." + ts);
+//            addScoreWriter(cvsplits, scoreWriters, "sanity_" + ts, "sanity." + ts);
+//            addScoreWriter(cvsplits, scoreWriters, "eval_" + ts, "eval." + ts);
         }
         LOG.info("scoring everything");
         List<SplitEntry> splitEntriesList = new ArrayList<SplitEntry>(cvsplits.getAllSplits());

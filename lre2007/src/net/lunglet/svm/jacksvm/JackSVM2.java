@@ -67,6 +67,7 @@ public final class JackSVM2 implements Serializable {
         return new PrecomputedKernel() {
             @Override
             public float get(final int i, final int j) {
+                // map from SVM index (0..N) to data index
                 return kernelReader.read(indexes[i], indexes[j]);
             }
         };

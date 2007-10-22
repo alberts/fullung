@@ -279,9 +279,19 @@ public final class CrossValidationSplits {
     }
 
     private static final class MitPart6FrontendLongFilter implements SplitEntryFilter {
+        private static final Set<String> INVALID_FILES;
+
+        static {
+            INVALID_FILES = new HashSet<String>();
+            INVALID_FILES.add("sre04.30s.xbxh.sph");
+            INVALID_FILES.add("sre04.30s.xfqr.sph");
+        }
+
         @Override
         public boolean filter(SplitEntry entry) {
             return entry.duration == 30 && !entry.filename.startsWith("sre");
+//            return entry.duration == 30 && !entry.filename.startsWith("sre05.") && !entry.filename.startsWith("sre06.")
+//                    && !INVALID_FILES.contains(entry.filename);
         }
     }
 
@@ -314,10 +324,6 @@ public final class CrossValidationSplits {
         }
     }
 
-    private Set<SplitEntry> readSplit(final String splitName) throws IOException {
-        return readSplit(splitName, new DefaultSplitEntryFilter());
-    }
-
     private Set<SplitEntry> readSplit(final String splitName, final SplitEntryFilter filter) throws IOException {
         File splitFile = new File(splitsDirectory, splitName + ".txt");
         System.out.println(splitFile);
@@ -347,6 +353,10 @@ public final class CrossValidationSplits {
         return entries;
     }
 
+    /*
+     * use all filter before training nap
+     * can then use any filter for kernel and training
+     */
     private Map<String, Set<SplitEntry>> readSplits(final boolean scoreEval) throws IOException {
 //        SplitEntryFilter frontendFilter = new MitPart6FrontendLongFilter();
 //        SplitEntryFilter frontendFilter = new MitPart6FrontendShortFilter();
@@ -366,16 +376,19 @@ public final class CrossValidationSplits {
             Set<SplitEntry> testi = readSplit(testname, testFilter);
             splits.put(testname, testi);
             test.addAll(testi);
+            Set<SplitEntry> fei = new HashSet<SplitEntry>();
             for (int j = 0; j < backendSplits; j++) {
                 final String fename = "frontend_" + i + "_" + j;
                 Set<SplitEntry> feij = readSplit(fename, frontendFilter);
                 splits.put(fename, feij);
-                frontend.addAll(feij);
+                fei.addAll(feij);
                 final String bename = "backend_" + i + "_" + j;
                 Set<SplitEntry> beij = readSplit(bename, backendFilter);
                 splits.put(bename, beij);
                 backend.addAll(beij);
             }
+            splits.put("frontend_" + i, fei);
+            frontend.addAll(fei);
         }
         splits.put("frontend", frontend);
         splits.put("backend", backend);
