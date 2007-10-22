@@ -16,8 +16,7 @@ import org.junit.Test;
 public final class PhnRecFeaturesTest {
     @Test
     public void test() throws IOException {
-//        File inputFile = new File("F:/language/NIST/lid96d1/test/30/02rz.sph_0.phnrec.zip");
-        File inputFile = new File("F:/language/CallFriend/Vietnamese/CF_VIE/TRAIN/VI_5322.SPH_1.phnrec.zip");
+        File inputFile = new File("E:/albert/mit/data/30/cslu22/AR-11.story.1.30s.sph_0.phnrec.zip");
         ArrayList<long[]> systemEvents = new ArrayList<long[]>();
         Map<String, Segment[]> systemSegments = new HashMap<String, Segment[]>();
         for (String system : new String[]{"cz", "hu", "ru"}) {
@@ -31,16 +30,18 @@ public final class PhnRecFeaturesTest {
 //                System.out.println(segment);
             }
             FloatDenseMatrix posteriors = features.getPosteriors();
-            System.out.println(posteriors.column(0));
-            System.out.println(posteriors.rows() + " " + posteriors.columns());
-//            FloatDenseVector ngrams = PhonemeUtil.calculateMonoBigrams(posteriors, 1);
-            FloatDenseVector ngrams = null;
-            System.out.println(ngrams.length());
+//            System.out.println(posteriors.column(0));
+//            System.out.println(posteriors.rows() + " " + posteriors.columns());
+            FloatDenseVector ngrams = PhonemeUtil.calculateMonograms(posteriors);
+//            FloatDenseVector ngrams = PhonemeUtil.calculateBigrams(posteriors, 1);
+//            System.out.println(ngrams.length());
+            System.out.println(ngrams);
+            break;
 
-            Segment[] validSegments = features.getValidSegments().toArray(new Segment[0]);
-            systemSegments.put(system, validSegments);
-            long[] events = getEvents(validSegments);
-            systemEvents.add(events);
+//            Segment[] validSegments = features.getValidSegments().toArray(new Segment[0]);
+//            systemSegments.put(system, validSegments);
+//            long[] events = getEvents(validSegments);
+//            systemEvents.add(events);
         }
 
         long[] sortedEvents = sortEvents(systemEvents.toArray(new long[0][]));
