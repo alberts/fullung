@@ -12,17 +12,26 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class PosteriorsConverter {
     // 10ms frame period in the HTK time unit
     private static final long FRAME_PERIOD = 100000L;
 
-    private static final List<String> PHONEMES_TO_IGNORE = Collections.unmodifiableList(Arrays.asList(new String[]{
-            "int", "oth", "pau", "spk"}));
+    public static final Set<String> PHONEMES_TO_IGNORE;
+
+    static {
+        Set<String> phonemesToIgnore = new HashSet<String>();
+        phonemesToIgnore.add("int");
+        phonemesToIgnore.add("oth");
+        phonemesToIgnore.add("pau");
+        phonemesToIgnore.add("spk");
+        PHONEMES_TO_IGNORE = Collections.unmodifiableSet(phonemesToIgnore);
+    }
 
     private final List<MasterLabel> labels;
 
