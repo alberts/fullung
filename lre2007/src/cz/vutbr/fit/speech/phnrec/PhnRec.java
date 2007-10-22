@@ -34,7 +34,7 @@ public final class PhnRec {
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        File inputDirectory = new File("G:/lid07e1/data");
+        File inputDirectory = new File("G:/nist2004/test");
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         File[] inputFiles = FileUtils.listFiles(inputDirectory, filter, true);
         for (File inputFile : inputFiles) {
@@ -67,23 +67,19 @@ public final class PhnRec {
                 LOG.info("skipping " + outputFile.getCanonicalPath());
                 continue;
             }
-            File tempOutputFile = File.createTempFile("phnrec", ".zip");
-            tempOutputFile.deleteOnExit();
-            LOG.info("Temporary output file = " + tempOutputFile.getCanonicalPath());
-            // TODO can use a ByteArrayOutputStream instead
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tempOutputFile));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ZipOutputStream out = new ZipOutputStream(baos);
             out.setLevel(9);
             for (PhnRecSystem system : PHNREC_SYSTEMS) {
                 LOG.info("processing channel " + i + " with system " + system);
                 system.processChannel(channelsData[i], out);
             }
             out.close();
-            LOG.info("moving output file to " + outputFile.getCanonicalPath());
-            outputFile.delete();
-            if (!tempOutputFile.renameTo(outputFile)) {
-                throw new RuntimeException();
-            }
-            LOG.info("moved output file");
+            LOG.info("writing output to " + outputFile.getCanonicalPath());
+            FileOutputStream fos = new FileOutputStream(outputFile);
+            fos.write(baos.toByteArray());
+            fos.close();
+            LOG.info("write output file");
         }
     }
 

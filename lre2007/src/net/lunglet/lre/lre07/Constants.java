@@ -21,8 +21,9 @@ public final class Constants {
 
     static {
         try {
+//            int testSplits = 10;
             int testSplits = 1;
-            int backendSplits = 1;
+            int backendSplits = 10;
             boolean scoreEval = false;
             File splitsDir = new File(SPLITS_DIRECTORY);
             File dataDir = new File(DATA_DIRECTORY);

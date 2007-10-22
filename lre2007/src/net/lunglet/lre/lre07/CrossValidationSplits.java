@@ -50,7 +50,7 @@ public final class CrossValidationSplits {
 
         public File getFile() {
             if (corpus.equals("lid07e1")) {
-                return new File("G:/lid07e1/data", filename);
+                return new File("E:/albert/lid07e1/data", filename);
             }
             return new File(dataDirectory, duration + "/" + corpus + "/" + filename);
         }
@@ -288,7 +288,8 @@ public final class CrossValidationSplits {
     private static final class MitPart6FrontendShortFilter implements SplitEntryFilter {
         @Override
         public boolean filter(SplitEntry entry) {
-            return (entry.duration == 3 || entry.duration == 10) && !entry.filename.startsWith("sre");
+//            return (entry.duration == 3 || entry.duration == 10) && !entry.filename.startsWith("sre");
+            return entry.duration == 10 && !entry.filename.startsWith("sre");
         }
     }
 
@@ -347,12 +348,14 @@ public final class CrossValidationSplits {
     }
 
     private Map<String, Set<SplitEntry>> readSplits(final boolean scoreEval) throws IOException {
-        SplitEntryFilter frontendFilter = new MitPart6FrontendLongFilter();
+//        SplitEntryFilter frontendFilter = new MitPart6FrontendLongFilter();
 //        SplitEntryFilter frontendFilter = new MitPart6FrontendShortFilter();
-//        SplitEntryFilter frontendFilter = new MitPart6FrontendAllFilter();
+        SplitEntryFilter frontendFilter = new MitPart6FrontendAllFilter();
 //        SplitEntryFilter frontendFilter = new MitPart2Filter();
         SplitEntryFilter backendFilter = new MitPart6BackendFilter();
+//        SplitEntryFilter backendFilter = new MitPart2Filter();
         SplitEntryFilter testFilter = new MitPart6TestFilter();
+//        SplitEntryFilter testFilter = new MitPart2Filter();
         SplitEntryFilter evalFilter = new DefaultSplitEntryFilter();
         Map<String, Set<SplitEntry>> splits = new HashMap<String, Set<SplitEntry>>();
         Set<SplitEntry> frontend = new HashSet<SplitEntry>();

@@ -138,8 +138,8 @@ public final class KernelChecker {
     }
 
     public static void main(final String[] args) {
-        H5File datah5 = new H5File("G:/czngrams.h5", H5File.H5F_ACC_RDONLY);
-        H5File kernelh5 = new H5File("G:/czkernel.h5", H5File.H5F_ACC_RDONLY);
+        H5File datah5 = new H5File("E:/albert/czngrams.h5", H5File.H5F_ACC_RDONLY);
+        H5File kernelh5 = new H5File("E:/albert/czkernel.h5", H5File.H5F_ACC_RDONLY);
         LOG.info("getting names of datasets");
         Set<String> names = getNames(datah5);
 

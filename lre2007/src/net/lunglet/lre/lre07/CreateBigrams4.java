@@ -1,5 +1,6 @@
 package net.lunglet.lre.lre07;
 
+import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
@@ -29,8 +30,12 @@ import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.IntType;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.lre.lre07.CrossValidationSplits.SplitEntry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public final class CreateBigrams4 {
+    private static final Log LOG = LogFactory.getLog(CreateBigrams4.class);
+
     private static List<FloatDenseVector> readPhnRecZip(final String phonemePrefix, final File zipFile)
             throws IOException {
         InputStream stream = new FileInputStream(zipFile);
@@ -53,14 +58,14 @@ public final class CreateBigrams4 {
             posteriors.setColumn(j, segments.get(j));
         }
         FloatDenseVector monograms = PhonemeUtil.calculateMonograms(posteriors);
-//        FloatDenseVector bigrams = PhonemeUtil.calculateBigrams(posteriors, 1);
-//        FloatDenseVector stagbi = PhonemeUtil.calculateBigrams(posteriors, 2);
+        FloatDenseVector bigrams = PhonemeUtil.calculateBigrams(posteriors, 1);
+        FloatDenseVector stagbi = PhonemeUtil.calculateBigrams(posteriors, 2);
 //        FloatDenseVector trigrams = PhonemeUtil.calculateTrigrams(posteriors, bigramIndexes);
 //        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, trigrams);
-//        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, stagbi);
+        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams, stagbi);
 //        FloatDenseVector ngrams = FloatMatrixUtils.concatenate(monograms, bigrams);
-//        return ngrams;
-        return monograms;
+        return ngrams;
+//        return monograms;
     }
 
     private static void writeNGrams(final String name, final String label, final FloatDenseVector ngrams,
@@ -92,6 +97,7 @@ public final class CreateBigrams4 {
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
+        LOG.info("creating feature vectors");
         CrossValidationSplits cvsplits = Constants.CVSPLITS;
         Set<SplitEntry> splitEntries = cvsplits.getAllSplits();
         final String phonemePrefix = "cz";
@@ -113,6 +119,7 @@ public final class CreateBigrams4 {
         for (SplitEntry splitEntry : splitEntriesList) {
             File zipFile = splitEntry.getFile("_0.phnrec.zip");
             if (!zipFile.exists()) {
+                LOG.info("skipping " + zipFile);
                 continue;
             }
             List<FloatDenseVector> segments = readPhnRecZip(phonemePrefix, zipFile);
@@ -124,5 +131,6 @@ public final class CreateBigrams4 {
             group.close();
         }
         h5file.close();
+        LOG.info("feature vector calculation is done");
     }
 }
