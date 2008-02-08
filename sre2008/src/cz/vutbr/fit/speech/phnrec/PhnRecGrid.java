@@ -23,8 +23,8 @@ import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 public final class PhnRecGrid {
     private static GridTopologySpi createTopologySpi() {
         GridBasicTopologySpi topSpi = new GridBasicTopologySpi();
-        topSpi.setLocalNode(false);
-        topSpi.setRemoteNodes(true);
+        topSpi.setLocalNode(true);
+        topSpi.setRemoteNodes(false);
         return topSpi;
     }
 
@@ -34,13 +34,13 @@ public final class PhnRecGrid {
         int channel;
 
         boolean isDone() {
-            return new File(filename + "_" + channel + ".phnrec.zip").exists();
+            return new File(filename + "." + channel + ".mlf").exists();
         }
     }
 
     private static List<PhnRecJobParameters> createJobParameters() throws IOException, UnsupportedAudioFileException {
         List<PhnRecJobParameters> jobParamsList = new ArrayList<PhnRecJobParameters>();
-        String path = "G:/temp";
+        String path = "C:\\temp\\data";
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         for (File inputFile : FileUtils.listFiles(path, filter, true)) {
             System.out.println("processing " + inputFile.getCanonicalPath());
@@ -59,19 +59,22 @@ public final class PhnRecGrid {
     }
 
     public static void main(final String[] args) throws Exception {
+        System.setProperty("GRIDGAIN_HOME", System.getProperty("user.dir"));
+        System.setProperty("gridgain.update.notifier", "false");
         final List<PhnRecJobParameters> jobParamsList = createJobParameters();
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         try {
             GridConfigurationAdapter cfg = new GridConfigurationAdapter();
+            cfg.setGridName("grid");
             cfg.setTopologySpi(createTopologySpi());
             cfg.setExecutorService(executorService);
             final Grid grid = GridFactory.start(cfg);
-            int maximumJobs = 50;
+            int maximumJobs = 2;
             GridTaskManager<PhnRecJob> taskManager = null;
             taskManager = new GridTaskManager<PhnRecJob>(grid, PhnRecTask.class, maximumJobs);
             taskManager.execute(new PhnRecTaskFactory(jobParamsList));
         } finally {
-            GridFactory.stop(true);
+            GridFactory.stop("grid", false);
             executorService.shutdown();
             executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
         }

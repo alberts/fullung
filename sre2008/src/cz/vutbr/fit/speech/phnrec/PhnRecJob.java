@@ -1,26 +1,39 @@
 package cz.vutbr.fit.speech.phnrec;
 
-import cz.vutbr.fit.speech.phnrec.PhnRecSystem.PhnRecSystemId;
-import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.zip.ZipOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import net.lunglet.sound.util.SoundUtils;
+import net.lunglet.util.ProcessManager;
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
 
 public class PhnRecJob implements GridJob {
     private static final long serialVersionUID = 1L;
 
-    // TODO this is probably going to leak
-    private static final PhnRecSystem[] PHNREC_SYSTEMS;
+    private static final ProcessManager PHNREC;
+
+    private static final File TEMP_PCM_FILE;
+
+    private static final File TEMP_MLF_FILE;
 
     static {
+        String executable = "C:\\temp\\phnrec.exe";
+        String configZip = "/cz/vutbr/fit/speech/phnrec/PHN_CZ_SPDAT_LCRC_N1500.zip";
+        File tmpdir = new File("C:\\temp");
+//        String tmpdir = FileUtils.createTempDirectory("phnrec", null);
         try {
-            PHNREC_SYSTEMS = new PhnRecSystem[]{new PhnRecSystem(PhnRecSystemId.PHN_CZ_SPDAT_LCRC_N1500),
-                    new PhnRecSystem(PhnRecSystemId.PHN_HU_SPDAT_LCRC_N1500),
-                    new PhnRecSystem(PhnRecSystemId.PHN_RU_SPDAT_LCRC_N1500)};
+            PHNREC = new ProcessManager(new String[]{executable, configZip}, tmpdir);
+            File workingDir = PHNREC.getWorkingDirectory();
+            TEMP_PCM_FILE = File.createTempFile("pcm", ".snd", workingDir);
+            TEMP_PCM_FILE.deleteOnExit();
+            TEMP_MLF_FILE = File.createTempFile("mlf", ".txt", workingDir);
+            TEMP_MLF_FILE.deleteOnExit();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -45,17 +58,34 @@ public class PhnRecJob implements GridJob {
 
     @Override
     public Serializable execute() throws GridException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ZipOutputStream out = new ZipOutputStream(baos);
-        out.setLevel(9);
         try {
-            for (PhnRecSystem system : PHNREC_SYSTEMS) {
-                system.processChannel(buf, out);
-            }
-            out.close();
+            FileOutputStream fos = new FileOutputStream(TEMP_PCM_FILE);
+            fos.write(buf);
+            fos.close();
+            List<String> arguments = new ArrayList<String>();
+            arguments.add("-v");
+            arguments.add("-c");
+            arguments.add(PHNREC.getWorkingDirectory().getAbsolutePath());
+            // source is single channel linear 16-bit PCM data
+            arguments.add("-s");
+            arguments.add("wf");
+            arguments.add("-w");
+            arguments.add("lin16");
+            arguments.add("-i");
+            arguments.add(TEMP_PCM_FILE.getAbsolutePath());
+            // target is mlf text file
+            arguments.add("-t");
+            arguments.add("str");
+            arguments.add("-o");
+            arguments.add(TEMP_MLF_FILE.getAbsolutePath());
+            PHNREC.run(arguments);
+            DataInputStream stream = new DataInputStream(new FileInputStream(TEMP_MLF_FILE));
+            byte[] buf = new byte[(int) TEMP_MLF_FILE.length()];
+            stream.readFully(buf);
+            stream.close();
+            return new Object[]{filename, channel, buf};
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new GridException(null, e);
         }
-        return new Object[]{filename, channel, baos.toByteArray()};
     }
 }

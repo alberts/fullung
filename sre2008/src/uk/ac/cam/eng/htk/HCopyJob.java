@@ -15,9 +15,10 @@ public class HCopyJob implements GridJob {
     private static final ProcessManager HCOPY;
 
     static {
-        String config =  "/uk/ac/cam/eng/htk/config.mfcc";
+        String config =  "/uk/ac/cam/eng/htk/config.mfcc1";
+        File tmpdir = new File("C:\\temp");
         try {
-            HCOPY = new ProcessManager(new String[]{"C:\\temp\\HCopy.exe", config}, "C:\\temp");
+            HCOPY = new ProcessManager(new String[]{"C:\\temp\\HCopy.exe", config}, tmpdir);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

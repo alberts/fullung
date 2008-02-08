@@ -8,5 +8,14 @@
 	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/gridgain-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-serialization-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jms-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="lib/javassist-4.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/tidy-04aug2000-r7.jar"/>
+	<classpathentry kind="lib" path="lib/trove-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/imq.jar"/>
 	<classpathentry kind="output" path="eclipse-classes"/>
 </classpath>

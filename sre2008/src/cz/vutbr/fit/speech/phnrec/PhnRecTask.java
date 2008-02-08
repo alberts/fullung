@@ -41,7 +41,7 @@ public final class PhnRecTask extends GridTaskAdapter<PhnRecJob> {
             String filename = (String) actualResult[0];
             int channel = (Integer) actualResult[1];
             byte[] buf = (byte[]) actualResult[2];
-            String outputFile = filename + "_" + channel + ".phnrec.zip";
+            String outputFile = filename + "." + channel + ".mlf";
             if (buf != null) {
                 System.out.println("writing " + outputFile);
                 try {

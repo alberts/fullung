@@ -53,12 +53,11 @@ public final class ProcessManager {
     }
 
     public ProcessManager(final String[] resources) throws IOException {
-        this(resources, System.getProperty("java.io.tmpdir"));
+        this(resources, new File(System.getProperty("java.io.tmpdir")));
     }
 
-    public ProcessManager(final String[] resources, final String tmpdir) throws IOException {
-        File baseDir = new File(tmpdir);
-        this.workingDir = FileUtils.createTempDirectory("java", null, baseDir);
+    public ProcessManager(final String[] resources, final File tmpdir) throws IOException {
+        this.workingDir = FileUtils.createTempDirectory("java", null, tmpdir);
         deleteOnExit(workingDir);
         if (!workingDir.isDirectory()) {
             throw new RuntimeException();
@@ -135,9 +134,11 @@ public final class ProcessManager {
         Process process = pb.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = reader.readLine();
+        // TODO make sure we don't lose the first line
         while (line != null) {
             line = reader.readLine();
             if (line != null) {
+                System.out.println(line);
                 output.add(line);
             }
         }
