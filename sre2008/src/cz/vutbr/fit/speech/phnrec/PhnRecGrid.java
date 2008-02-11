@@ -1,5 +1,8 @@
 package cz.vutbr.fit.speech.phnrec;
 
+import com.sun.messaging.ConnectionConfiguration;
+import com.sun.messaging.Topic;
+import com.sun.messaging.TopicConnectionFactory;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -17,17 +20,12 @@ import net.lunglet.io.FilenameSuffixFilter;
 import org.gridgain.grid.Grid;
 import org.gridgain.grid.GridConfigurationAdapter;
 import org.gridgain.grid.GridFactory;
-import org.gridgain.grid.spi.topology.GridTopologySpi;
+import org.gridgain.grid.spi.communication.jms.GridJmsCommunicationSpi;
+import org.gridgain.grid.spi.communication.tcp.GridTcpCommunicationSpi;
+import org.gridgain.grid.spi.discovery.jms.GridJmsDiscoverySpi;
 import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 
 public final class PhnRecGrid {
-    private static GridTopologySpi createTopologySpi() {
-        GridBasicTopologySpi topSpi = new GridBasicTopologySpi();
-        topSpi.setLocalNode(true);
-        topSpi.setRemoteNodes(false);
-        return topSpi;
-    }
-
     static final class PhnRecJobParameters {
         String filename;
 
@@ -40,9 +38,10 @@ public final class PhnRecGrid {
 
     private static List<PhnRecJobParameters> createJobParameters() throws IOException, UnsupportedAudioFileException {
         List<PhnRecJobParameters> jobParamsList = new ArrayList<PhnRecJobParameters>();
-        String path = "C:\\temp\\data";
+        String path = "E:\\todo\\SRE05";
         FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
-        for (File inputFile : FileUtils.listFiles(path, filter, true)) {
+        boolean recurse = true;
+        for (File inputFile : FileUtils.listFiles(path, filter, recurse)) {
             System.out.println("processing " + inputFile.getCanonicalPath());
             AudioFileFormat format = AudioSystem.getAudioFileFormat(inputFile);
             for (int channel = 0; channel < format.getFormat().getChannels(); channel++) {
@@ -59,17 +58,51 @@ public final class PhnRecGrid {
     }
 
     public static void main(final String[] args) throws Exception {
+        int maximumJobs = 250;
         System.setProperty("GRIDGAIN_HOME", System.getProperty("user.dir"));
         System.setProperty("gridgain.update.notifier", "false");
         final List<PhnRecJobParameters> jobParamsList = createJobParameters();
         ExecutorService executorService = Executors.newFixedThreadPool(2);
+        GridConfigurationAdapter cfg = new GridConfigurationAdapter();
+        final String gridName = "grid";
+        cfg.setGridName(gridName);
+        GridBasicTopologySpi topologySpi = new GridBasicTopologySpi();
+        topologySpi.setLocalNode(false);
+        topologySpi.setRemoteNodes(true);
+        cfg.setPeerClassLoadingEnabled(true);
+        cfg.setTopologySpi(topologySpi);
+        cfg.setExecutorService(executorService);
+        if (true) {
+//            cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
+//            cfg.setDiscoverySpi(new GridMulticastDiscoverySpi());
+            cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
+            GridJmsDiscoverySpi discoSpi = new GridJmsDiscoverySpi();
+            TopicConnectionFactory connectionFactory = new TopicConnectionFactory();
+            discoSpi.setConnectionFactory(connectionFactory);
+            discoSpi.setTopic(new Topic("gridgaindisco"));
+            discoSpi.setTimeToLive(600L);
+            discoSpi.setHeartbeatFrequency(3000L);
+            discoSpi.setMaximumMissedHeartbeats(10L);
+            discoSpi.setHandshakeWaitTime(10000L);
+            cfg.setDiscoverySpi(discoSpi);
+        } else {
+          TopicConnectionFactory connectionFactory = new TopicConnectionFactory();
+//          connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, "dominatrix.chem.sun.ac.za");
+          connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, "asok.dsp.sun.ac.za");
+          connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, "7676");
+          GridJmsCommunicationSpi commSpi = new GridJmsCommunicationSpi();
+          commSpi.setConnectionFactory(connectionFactory);
+          commSpi.setTopic(new Topic("gridgaincomm"));
+          cfg.setCommunicationSpi(commSpi);
+          GridJmsDiscoverySpi discoSpi = new GridJmsDiscoverySpi();
+          discoSpi.setConnectionFactory(connectionFactory);
+          discoSpi.setTopic(new Topic("gridgaindisco"));
+          cfg.setDiscoverySpi(discoSpi);
+        }
         try {
-            GridConfigurationAdapter cfg = new GridConfigurationAdapter();
-            cfg.setGridName("grid");
-            cfg.setTopologySpi(createTopologySpi());
-            cfg.setExecutorService(executorService);
             final Grid grid = GridFactory.start(cfg);
-            int maximumJobs = 2;
+            // without this sleep, things break
+            Thread.sleep(10000L);
             GridTaskManager<PhnRecJob> taskManager = null;
             taskManager = new GridTaskManager<PhnRecJob>(grid, PhnRecTask.class, maximumJobs);
             taskManager.execute(new PhnRecTaskFactory(jobParamsList));

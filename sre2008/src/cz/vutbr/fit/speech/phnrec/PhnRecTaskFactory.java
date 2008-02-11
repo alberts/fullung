@@ -29,6 +29,7 @@ public final class PhnRecTaskFactory implements GridTaskFactory<PhnRecJob> {
                 if (jobParams == null) {
                     return null;
                 }
+                System.out.println("returning new job for " + jobParams.filename + " channel " + jobParams.channel);
                 return new PhnRecJob(jobParams.filename, jobParams.channel);
             }
 

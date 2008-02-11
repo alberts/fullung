@@ -23,19 +23,24 @@ public class PhnRecJob implements GridJob {
     private static final File TEMP_MLF_FILE;
 
     static {
-        String executable = "C:\\temp\\phnrec.exe";
-        String configZip = "/cz/vutbr/fit/speech/phnrec/PHN_CZ_SPDAT_LCRC_N1500.zip";
-        File tmpdir = new File("C:\\temp");
-//        String tmpdir = FileUtils.createTempDirectory("phnrec", null);
-        try {
-            PHNREC = new ProcessManager(new String[]{executable, configZip}, tmpdir);
-            File workingDir = PHNREC.getWorkingDirectory();
-            TEMP_PCM_FILE = File.createTempFile("pcm", ".snd", workingDir);
-            TEMP_PCM_FILE.deleteOnExit();
-            TEMP_MLF_FILE = File.createTempFile("mlf", ".txt", workingDir);
-            TEMP_MLF_FILE.deleteOnExit();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        String executable = "/home/albert/opt/bin/phnrec";
+        if (new File(executable).exists()) {
+            String configZip = "/cz/vutbr/fit/speech/phnrec/PHN_CZ_SPDAT_LCRC_N1500.zip";
+            File tmpdir = new File("/tmp");
+            try {
+                PHNREC = new ProcessManager(new String[]{executable, configZip}, tmpdir);
+                File workingDir = PHNREC.getWorkingDirectory();
+                TEMP_PCM_FILE = File.createTempFile("pcm", ".snd", workingDir);
+                TEMP_PCM_FILE.deleteOnExit();
+                TEMP_MLF_FILE = File.createTempFile("mlf", ".txt", workingDir);
+                TEMP_MLF_FILE.deleteOnExit();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            PHNREC = null;
+            TEMP_PCM_FILE = null;
+            TEMP_MLF_FILE = null;
         }
     }
 

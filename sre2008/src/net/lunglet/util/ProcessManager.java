@@ -146,9 +146,15 @@ public final class ProcessManager {
         try {
             int exitValue = process.waitFor();
             if (exitValue != 0) {
-                throw new RuntimeException();
+                StringBuilder commandBuilder = new StringBuilder();
+                for (String str : command) {
+                    commandBuilder.append(str);
+                    commandBuilder.append(" ");
+                }
+                throw new RuntimeException("Command failed: " + commandBuilder.toString().trim());
             }
         } catch (InterruptedException e) {
+            // TODO this has happened before... don't know why
             throw new RuntimeException(e);
         }
         return output;

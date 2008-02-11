@@ -32,13 +32,18 @@ public final class GridTaskManager<T> {
                     // TODO notify observers of completed task. task factory
                     // could be an observer, in which case it could use the info
                     // to decide which task to make next
-                    results.add(future.get());
+                    try {
+                        results.add(future.get());
+                    } catch (GridException e) {
+                        System.err.println("Task failed: " + e.getMessage());
+                    }
                     completedFutures.add(future);
                 }
             }
             futures.removeAll(completedFutures);
             while (pendingTasks.hasNext() && futures.size() < maximumTasks) {
                 T arg = pendingTasks.next();
+                System.out.println("executing a new task");
                 GridTaskFuture future = grid.execute(taskClass.getName(), arg);
                 futures.add(future);
             }

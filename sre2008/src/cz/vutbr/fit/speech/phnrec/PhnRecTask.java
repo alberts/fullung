@@ -25,7 +25,9 @@ public final class PhnRecTask extends GridTaskAdapter<PhnRecJob> {
             throw new IllegalArgumentException();
         }
         Map<GridJob, GridNode> map = new HashMap<GridJob, GridNode>(1);
-        map.put(job, subgrid.get(rng.nextInt(subgrid.size())));
+        GridNode node = subgrid.get(rng.nextInt(subgrid.size()));
+        System.out.println("mapping new job to " + node.getPhysicalAddress());
+        map.put(job, node);
         return map;
     }
 

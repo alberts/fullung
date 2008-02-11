@@ -23,7 +23,7 @@ import org.gridgain.grid.GridTaskAdapter;
 import org.gridgain.grid.GridTaskFuture;
 import org.gridgain.grid.logger.GridLogger;
 import org.gridgain.grid.resources.GridLoggerResource;
-import org.gridgain.grid.spi.communication.jms.GridJmsCommunicationSpi;
+import org.gridgain.grid.spi.communication.tcp.GridTcpCommunicationSpi;
 import org.gridgain.grid.spi.discovery.jms.GridJmsDiscoverySpi;
 import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 
@@ -50,11 +50,11 @@ public final class TestGrid {
         private static final long serialVersionUID = 1L;
 
         private final int i;
-        
+
         public TestJob(final int i) {
             this.i = i;
         }
-        
+
         @Override
         public void cancel() {
             throw new UnsupportedOperationException();
@@ -73,7 +73,7 @@ public final class TestGrid {
     public static void main(final String[] args) throws Exception {
         System.setProperty("GRIDGAIN_HOME", System.getProperty("user.dir"));
         System.setProperty("gridgain.update.notifier", "false");
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         GridConfigurationAdapter cfg = new GridConfigurationAdapter();
         final String gridName = "grid";
         cfg.setGridName(gridName);
@@ -83,23 +83,29 @@ public final class TestGrid {
         cfg.setPeerClassLoadingEnabled(true);
         cfg.setTopologySpi(topologySpi);
         cfg.setExecutorService(executorService);
+        cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
         TopicConnectionFactory connectionFactory = new TopicConnectionFactory();
-        connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, "dominatrix.chem.sun.ac.za");
+        connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, "asok.dsp.sun.ac.za");
         connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, "7676");
-        GridJmsCommunicationSpi commSpi = new GridJmsCommunicationSpi();
-        commSpi.setConnectionFactory(connectionFactory);
-        commSpi.setTopic(new Topic("gridgaincomm"));
-        cfg.setCommunicationSpi(commSpi);
+//        GridJmsCommunicationSpi commSpi = new GridJmsCommunicationSpi();
+//        commSpi.setConnectionFactory(connectionFactory);
+//        commSpi.setTopic(new Topic("gridgaincomm"));
+//        cfg.setCommunicationSpi(commSpi);
+        cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
         GridJmsDiscoverySpi discoSpi = new GridJmsDiscoverySpi();
         discoSpi.setConnectionFactory(connectionFactory);
         discoSpi.setTopic(new Topic("gridgaindisco"));
+        discoSpi.setTimeToLive(600L);
+        discoSpi.setHeartbeatFrequency(3000L);
+        discoSpi.setMaximumMissedHeartbeats(10L);
+        discoSpi.setHandshakeWaitTime(10000L);
         cfg.setDiscoverySpi(discoSpi);
         try {
             final Grid grid = GridFactory.start(cfg);
             // without this sleep, things break
             Thread.sleep(10000L);
             List<GridTaskFuture> futures = new ArrayList<GridTaskFuture>();
-            for (int i = 0; i < 20000; i++) {
+            for (int i = 0; i < 1000; i++) {
                 GridTaskFuture future = grid.execute(TestTask.class.getName(), new TestJob(i));
                 futures.add(future);
             }
