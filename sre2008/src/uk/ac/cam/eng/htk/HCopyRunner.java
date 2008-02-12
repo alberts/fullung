@@ -125,7 +125,6 @@ public final class HCopyRunner {
                         out.close();
                         File outFile = new File(task.filename + "." + task.channel + OUTPUT_SUFFIX);
                         run(tempFile, outFile);
-                        tempFile.delete();
                         return null;
                     } finally {
                         if (tempFile != null) {
