@@ -106,10 +106,14 @@ public final class HCopyRunner {
 
     public static void main(final String[] args) throws InterruptedException, IOException,
             UnsupportedAudioFileException {
-        final String path = "C:\\temp\\data";
-        final int nThreads = 4;
+        List<Task> tasks = new ArrayList<Task>();
+        tasks.addAll(createTasks("C:\\SRE2008\\SRE04"));
+        tasks.addAll(createTasks("C:\\SRE2008\\SRE05"));
+        tasks.addAll(createTasks("C:\\SRE2008\\SRE06"));
+        tasks.addAll(createTasks("C:\\SRE2008\\SRE00"));
+        tasks.addAll(createTasks("C:\\SRE2008\\SRE99"));
+        final int nThreads = 8;
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
-        List<Task> tasks = createTasks(path);
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
         for (final Task task : tasks) {
             Future<Void> future = executorService.submit(new Callable<Void>() {

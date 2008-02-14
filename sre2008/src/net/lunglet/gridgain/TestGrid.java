@@ -1,8 +1,5 @@
 package net.lunglet.gridgain;
 
-import com.sun.messaging.ConnectionConfiguration;
-import com.sun.messaging.Topic;
-import com.sun.messaging.TopicConnectionFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,11 +21,10 @@ import org.gridgain.grid.GridTaskFuture;
 import org.gridgain.grid.logger.GridLogger;
 import org.gridgain.grid.resources.GridLoggerResource;
 import org.gridgain.grid.spi.communication.tcp.GridTcpCommunicationSpi;
-import org.gridgain.grid.spi.discovery.jms.GridJmsDiscoverySpi;
 import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 
 public final class TestGrid {
-    public static class TestTask extends GridTaskAdapter<TestJob> {
+    public static class TestTask extends GridTaskAdapter<TestJob, Object> {
         private static final long serialVersionUID = 1L;
 
         private final Random rng = new Random();
@@ -78,38 +74,38 @@ public final class TestGrid {
         final String gridName = "grid";
         cfg.setGridName(gridName);
         GridBasicTopologySpi topologySpi = new GridBasicTopologySpi();
-        topologySpi.setLocalNode(false);
-        topologySpi.setRemoteNodes(true);
+        topologySpi.setLocalNode(true);
+        topologySpi.setRemoteNodes(false);
         cfg.setPeerClassLoadingEnabled(true);
         cfg.setTopologySpi(topologySpi);
         cfg.setExecutorService(executorService);
         cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
-        TopicConnectionFactory connectionFactory = new TopicConnectionFactory();
-        connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, "asok.dsp.sun.ac.za");
-        connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, "7676");
+//        TopicConnectionFactory connectionFactory = new TopicConnectionFactory();
+//        connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, "asok.dsp.sun.ac.za");
+//        connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, "7676");
 //        GridJmsCommunicationSpi commSpi = new GridJmsCommunicationSpi();
 //        commSpi.setConnectionFactory(connectionFactory);
 //        commSpi.setTopic(new Topic("gridgaincomm"));
 //        cfg.setCommunicationSpi(commSpi);
-        cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
-        GridJmsDiscoverySpi discoSpi = new GridJmsDiscoverySpi();
-        discoSpi.setConnectionFactory(connectionFactory);
-        discoSpi.setTopic(new Topic("gridgaindisco"));
-        discoSpi.setTimeToLive(600L);
-        discoSpi.setHeartbeatFrequency(3000L);
-        discoSpi.setMaximumMissedHeartbeats(10L);
-        discoSpi.setHandshakeWaitTime(10000L);
-        cfg.setDiscoverySpi(discoSpi);
+//        cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
+//        GridJmsDiscoverySpi discoSpi = new GridJmsDiscoverySpi();
+//        discoSpi.setConnectionFactory(connectionFactory);
+//        discoSpi.setTopic(new Topic("gridgaindisco"));
+//        discoSpi.setTimeToLive(600L);
+//        discoSpi.setHeartbeatFrequency(3000L);
+//        discoSpi.setMaximumMissedHeartbeats(10L);
+//        discoSpi.setHandshakeWaitTime(10000L);
+//        cfg.setDiscoverySpi(discoSpi);
         try {
             final Grid grid = GridFactory.start(cfg);
             // without this sleep, things break
             Thread.sleep(10000L);
-            List<GridTaskFuture> futures = new ArrayList<GridTaskFuture>();
+            List<GridTaskFuture<Object>> futures = new ArrayList<GridTaskFuture<Object>>();
             for (int i = 0; i < 1000; i++) {
-                GridTaskFuture future = grid.execute(TestTask.class.getName(), new TestJob(i));
+                GridTaskFuture<Object> future = grid.execute(TestTask.class.getName(), new TestJob(i));
                 futures.add(future);
             }
-            for (GridTaskFuture future : futures) {
+            for (GridTaskFuture<Object> future : futures) {
                 future.get();
             }
         } finally {
