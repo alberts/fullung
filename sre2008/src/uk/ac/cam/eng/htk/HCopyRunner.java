@@ -31,8 +31,9 @@ public final class HCopyRunner {
         int channel;
 
         boolean isDone() {
-            return new File(filename + "." + channel + OUTPUT_SUFFIX).exists()
-                    || new File(filename + "." + channel + OUTPUT_SUFFIX + ".gz").exists();
+//            return new File(filename + "." + channel + OUTPUT_SUFFIX).exists()
+//                    || new File(filename + "." + channel + OUTPUT_SUFFIX + ".gz").exists();
+            return false;
         }
     }
 
@@ -107,11 +108,12 @@ public final class HCopyRunner {
     public static void main(final String[] args) throws InterruptedException, IOException,
             UnsupportedAudioFileException {
         List<Task> tasks = new ArrayList<Task>();
-        tasks.addAll(createTasks("C:\\SRE2008\\SRE04"));
-        tasks.addAll(createTasks("C:\\SRE2008\\SRE05"));
-        tasks.addAll(createTasks("C:\\SRE2008\\SRE06"));
-        tasks.addAll(createTasks("C:\\SRE2008\\SRE00"));
-        tasks.addAll(createTasks("C:\\SRE2008\\SRE99"));
+        tasks.addAll(createTasks("C:\\home\\albert\\SRE2008\\code\\scripts\\data"));
+//        tasks.addAll(createTasks("C:\\SRE2008\\SRE04"));
+//        tasks.addAll(createTasks("C:\\SRE2008\\SRE05"));
+//        tasks.addAll(createTasks("C:\\SRE2008\\SRE06"));
+//        tasks.addAll(createTasks("C:\\SRE2008\\SRE00"));
+//        tasks.addAll(createTasks("C:\\SRE2008\\SRE99"));
         final int nThreads = 8;
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
