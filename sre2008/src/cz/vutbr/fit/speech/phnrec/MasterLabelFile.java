@@ -51,15 +51,23 @@ public final class MasterLabelFile {
         }
     }
 
+    public boolean containsTimestamp(final double t) {
+        return t >= labels.get(0).getStartTime() && t <= labels.get(labels.size() - 1).getEndTime();
+    }
+
+    public double getLastEndTime() {
+        return labels.get(labels.size() - 1).getEndTime();
+    }
+
     /**
      * @param start start of frame in seconds
      * @param end end of frame in seconds
      */
     public boolean isOnlySpeech(final double start, final double end) {
-        if (start < labels.get(0).getStartTimeSeconds()) {
+        if (start < labels.get(0).getStartTime()) {
             throw new IllegalArgumentException();
         }
-        if (labels.get(labels.size() - 1).getEndTimeSeconds() < end) {
+        if (labels.get(labels.size() - 1).getEndTime() < end) {
             throw new IllegalArgumentException();
         }
         // set startIndex to last block to handle the case where start and end
@@ -70,7 +78,7 @@ public final class MasterLabelFile {
             // the less than comparison means that startIndex is never set
             // inside this loop if start and end are equal to the last timestamp
             // in the file
-            if (start >= label.getStartTimeSeconds() && start < label.getEndTimeSeconds()) {
+            if (start >= label.getStartTime() && start < label.getEndTime()) {
                 startIndex = i;
                 break;
             }
@@ -78,7 +86,7 @@ public final class MasterLabelFile {
         int endIndex = -1;
         for (int i = startIndex; i < labels.size(); i++) {
             MasterLabel label = labels.get(i);
-            if (end >= label.getStartTimeSeconds() && end <= label.getEndTimeSeconds()) {
+            if (end >= label.getStartTime() && end <= label.getEndTime()) {
                 endIndex = i;
                 break;
             }

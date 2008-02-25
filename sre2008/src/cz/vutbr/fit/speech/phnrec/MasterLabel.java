@@ -36,24 +36,24 @@ public final class MasterLabel {
         return endTime - startTime;
     }
 
-    public long getEndTime() {
-        return endTime;
+    public double getEndTime() {
+        return endTime / 1.0e7;
     }
 
-    public double getEndTimeSeconds() {
-        return endTime / 1.0e7;
+    public long getEndTimeHTK() {
+        return endTime;
     }
 
     public String getLabel() {
         return label;
     }
 
-    public long getStartTime() {
-        return startTime;
+    public double getStartTime() {
+        return startTime / 1.0e7;
     }
 
-    public double getStartTimeSeconds() {
-        return startTime / 1.0e7;
+    public long getStartTimeHTK() {
+        return startTime;
     }
 
     @Override
