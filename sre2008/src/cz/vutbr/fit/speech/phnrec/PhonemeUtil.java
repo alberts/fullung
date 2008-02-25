@@ -20,8 +20,6 @@ public final class PhonemeUtil {
             labels.add(new MasterLabel(label, startTime, endTime, score));
             line = bufReader.readLine();
         }
-        // TODO maybe this close shouldn't be here
-        bufReader.close();
         return labels;
     }
 

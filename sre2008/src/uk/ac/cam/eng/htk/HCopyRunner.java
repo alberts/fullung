@@ -126,8 +126,9 @@ public final class HCopyRunner {
                     try  {
                         tempFile = File.createTempFile("wav", ".htk", TEMP_DIR);
                         HTKOutputStream out = new HTKOutputStream(tempFile.getAbsolutePath());
-                        // sample period of 8 kHz in 100ns units = 1250
-                        out.writeWave(buf, 1250);
+                        // sample period of 8 kHz in 100ns units
+                        int framePeriod = 1250;
+                        out.writeWaveform(buf, framePeriod);
                         out.close();
                         File outFile = new File(task.filename + "." + task.channel + OUTPUT_SUFFIX);
                         run(tempFile, outFile);
