@@ -4,13 +4,13 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public final class MasterLabel {
-    final long endTime;
+    private final long endTime;
 
-    final String label;
+    private final String label;
 
-    final float score;
+    private final float score;
 
-    final long startTime;
+    private final long startTime;
 
     public MasterLabel(final String label, final long startTime, final long endTime, final float score) {
         this.label = label;
@@ -31,7 +31,7 @@ public final class MasterLabel {
         return new EqualsBuilder().append(label, other.label).append(startTime, other.startTime).append(endTime,
                 other.endTime).append(score, other.score).isEquals();
     }
-
+    
     public long getDuration() {
         return endTime - startTime;
     }
@@ -40,8 +40,20 @@ public final class MasterLabel {
         return endTime;
     }
 
+    public double getEndTimeSeconds() {
+        return endTime / 1.0e7;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
     public long getStartTime() {
         return startTime;
+    }
+
+    public double getStartTimeSeconds() {
+        return startTime / 1.0e7;
     }
 
     @Override
