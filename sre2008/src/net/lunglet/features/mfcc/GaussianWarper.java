@@ -2,26 +2,32 @@ package net.lunglet.features.mfcc;
 
 import com.dvsoft.sv.toolbox.matrix.GaussWarp;
 import com.dvsoft.sv.toolbox.matrix.JMatrix;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import net.lunglet.util.AssertUtils;
 
 public final class GaussianWarper {
-    private final Features[] features;
-
-    public GaussianWarper(final Features[] features) {
-        this.features = features;
-    }
-
-    public Features[] build() {
-        Features[] warpedFeatures = new Features[features.length];
-        int channels = features.length;
-        for (int channel = 0; channel < channels; channel++) {
-            float[][] values = features[channel].getValues();
-            JMatrix mat = new JMatrix(values);
-            mat = mat.transpose();
-            GaussWarp.warp(mat);
-            mat = mat.transpose();
-            values = mat.toFloatArray();
-            warpedFeatures[channel] = features[channel].replaceValues(values); 
+    public Features apply(final Features features) {
+        float[][] values = features.getValues();
+        ArrayList<float[]> validValues = new ArrayList<float[]>();
+        for (float[] v : values) {
+            if (v != null) {
+                validValues.add(v);
+            }
         }
-        return warpedFeatures;
+        JMatrix mat = new JMatrix(validValues.toArray(new float[0][]));
+        mat = mat.transpose();
+        GaussWarp.warp(mat);
+        mat = mat.transpose();
+        float[][] warpedValues = mat.toFloatArray();
+        List<float[]> warpedList = new ArrayList<float[]>(Arrays.asList(warpedValues));
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                values[i] = warpedList.remove(0);
+            }
+        }
+        AssertUtils.assertTrue(warpedList.isEmpty());
+        return features.replaceValues(values);
     }
 }

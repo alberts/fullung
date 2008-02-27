@@ -2,6 +2,8 @@ package net.lunglet.features.mfcc;
 
 import net.lunglet.util.ArrayUtils;
 
+// TODO allow stuff like master label file to be attached to features as a property
+
 public final class Features {
     private final int frameLength;
 

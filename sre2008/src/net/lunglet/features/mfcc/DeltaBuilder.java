@@ -42,15 +42,22 @@ public final class DeltaBuilder {
 
     private final int endIndex;
 
-    private final Features features;
+    private final int minBlockSize;
+    
+    public DeltaBuilder(final int beginIndex, final int endIndex) {
+        this(2, beginIndex, endIndex);
+    }
 
-    public DeltaBuilder(final Features features, final int beginIndex, final int endIndex) {
-        this.features = features;
+    public DeltaBuilder(final int minBlockSize, final int beginIndex, final int endIndex) {
+        if (minBlockSize < 2) {
+            throw new IllegalArgumentException();
+        }
+        this.minBlockSize = minBlockSize;
         this.beginIndex = beginIndex;
         this.endIndex = endIndex;
     }
 
-    public Features build() {
+    public Features apply(final Features features) {
         float[][] values = features.getValues();
         float[][] deltas = new float[values.length][];
         int firstBlockIndex = -1;
@@ -63,7 +70,7 @@ public final class DeltaBuilder {
                 }
             }
             if (values[i] == null || i == values.length - 1) {
-                if (blockList.size() >= 2) {
+                if (blockList.size() >= minBlockSize) {
                     float[][] block = blockList.toArray(new float[0][]);
                     float[][] deltaBlock = delta(block, beginIndex, endIndex);
                     for (int j = 0; j < blockList.size(); j++) {
@@ -74,7 +81,6 @@ public final class DeltaBuilder {
                 blockList.clear();
             }
         }
-        
         float[][] newValues = new float[values.length][];
         for (int i = 0; i < newValues.length; i++) {
             if (deltas[i] == null) {

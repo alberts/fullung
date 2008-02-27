@@ -14,8 +14,8 @@ public final class PhnRecVADTest {
     public void test() throws IOException, UnsupportedAudioFileException {
         InputStream audioStream = getClass().getResourceAsStream("kajx.sph");
         assertNotNull(audioStream);
-        HTKMFCCBuilder htkMfccBuilder = new HTKMFCCBuilder(audioStream);
-        Features[] featuresArr = htkMfccBuilder.build();
+        HTKMFCCBuilder htkMfccBuilder = new HTKMFCCBuilder();
+        Features[] featuresArr = htkMfccBuilder.apply(audioStream);
         assertEquals(2, featuresArr.length);
         Features features = featuresArr[0];
         audioStream.close();
@@ -23,8 +23,8 @@ public final class PhnRecVADTest {
         assertNotNull(mlfStream);
         MasterLabelFile mlf = new MasterLabelFile(new InputStreamReader(mlfStream));
         mlfStream.close();
-        PhnRecVAD vad = new PhnRecVAD(features, mlf);
-        Features vadFeatures = vad.build();
+        PhnRecVAD vad = new PhnRecVAD();
+        Features vadFeatures = vad.apply(features, mlf);
         float[][] values = features.getValues();
         float[][] vadValues = vadFeatures.getValues();
         assertEquals(values.length, vadValues.length);

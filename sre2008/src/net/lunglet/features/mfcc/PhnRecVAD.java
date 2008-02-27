@@ -6,16 +6,7 @@ import cz.vutbr.fit.speech.phnrec.MasterLabelFile;
  * Voice activity detector that uses PhnRec master label files.
  */
 public final class PhnRecVAD {
-    private final Features features;
-
-    private final MasterLabelFile mlf;
-
-    public PhnRecVAD(final Features features, final MasterLabelFile mlf) {
-        this.features = features;
-        this.mlf = mlf;
-    }
-
-    public Features build() {
+    public Features apply(final Features features, final MasterLabelFile mlf) {
         final double framePeriod = features.getFramePeriodHTK() / 1.0e7;
         final double frameLength = features.getFrameLengthHTK() / 1.0e7;
         float[][] mfcc = features.getValues();

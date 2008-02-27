@@ -1,19 +1,9 @@
 package net.lunglet.features.mfcc;
 
-import java.util.Arrays;
 import net.lunglet.util.AssertUtils;
 
 public final class CrossChannelSquelchVAD {
-    private final Features[] features;
-
-    public CrossChannelSquelchVAD(final Features[] features) {
-        if (features.length != 2) {
-            throw new IllegalArgumentException();
-        }
-        this.features = Arrays.copyOf(features, features.length);
-    }
-
-    private float[][] build(final int channel) {
+    private float[][] apply(final Features[] features, final int channel) {
         float[][] mfcc = features[channel].getValues();
         float[][] otherMFCC = features[channel == 0 ? 1 : 0].getValues();
         float[][] newmfcc = new float[mfcc.length][];
@@ -31,11 +21,14 @@ public final class CrossChannelSquelchVAD {
         return newmfcc;
     }
 
-    public Features[] build() {
+    public Features[] apply(final Features[] features) {
+        if (features.length != 2) {
+            throw new IllegalArgumentException();
+        }
         Features[] squelchedFeatures = new Features[features.length];
-        for (int i = 0; i < features.length; i++) {
-            float[][] values = build(i);
-            squelchedFeatures[i] = features[i].replaceValues(values);
+        for (int channel = 0; channel < features.length; channel++) {
+            float[][] values = apply(features, channel);
+            squelchedFeatures[channel] = features[channel].replaceValues(values);
         }
         return squelchedFeatures;
     }

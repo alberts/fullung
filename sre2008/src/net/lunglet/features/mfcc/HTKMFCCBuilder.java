@@ -1,7 +1,6 @@
 package net.lunglet.features.mfcc;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -44,17 +43,8 @@ public final class HTKMFCCBuilder {
         }
     }
 
-    private final AudioInputStream ais;
-
-    public HTKMFCCBuilder(final File audioFile) throws UnsupportedAudioFileException, IOException {
-        this(new FileInputStream(audioFile));
-    }
-
-    public HTKMFCCBuilder(final InputStream stream) throws UnsupportedAudioFileException, IOException {
-        this.ais = AudioSystem.getAudioInputStream(stream);
-    }
-
-    public Features[] build() {
+    public Features[] apply(final InputStream stream) throws UnsupportedAudioFileException, IOException {
+        AudioInputStream ais = AudioSystem.getAudioInputStream(stream);
         byte[][] channelsData = SoundUtils.readChannels(ais);
         int channels = channelsData.length;
         Features[] features = new Features[channels];

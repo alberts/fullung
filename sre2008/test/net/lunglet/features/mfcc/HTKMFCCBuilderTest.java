@@ -23,8 +23,8 @@ public final class HTKMFCCBuilderTest {
     public void testMono() throws UnsupportedAudioFileException, IOException {
         InputStream stream = getClass().getResourceAsStream("xdac.sph");
         assertNotNull(stream);
-        HTKMFCCBuilder builder = new HTKMFCCBuilder(stream);
-        Features[] features = builder.build();
+        HTKMFCCBuilder builder = new HTKMFCCBuilder();
+        Features[] features = builder.apply(stream);
         stream.close();
         assertEquals(1, features.length);
         checkFeatureVectors(features[0]);
@@ -35,8 +35,8 @@ public final class HTKMFCCBuilderTest {
     public void testStereo() throws UnsupportedAudioFileException, IOException {
         InputStream stream = getClass().getResourceAsStream("kajx.sph");
         assertNotNull(stream);
-        HTKMFCCBuilder builder = new HTKMFCCBuilder(stream);
-        Features[] features = builder.build();
+        HTKMFCCBuilder builder = new HTKMFCCBuilder();
+        Features[] features = builder.apply(stream);
         assertEquals(2, features.length);
         checkFeatureVectors(features[0]);
         assertEquals(1287, features[0].getValues().length);
