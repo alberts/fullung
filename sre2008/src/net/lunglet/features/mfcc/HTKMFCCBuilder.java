@@ -57,7 +57,7 @@ public final class HTKMFCCBuilder {
     public Features[] build() {
         byte[][] channelsData = SoundUtils.readChannels(ais);
         int channels = channelsData.length;
-        Features[] featureVectors = new Features[channels];
+        Features[] features = new Features[channels];
         float sampleRate = ais.getFormat().getSampleRate();
         int waveFramePeriod = (int) (1.0e7 / sampleRate);
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
@@ -84,7 +84,7 @@ public final class HTKMFCCBuilder {
                     boolean hasEnergy = header.hasEnergy();
                     in.reset();
                     float[][] mfcc = in.readMFCC();
-                    featureVectors[channel] = new Features(mfcc, mfccFramePeriod, mfccFrameLength, hasEnergy);
+                    features[channel] = new Features(mfcc, mfccFramePeriod, mfccFrameLength, hasEnergy);
                 } finally {
                     in.close();
                 }
@@ -99,6 +99,6 @@ public final class HTKMFCCBuilder {
                 tempMFCCFile.delete();
             }
         }
-        return featureVectors;
+        return features;
     }
 }

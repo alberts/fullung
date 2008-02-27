@@ -1,5 +1,5 @@
 package net.lunglet.features.mfcc;
 
 public interface FeatureCombiner {
-    float[][] combine(float[][] f1, float[][] f2);
+    Features combine(Features f1, Features f2);
 }

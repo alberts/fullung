@@ -18,6 +18,48 @@ public final class DeltaBuilderTest {
             }
         }
     }
+    
+    private static void checkDeltaBuilder(final float[][] values, final int expectedCount) {
+        Features f = new Features(values, 0, 0, false);
+        DeltaBuilder builder = new DeltaBuilder(f, 0, 1);
+        Features fd = builder.build();
+        float[][] newValues = fd.getValues();
+        int actualCount = 0;
+        for (int i = 0; i < newValues.length; i++) {
+            if (newValues[i] != null) {
+                actualCount++;
+            }
+        }
+        assertEquals(expectedCount, actualCount);
+    }
+    
+    @Test
+    public void testDeltaBuilder() {
+        checkDeltaBuilder(new float[][]{}, 0);
+        checkDeltaBuilder(new float[][]{null}, 0);
+        checkDeltaBuilder(new float[][]{{1.0f}}, 0);
+        checkDeltaBuilder(new float[][]{{1.0f}, {1.0f}}, 2);
+        checkDeltaBuilder(new float[][]{{1.0f}, null, {1.0f}}, 0);
+        checkDeltaBuilder(new float[][]{{1.0f}, null, {1.0f}, {1.0f}}, 2);
+        checkDeltaBuilder(new float[][]{{1.0f}, {1.0f}, null, {1.0f}, {1.0f}}, 4);
+        checkDeltaBuilder(new float[][]{null, {1.0f}, {1.0f}, null}, 2);
+        checkDeltaBuilder(new float[][]{{1.0f}, {1.0f}, {1.0f}}, 3);
+    }
+    
+    @Test
+    public void testDeltaBuilder2() {
+        float[][] values = new float[][]{{1.0f}, {4.0f}, {7.0f}};
+        Features f = new Features(values, 0, 0, false);
+        DeltaBuilder builder = new DeltaBuilder(f, 0, 1);
+        Features fd = builder.build();
+        float[][] newValues = fd.getValues();
+        assertEquals(1.0, newValues[0][0], 0);
+        assertEquals(1.5, newValues[0][1], 1.0e-6f);
+        assertEquals(4.0, newValues[1][0], 0);
+        assertEquals(1.8, newValues[1][1], 1.0e-6f);
+        assertEquals(7.0, newValues[2][0], 0);
+        assertEquals(1.5, newValues[2][1], 1.0e-6f);
+    }
 
     @Test
     public void testDelta() {
@@ -52,7 +94,7 @@ public final class DeltaBuilderTest {
      */
     @Test
     public void testDeltaHTK() throws IOException {
-        InputStream stream = getClass().getResourceAsStream("xdac.mfc");
+        InputStream stream = getClass().getResourceAsStream("xdac.sph.0.mfc");
         assertNotNull(stream);
         HTKInputStream in = new HTKInputStream(stream);
         in.mark(HTKHeader.SIZE);

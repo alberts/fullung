@@ -1,29 +1,26 @@
 package net.lunglet.features.mfcc;
 
-import net.lunglet.htk.HTKHeader;
+import java.util.Arrays;
 import net.lunglet.util.AssertUtils;
 
 public final class CrossChannelSquelchVAD {
-    private final float[][][] mfccs;
+    private final Features[] features;
 
-    public CrossChannelSquelchVAD(final float[][][] mfccs, final HTKHeader header) {
-        if (mfccs.length != 2) {
+    public CrossChannelSquelchVAD(final Features[] features) {
+        if (features.length != 2) {
             throw new IllegalArgumentException();
         }
-        if (!header.hasEnergy()) {
-            throw new IllegalArgumentException();
-        }
-        this.mfccs = mfccs;
+        this.features = Arrays.copyOf(features, features.length);
     }
 
     private float[][] build(final int channel) {
-        float[][] mfcc = mfccs[channel];
-        float[][] otherMFCC = mfccs[channel == 0 ? 1 : 0];
+        float[][] mfcc = features[channel].getValues();
+        float[][] otherMFCC = features[channel == 0 ? 1 : 0].getValues();
         float[][] newmfcc = new float[mfcc.length][];
         for (int i = 0; i < mfcc.length; i++) {
             AssertUtils.assertEquals(mfcc[i].length, otherMFCC[i].length);
             final int energyIndex = mfcc[i].length - 1;
-            // convert from HTK normalised log energy 
+            // convert from HTK normalised log energy
             double e1 = Math.exp(mfcc[i][energyIndex] - 1.0);
             double e2 = Math.exp(otherMFCC[i][energyIndex] - 1.0);
             // keep frame if difference in energies is more than 3 dB
@@ -34,15 +31,12 @@ public final class CrossChannelSquelchVAD {
         return newmfcc;
     }
 
-    public float[][][] build() {
-        // can't do cross channel squelch with a single channel
-        if (mfccs.length == 1) {
-            return mfccs;
+    public Features[] build() {
+        Features[] squelchedFeatures = new Features[features.length];
+        for (int i = 0; i < features.length; i++) {
+            float[][] values = build(i);
+            squelchedFeatures[i] = features[i].replaceValues(values);
         }
-        float[][][] newmfccs = new float[mfccs.length][][];
-        for (int i = 0; i < mfccs.length; i++) {
-            newmfccs[i] = build(i);
-        }
-        return newmfccs;
+        return squelchedFeatures;
     }
 }
