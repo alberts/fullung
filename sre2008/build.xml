@@ -6,6 +6,10 @@
 
   <property file="default.build.properties" />
 
+  <path id="array4j.build.classpath">
+    <fileset dir="${array4j.lib.dir}" includes="*.jar" />
+  </path>
+
   <path id="build.classpath">
     <fileset dir="${lib.dir}" includes="*.jar" />
   </path>
@@ -24,9 +28,18 @@
   <target name="prepare" depends="init" description="Creates the directories needed for building">
     <mkdir dir="${build.dir}" />
     <mkdir dir="${classes.dir}" />
+    <mkdir dir="${dist.dir}" />
   </target>
 
-  <target name="compile-sre2008" depends="prepare">
+  <target name="compile-array4j" depends="prepare">
+    <javac destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
+      <classpath refid="array4j.build.classpath" />
+      <src path="${array4j.src.dir}" />
+      <patternset refid="java.src.pattern" />
+    </javac>
+  </target>
+
+  <target name="compile-sre2008" depends="compile-array4j">
     <javac destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
       <classpath refid="build.classpath" />
       <src path="${src.dir}" />
