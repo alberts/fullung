@@ -3,13 +3,12 @@ package net.lunglet.features.mfcc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import cz.vutbr.fit.speech.phnrec.MasterLabelFile;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import org.junit.Ignore;
+import net.lunglet.htk.HTKFlags;
+import net.lunglet.htk.HTKOutputStream;
 import org.junit.Test;
 
 public final class MFCCBuilderTest {
@@ -20,21 +19,41 @@ public final class MFCCBuilderTest {
     }
 
     private static void writeFeatures(final String name, final Features features) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(name));
-        for (float[] v : features.getValues()) {
-            if (v == null) {
-                continue;
-            }
-            for (float f : v) {
-                writer.write(f + " ");
-            }
-            writer.write("\n");
+        HTKOutputStream out = new HTKOutputStream(name);
+        int flags = 0;
+        if (features.hasEnergy()) {
+            flags |= HTKFlags.HAS_ENERGY;
+            flags |= HTKFlags.SUPPRESS_ABSOLUTE_ENERGY;
         }
-        writer.close();
+        flags |= HTKFlags.HAS_DELTA;
+        flags |= HTKFlags.HAS_ACCELERATION;
+        int framePeriod = features.getFramePeriodHTK();
+        float[][] values = features.getValues();
+        out.writeMFCC(values, framePeriod, flags);
+        out.close();
     }
 
     @Test
-    public void test() throws IOException, UnsupportedAudioFileException {
+    public void testStereo() throws IOException, UnsupportedAudioFileException {
+        String name = "jabo.sph";
+        InputStream stream = getClass().getResourceAsStream(name);
+        assertNotNull(stream);
+        MFCCBuilder mfccBuilder = new MFCCBuilder();
+        MasterLabelFile[] mlfs = {getMLF(name + ".0.mlf"), getMLF(name + ".1.mlf")};
+        Features[] features = mfccBuilder.apply(stream, mlfs);
+        assertEquals(2, features.length);
+        float[][] values = features[0].getValues();
+        for (int i = 0; i < values.length; i++) {
+            assertNotNull(values[i]);
+        }
+        if (true) {
+            writeFeatures("jabo.sph.0.mfc", features[0]);
+            writeFeatures("jabo.sph.1.mfc", features[1]);
+        }
+    }
+
+    @Test
+    public void testMono() throws IOException, UnsupportedAudioFileException {
         String name = "xdac.sph";
         InputStream stream = getClass().getResourceAsStream(name);
         assertNotNull(stream);
@@ -43,11 +62,15 @@ public final class MFCCBuilderTest {
         Features[] features = mfccBuilder.apply(stream, mlfs);
         assertEquals(1, features.length);
         float[][] values = features[0].getValues();
-
-        writeFeatures("xdac.sph.0.mfc.txt", features[0]);
+        for (int i = 0; i < values.length; i++) {
+            assertNotNull(values[i]);
+        }
+        if (true) {
+            writeFeatures("xdac.sph.0.mfc", features[0]);
+        }
     }
 
-    @Ignore
+    @Test
     public void testShort() throws IOException, UnsupportedAudioFileException {
         String name = "kajx.sph";
         InputStream stream = getClass().getResourceAsStream(name);
@@ -56,5 +79,9 @@ public final class MFCCBuilderTest {
         MasterLabelFile[] mlfs = {getMLF(name + ".0.mlf"), getMLF(name + ".1.mlf")};
         Features[] features = mfccBuilder.apply(stream, mlfs);
         assertEquals(2, features.length);
+        if (true) {
+            writeFeatures("kajx.sph.0.mfc", features[0]);
+            writeFeatures("kajx.sph.1.mfc", features[1]);
+        }
     }
 }

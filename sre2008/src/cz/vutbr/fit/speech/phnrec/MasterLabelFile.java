@@ -93,8 +93,8 @@ public final class MasterLabelFile {
         }
         AssertUtils.assertTrue(endIndex >= 0 && endIndex >= startIndex);
         for (int i = startIndex; i <= endIndex; i++) {
-            String label = labels.get(i).getLabel();
-            if (BAD_LABELS.contains(label)) {
+            MasterLabel label = labels.get(i);
+            if (BAD_LABELS.contains(label.getLabel())) {
                 return false;
             }
         }

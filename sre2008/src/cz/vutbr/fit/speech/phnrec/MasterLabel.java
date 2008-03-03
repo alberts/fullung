@@ -48,6 +48,10 @@ public final class MasterLabel {
         return label;
     }
 
+    public float getScore() {
+        return score;
+    }
+
     public double getStartTime() {
         return startTime / 1.0e7;
     }
@@ -55,7 +59,7 @@ public final class MasterLabel {
     public long getStartTimeHTK() {
         return startTime;
     }
-
+    
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(label).append(startTime).append(endTime).append(score).toHashCode();
