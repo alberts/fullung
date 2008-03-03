@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="compile" name="sre2008">
+  <description>NIST Speaker Recognition Evaluation 2008</description>
+
+  <property file="build.properties" />
+
+  <property file="default.build.properties" />
+
+  <path id="build.classpath">
+    <fileset dir="${lib.dir}" includes="*.jar" />
+  </path>
+
+  <patternset id="java.src.pattern">
+    <include name="**/*.java" />
+  </patternset>
+
+  <target name="init" description="initialize the build">
+    <tstamp>
+      <format property="build.date" pattern="yyyy-MM-dd" />
+    </tstamp>
+    <property environment="env" />
+  </target>
+
+  <target name="prepare" depends="init" description="Creates the directories needed for building">
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${classes.dir}" />
+  </target>
+
+  <target name="compile-sre2008" depends="prepare">
+    <javac destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
+      <classpath refid="build.classpath" />
+      <src path="${src.dir}" />
+      <patternset refid="java.src.pattern" />
+    </javac>
+  </target>
+
+  <target name="compile" depends="compile-sre2008" description="Compile the source files for the project.">
+  </target>
+
+  <target name="clean" depends="init" description="clean almost everything">
+    <delete dir="${build.dir}" />
+    <delete dir="${dist.dir}" />
+  </target>
+</project>

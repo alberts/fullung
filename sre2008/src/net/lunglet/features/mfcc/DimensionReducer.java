@@ -8,11 +8,11 @@ public final class DimensionReducer {
             if (values[i] == null) {
                 continue;
             }
-            newValues[i] = new float[values[i].length - 2];
-            // copy C1 to C12, excluding C0 and log energy
-            System.arraycopy(values[i], 1, newValues[i], 0, 12);
-            // copy deltas and delta-deltas
-            System.arraycopy(values[i], 14, newValues[i], 12, 28);
+            newValues[i] = new float[values[i].length - 1];
+            // copy C1 to C12, excluding log energy
+            System.arraycopy(values[i], 0, newValues[i], 0, 12);
+            // copy deltas and delta-deltas, including those for log energy
+            System.arraycopy(values[i], 13, newValues[i], 12, 2 * 13);
         }
         return features.replaceValues(newValues);
     }

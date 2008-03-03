@@ -18,7 +18,7 @@ public final class DeltaBuilderTest {
             }
         }
     }
-    
+
     private static void checkDeltaBuilder(final float[][] values, final int expectedCount) {
         Features f = new Features(values, 0, 0, false);
         DeltaBuilder builder = new DeltaBuilder(0, 1);
@@ -32,7 +32,7 @@ public final class DeltaBuilderTest {
         }
         assertEquals(expectedCount, actualCount);
     }
-    
+
     @Test
     public void testDeltaBuilder() {
         checkDeltaBuilder(new float[][]{}, 0);
@@ -45,7 +45,23 @@ public final class DeltaBuilderTest {
         checkDeltaBuilder(new float[][]{null, {1.0f}, {1.0f}, null}, 2);
         checkDeltaBuilder(new float[][]{{1.0f}, {1.0f}, {1.0f}}, 3);
     }
-    
+
+    @Test
+    public void testDeltaDelta() {
+        float[][] values = new float[2][13];
+        for (int i = 0; i < values[0].length; i++) {
+            values[0][i] = i;
+            values[1][i] = i;
+        }
+        Features f1 = new Features(values, 0, 0, true);
+        DeltaBuilder deltaBuilder = new DeltaBuilder(0, 13);
+        Features f2 = deltaBuilder.apply(f1);
+        assertEquals(2 * 13, f2.getValues()[0].length);
+        DeltaBuilder deltaDeltaBuilder = new DeltaBuilder(13, 26);
+        Features f3 = deltaDeltaBuilder.apply(f2);
+        assertEquals(3 * 13, f3.getValues()[0].length);
+    }
+
     @Test
     public void testDeltaBuilder2() {
         float[][] values = new float[][]{{1.0f}, {4.0f}, {7.0f}};

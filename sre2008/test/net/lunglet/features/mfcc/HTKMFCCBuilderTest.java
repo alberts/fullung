@@ -15,7 +15,7 @@ public final class HTKMFCCBuilderTest {
         assertEquals(200000, f.getFrameLengthHTK());
         float[][] mfcc = f.getValues();
         for (int i = 0; i < mfcc.length; i++) {
-            assertEquals(14, mfcc[i].length);
+            assertEquals(13, mfcc[i].length);
         }
     }
 

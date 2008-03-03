@@ -17,6 +17,8 @@ import net.lunglet.htk.HTKFlags;
 import net.lunglet.htk.HTKOutputStream;
 
 public final class MFCCBuilder {
+    private static final boolean DEBUG = false;
+
     private final DeltaBuilder deltaBuilder;
 
     private final DeltaBuilder deltaDeltaBuilder;
@@ -42,8 +44,8 @@ public final class MFCCBuilder {
         this.vadFeatureCombiner = new VADFeatureCombiner();
         this.gaussianWarper = new GaussianWarper();
         int minBlockSize = 20;
-        this.deltaBuilder = new DeltaBuilder(minBlockSize, 0, 14);
-        this.deltaDeltaBuilder = new DeltaBuilder(minBlockSize, 14, 28);
+        this.deltaBuilder = new DeltaBuilder(minBlockSize, 0, 13);
+        this.deltaDeltaBuilder = new DeltaBuilder(minBlockSize, 13, 26);
         this.dimensionReducer = new DimensionReducer();
         this.frameRemover = new ExcludedFrameRemover();
     }
@@ -93,7 +95,7 @@ public final class MFCCBuilder {
             features[i] = dimensionReducer.apply(features[i]);
         }
         // XXX debugging code
-        if (false) {
+        if (DEBUG) {
             IndexAppender indexAppender = new IndexAppender();
             for (int i = 0; i < features.length; i++) {
                 features[i] = indexAppender.apply(features[i]);
@@ -121,8 +123,6 @@ public final class MFCCBuilder {
     }
 
     public static void main(final String[] args) throws IOException, UnsupportedAudioFileException {
-        // TODO get rid of C0 completely
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
         while (line != null) {
