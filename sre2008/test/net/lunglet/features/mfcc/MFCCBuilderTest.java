@@ -12,12 +12,6 @@ import net.lunglet.htk.HTKOutputStream;
 import org.junit.Test;
 
 public final class MFCCBuilderTest {
-    private MasterLabelFile getMLF(final String name) throws IOException {
-        InputStream stream = getClass().getResourceAsStream(name);
-        assertNotNull(stream);
-        return new MasterLabelFile(new InputStreamReader(stream));
-    }
-
     private static void writeFeatures(final String name, final Features features) throws IOException {
         HTKOutputStream out = new HTKOutputStream(name);
         int flags = 0;
@@ -33,23 +27,10 @@ public final class MFCCBuilderTest {
         out.close();
     }
 
-    @Test
-    public void testStereo() throws IOException, UnsupportedAudioFileException {
-        String name = "jabo.sph";
+    private MasterLabelFile getMLF(final String name) throws IOException {
         InputStream stream = getClass().getResourceAsStream(name);
         assertNotNull(stream);
-        MFCCBuilder mfccBuilder = new MFCCBuilder();
-        MasterLabelFile[] mlfs = {getMLF(name + ".0.mlf"), getMLF(name + ".1.mlf")};
-        Features[] features = mfccBuilder.apply(stream, mlfs);
-        assertEquals(2, features.length);
-        float[][] values = features[0].getValues();
-        for (int i = 0; i < values.length; i++) {
-            assertNotNull(values[i]);
-        }
-        if (true) {
-            writeFeatures("jabo.sph.0.mfc", features[0]);
-            writeFeatures("jabo.sph.1.mfc", features[1]);
-        }
+        return new MasterLabelFile(new InputStreamReader(stream));
     }
 
     @Test
@@ -82,6 +63,25 @@ public final class MFCCBuilderTest {
         if (true) {
             writeFeatures("kajx.sph.0.mfc", features[0]);
             writeFeatures("kajx.sph.1.mfc", features[1]);
+        }
+    }
+
+    @Test
+    public void testStereo() throws IOException, UnsupportedAudioFileException {
+        String name = "jabo.sph";
+        InputStream stream = getClass().getResourceAsStream(name);
+        assertNotNull(stream);
+        MFCCBuilder mfccBuilder = new MFCCBuilder();
+        MasterLabelFile[] mlfs = {getMLF(name + ".0.mlf"), getMLF(name + ".1.mlf")};
+        Features[] features = mfccBuilder.apply(stream, mlfs);
+        assertEquals(2, features.length);
+        float[][] values = features[0].getValues();
+        for (int i = 0; i < values.length; i++) {
+            assertNotNull(values[i]);
+        }
+        if (true) {
+            writeFeatures("jabo.sph.0.mfc", features[0]);
+            writeFeatures("jabo.sph.1.mfc", features[1]);
         }
     }
 }

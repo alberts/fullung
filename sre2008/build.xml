@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="compile" name="sre2008">
+<project basedir="." default="jar-complete" name="sre2008">
   <description>NIST Speaker Recognition Evaluation 2008</description>
 
   <property file="build.properties" />
@@ -32,6 +32,11 @@
   </target>
 
   <target name="compile-array4j" depends="prepare">
+    <copy todir="${classes.dir}">
+      <fileset dir="${array4j.resources.dir}">
+        <include name="**/*" />
+      </fileset>
+    </copy>
     <javac destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
       <classpath refid="array4j.build.classpath" />
       <src path="${array4j.src.dir}" />
@@ -40,14 +45,43 @@
   </target>
 
   <target name="compile-sre2008" depends="compile-array4j">
-    <javac destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
+    <copy todir="${classes.dir}">
+      <fileset dir="${resources.dir}">
+        <include name="**/*" />
+        <exclude name="cz/vutbr/fit/speech/phnrec/**/*" />
+      </fileset>
+    </copy>
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
       <classpath refid="build.classpath" />
-      <src path="${src.dir}" />
+      <include name="**/*.java" />
+      <exclude name="cz/vutbr/fit/speech/phnrec/PhnRecGrid2.java" />
+      <exclude name="cz/vutbr/fit/speech/phnrec/PhnRecJob.java" />
+      <exclude name="cz/vutbr/fit/speech/phnrec/PhnRecTask.java" />
+      <exclude name="net/lunglet/gridgain/**/*" />
       <patternset refid="java.src.pattern" />
     </javac>
   </target>
 
   <target name="compile" depends="compile-sre2008" description="Compile the source files for the project.">
+  </target>
+
+  <target name="jar-complete" depends="compile" description="Create the complete sre2008 jar.">
+    <property name="filename" value="sre2008.jar" />
+    <taskdef name="jarjar"
+             classname="com.tonicsystems.jarjar.JarJarTask"
+             classpath="${build.lib.dir}/jarjar-1.0rc6.jar" />
+    <jarjar destfile="${dist.dir}/${filename}">
+      <fileset dir="${classes.dir}" />
+      <zipfileset src="${array4j.lib.dir}/blas.jar" />
+      <zipfileset src="${array4j.lib.dir}/f2jutil.jar" />
+      <zipfileset src="${array4j.lib.dir}/lapack.jar" />
+      <zipfileset src="${array4j.lib.dir}/jna.jar" />
+      <zipfileset src="${array4j.lib.dir}/commons-lang-2.3.jar" />
+      <zipfileset src="${array4j.lib.dir}/jcip-annotations.jar" />
+      <zipfileset src="${lib.dir}/commons-net-1.4.1.jar" />
+      <zipfileset src="${lib.dir}/slf4j-simple-1.4.3.jar" />
+      <zipfileset src="${lib.dir}/slf4j-api-1.4.3.jar" />
+    </jarjar>
   </target>
 
   <target name="clean" depends="init" description="clean almost everything">

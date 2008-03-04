@@ -6,22 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import net.lunglet.util.AssertUtils;
 
 public final class MasterLabelFile {
-    private static final Set<String> BAD_LABELS;
-
-    static {
-        BAD_LABELS = new HashSet<String>();
-        BAD_LABELS.add("int");
-        BAD_LABELS.add("oth");
-        BAD_LABELS.add("pau");
-        BAD_LABELS.add("spk");
-    }
-
     private static List<MasterLabel> readLabels(final Reader reader) throws IOException {
         List<MasterLabel> labels = new ArrayList<MasterLabel>();
         BufferedReader bufReader = new BufferedReader(reader);
@@ -94,7 +82,7 @@ public final class MasterLabelFile {
         AssertUtils.assertTrue(endIndex >= 0 && endIndex >= startIndex);
         for (int i = startIndex; i <= endIndex; i++) {
             MasterLabel label = labels.get(i);
-            if (BAD_LABELS.contains(label.getLabel())) {
+            if (!label.isValid()) {
                 return false;
             }
         }

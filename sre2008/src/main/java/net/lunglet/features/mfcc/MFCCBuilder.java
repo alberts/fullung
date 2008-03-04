@@ -15,16 +15,78 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import net.lunglet.htk.HTKFlags;
 import net.lunglet.htk.HTKOutputStream;
+import net.lunglet.util.AssertUtils;
 
 public final class MFCCBuilder {
     private static final boolean DEBUG = false;
+
+    private static final int MIN_BLOCK_SIZE = 20;
+
+    private static void convertFile(final MFCCBuilder mfccBuilder, final String name)
+            throws UnsupportedAudioFileException, IOException {
+        File sphFile = new File(name);
+        System.err.println("Reading " + sphFile);
+        AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
+        int channels = aff.getFormat().getChannels();
+        ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
+        for (int i = 0; i < channels; i++) {
+            File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
+            System.err.println("Reading " + mlfFile);
+            mlfs.add(new MasterLabelFile(mlfFile));
+        }
+        Features[] features = mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
+        for (int i = 0; i < channels; i++) {
+            File mfccFile = new File(sphFile.getAbsolutePath() + "." + i + ".mfc.gz");
+            System.err.println("Writing " + mfccFile);
+            writeMFCC(mfccFile, features[i]);
+        }
+    }
+
+    public static void main(final String[] args) throws IOException  {
+        MFCCBuilder mfccBuilder = new MFCCBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String line = reader.readLine();
+        while (line != null && line.trim().length() > 0) {
+            try {
+                String name = line.trim();
+                convertFile(mfccBuilder, name);
+            } catch (UnsupportedAudioFileException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            line = reader.readLine();
+        }
+        reader.close();
+    }
+
+    private static void writeMFCC(final File file, final Features features) throws IOException {
+        HTKOutputStream out = new HTKOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
+        int flags = 0;
+        if (features.hasEnergy()) {
+            flags |= HTKFlags.HAS_ENERGY;
+            flags |= HTKFlags.SUPPRESS_ABSOLUTE_ENERGY;
+        }
+        flags |= HTKFlags.HAS_DELTA;
+        flags |= HTKFlags.HAS_ACCELERATION;
+        int framePeriod = features.getFramePeriodHTK();
+        float[][] values = features.getValues();
+        out.writeMFCC(values, framePeriod, flags);
+        out.close();
+    }
 
     private final DeltaBuilder deltaBuilder;
 
     private final DeltaBuilder deltaDeltaBuilder;
 
-    private final GaussianWarper gaussianWarper;
+    private final DimensionReducer dimensionReducer;
 
+    private final ExcludedFrameRemover frameRemover;
+
+    private final GaussianWarper gaussianWarper;
+    
     private final HTKMFCCBuilder htkmfcc;
 
     private final PhnRecVAD phnrecVAD;
@@ -33,19 +95,14 @@ public final class MFCCBuilder {
 
     private final VADFeatureCombiner vadFeatureCombiner;
 
-    private final DimensionReducer dimensionReducer;
-
-    private final ExcludedFrameRemover frameRemover;
-
     public MFCCBuilder() {
         this.htkmfcc = new HTKMFCCBuilder();
         this.phnrecVAD = new PhnRecVAD();
         this.squelchVAD = new CrossChannelSquelchVAD();
         this.vadFeatureCombiner = new VADFeatureCombiner();
         this.gaussianWarper = new GaussianWarper();
-        int minBlockSize = 20;
-        this.deltaBuilder = new DeltaBuilder(minBlockSize, 0, 13);
-        this.deltaDeltaBuilder = new DeltaBuilder(minBlockSize, 13, 26);
+        this.deltaBuilder = new DeltaBuilder(MIN_BLOCK_SIZE, 0, 13);
+        this.deltaDeltaBuilder = new DeltaBuilder(MIN_BLOCK_SIZE, 13, 26);
         this.dimensionReducer = new DimensionReducer();
         this.frameRemover = new ExcludedFrameRemover();
     }
@@ -103,48 +160,9 @@ public final class MFCCBuilder {
         }
         for (int i = 0; i < features.length; i++) {
             features[i] = frameRemover.apply(features[i]);
+            // check that we got at least one block of features
+            AssertUtils.assertTrue(features[i].getValues().length >= MIN_BLOCK_SIZE);
         }
         return features;
-    }
-
-    private static void writeMFCC(final File file, final Features features) throws IOException {
-        HTKOutputStream out = new HTKOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
-        int flags = 0;
-        if (features.hasEnergy()) {
-            flags |= HTKFlags.HAS_ENERGY;
-            flags |= HTKFlags.SUPPRESS_ABSOLUTE_ENERGY;
-        }
-        flags |= HTKFlags.HAS_DELTA;
-        flags |= HTKFlags.HAS_ACCELERATION;
-        int framePeriod = features.getFramePeriodHTK();
-        float[][] values = features.getValues();
-        out.writeMFCC(values, framePeriod, flags);
-        out.close();
-    }
-
-    public static void main(final String[] args) throws IOException, UnsupportedAudioFileException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String line = reader.readLine();
-        while (line != null) {
-            File sphFile = new File(line.trim());
-            System.err.println("Reading " + sphFile);
-            AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
-            int channels = aff.getFormat().getChannels();
-            ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
-            for (int i = 0; i < channels; i++) {
-                File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
-                System.err.println("Reading " + mlfFile);
-                mlfs.add(new MasterLabelFile(mlfFile));
-            }
-            MFCCBuilder mfccBuilder = new MFCCBuilder();
-            Features[] features = mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
-            for (int i = 0; i < channels; i++) {
-                File mfccFile = new File(sphFile.getAbsolutePath() + "." + i + ".mfc.gz");
-                System.err.println("Writing " + mfccFile);
-                writeMFCC(mfccFile, features[i]);
-            }
-            line = reader.readLine();
-        }
-        reader.close();
     }
 }

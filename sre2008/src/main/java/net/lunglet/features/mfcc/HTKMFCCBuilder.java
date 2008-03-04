@@ -1,6 +1,7 @@
 package net.lunglet.features.mfcc;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,21 +13,58 @@ import net.lunglet.htk.HTKHeader;
 import net.lunglet.htk.HTKInputStream;
 import net.lunglet.htk.HTKOutputStream;
 import net.lunglet.sound.util.SoundUtils;
+import net.lunglet.util.PlatformUtils;
 
 // TODO add parser for HTK configuration file so that we can get values like the MFCC frame length
 
 public final class HTKMFCCBuilder {
     private static final int MFCC_FRAME_LENGTH = 200000;
 
-    private static void runHCopy(final File waveform, final File mfcc) {
+    private static void copyStreamToFile(final InputStream stream, final File file) throws IOException {
+        byte[] buf = new byte[16384];
+        FileOutputStream fos = new FileOutputStream(file);
+        try {
+            int bytesRead = stream.read(buf);
+            while (bytesRead >= 0) {
+                fos.write(buf, 0, bytesRead);
+                bytesRead = stream.read(buf);
+            }
+        } finally {
+            fos.close();
+        }
+    }
+
+    private final File hcopyFile;
+    
+    private final File configFile;
+    
+    public HTKMFCCBuilder() {
+        try {
+            File tempDir = new File(".");
+            if (PlatformUtils.isWindows()) {
+                hcopyFile = File.createTempFile("HCopy", ".exe", tempDir);
+                copyStreamToFile(getClass().getResourceAsStream("HCopy.exe"), hcopyFile);
+            } else {
+                hcopyFile = File.createTempFile("HCopy", "", tempDir);
+                copyStreamToFile(getClass().getResourceAsStream("HCopy"), hcopyFile);
+                hcopyFile.setExecutable(true);
+            }
+            hcopyFile.deleteOnExit();
+            configFile = File.createTempFile("config", ".mfcc", tempDir);
+            copyStreamToFile(getClass().getResourceAsStream("config.mfcc"), configFile);
+            configFile.deleteOnExit();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void runHCopy(final File waveform, final File mfcc) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.redirectErrorStream(true);
-        File workingDir = new File("C:\\home\\albert\\SRE2008\\scripts");
-        processBuilder.directory(workingDir);
         List<String> command = new ArrayList<String>();
-        command.add(new File(workingDir, "HCopy.exe").getAbsolutePath());
+        command.add(hcopyFile.getAbsolutePath());
         command.add("-C");
-        command.add(new File(workingDir, "config.mfcc").getAbsolutePath());
+        command.add(configFile.getAbsolutePath());
         command.add(waveform.getAbsolutePath());
         command.add(mfcc.getAbsolutePath());
         processBuilder.command(command);
