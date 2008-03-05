@@ -12,7 +12,7 @@ public final class GaussianWarper {
     // use a window size of 302 to work around a bug in GaussWarp
     private static final int WINDOW_SIZE = 302;
 
-    public Features apply(final Features features) {
+    public FeatureSet apply(final FeatureSet features) {
         float[][] values = features.getValues();
         ArrayList<float[]> validValues = new ArrayList<float[]>();
         for (float[] v : values) {

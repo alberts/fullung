@@ -35,9 +35,9 @@ public final class HTKMFCCBuilder {
     }
 
     private final File hcopyFile;
-    
+
     private final File configFile;
-    
+
     public HTKMFCCBuilder() {
         try {
             File tempDir = new File(".");
@@ -81,11 +81,11 @@ public final class HTKMFCCBuilder {
         }
     }
 
-    public Features[] apply(final InputStream stream) throws UnsupportedAudioFileException, IOException {
+    public FeatureSet[] apply(final InputStream stream) throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = AudioSystem.getAudioInputStream(stream);
         byte[][] channelsData = SoundUtils.readChannels(ais);
         int channels = channelsData.length;
-        Features[] features = new Features[channels];
+        FeatureSet[] features = new FeatureSet[channels];
         float sampleRate = ais.getFormat().getSampleRate();
         int waveFramePeriod = (int) (1.0e7 / sampleRate);
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
@@ -112,7 +112,7 @@ public final class HTKMFCCBuilder {
                     boolean hasEnergy = header.hasEnergy();
                     in.reset();
                     float[][] mfcc = in.readMFCC();
-                    features[channel] = new Features(mfcc, mfccFramePeriod, mfccFrameLength, hasEnergy);
+                    features[channel] = new FeatureSet(mfcc, mfccFramePeriod, mfccFrameLength, hasEnergy);
                 } finally {
                     in.close();
                 }

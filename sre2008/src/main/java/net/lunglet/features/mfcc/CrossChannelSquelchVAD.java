@@ -3,7 +3,7 @@ package net.lunglet.features.mfcc;
 import net.lunglet.util.AssertUtils;
 
 public final class CrossChannelSquelchVAD {
-    private float[][] apply(final Features[] features, final int channel) {
+    private float[][] apply(final FeatureSet[] features, final int channel) {
         float[][] mfcc = features[channel].getValues();
         float[][] otherMFCC = features[channel == 0 ? 1 : 0].getValues();
         float[][] newmfcc = new float[mfcc.length][];
@@ -21,7 +21,7 @@ public final class CrossChannelSquelchVAD {
         return newmfcc;
     }
 
-    private float[][] apply2(final Features[] features, final int channel) {
+    private float[][] apply2(final FeatureSet[] features, final int channel) {
         float[][] mfcc = features[channel].getValues();
         double thresholdEnergydB = PhnRecVAD.getMaxEnergydB(mfcc) - 3.0;
         float[][] otherMFCC = features[channel == 0 ? 1 : 0].getValues();
@@ -39,11 +39,11 @@ public final class CrossChannelSquelchVAD {
         return newmfcc;
     }
 
-    public Features[] apply(final Features[] features) {
+    public FeatureSet[] apply(final FeatureSet[] features) {
         if (features.length != 2) {
             throw new IllegalArgumentException();
         }
-        Features[] squelchedFeatures = new Features[features.length];
+        FeatureSet[] squelchedFeatures = new FeatureSet[features.length];
         for (int channel = 0; channel < features.length; channel++) {
             float[][] values = apply2(features, channel);
             squelchedFeatures[channel] = features[channel].replaceValues(values);

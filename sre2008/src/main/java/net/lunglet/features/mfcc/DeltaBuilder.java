@@ -57,7 +57,7 @@ public final class DeltaBuilder {
         this.endIndex = endIndex;
     }
 
-    public Features apply(final Features features) {
+    public FeatureSet apply(final FeatureSet features) {
         float[][] values = features.getValues();
         float[][] deltas = new float[values.length][];
         int firstBlockIndex = -1;

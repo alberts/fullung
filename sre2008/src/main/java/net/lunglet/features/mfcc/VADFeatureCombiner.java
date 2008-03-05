@@ -2,7 +2,7 @@ package net.lunglet.features.mfcc;
 
 public final class VADFeatureCombiner implements FeatureCombiner {
     @Override
-    public Features combine(final Features f1, final Features f2) {
+    public FeatureSet combine(final FeatureSet f1, final FeatureSet f2) {
         float[][] v1 = f1.getValues();
         float[][] v2 = f2.getValues();
         if (v1.length != v2.length) {

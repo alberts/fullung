@@ -4,7 +4,7 @@ import net.lunglet.util.ArrayUtils;
 
 // TODO allow stuff like master label file to be attached to features as a property
 
-public final class Features {
+public final class FeatureSet {
     private final int frameLength;
 
     private final int framePeriod;
@@ -13,7 +13,7 @@ public final class Features {
 
     private final float[][] values;
 
-    public Features(final float[][] values, final int framePeriod, final int frameLength, final boolean hasEnergy) {
+    public FeatureSet(final float[][] values, final int framePeriod, final int frameLength, final boolean hasEnergy) {
         this.values = ArrayUtils.copyOf(values, values.length);
         this.framePeriod = framePeriod;
         this.frameLength = frameLength;
@@ -36,7 +36,7 @@ public final class Features {
         return hasEnergy;
     }
 
-    public Features replaceValues(final float[][] values) {
-        return new Features(values, framePeriod, frameLength, hasEnergy);
+    public FeatureSet replaceValues(final float[][] values) {
+        return new FeatureSet(values, framePeriod, frameLength, hasEnergy);
     }
 }

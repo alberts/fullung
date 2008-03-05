@@ -18,7 +18,7 @@ import net.lunglet.htk.HTKOutputStream;
 import net.lunglet.util.AssertUtils;
 
 public final class MFCCBuilder {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static final int MIN_BLOCK_SIZE = 20;
 
@@ -34,7 +34,7 @@ public final class MFCCBuilder {
             System.err.println("Reading " + mlfFile);
             mlfs.add(new MasterLabelFile(mlfFile));
         }
-        Features[] features = mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
+        FeatureSet[] features = mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
         for (int i = 0; i < channels; i++) {
             File mfccFile = new File(sphFile.getAbsolutePath() + "." + i + ".mfc.gz");
             System.err.println("Writing " + mfccFile);
@@ -62,7 +62,7 @@ public final class MFCCBuilder {
         reader.close();
     }
 
-    private static void writeMFCC(final File file, final Features features) throws IOException {
+    public static void writeMFCC(final File file, final FeatureSet features) throws IOException {
         HTKOutputStream out = new HTKOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
         int flags = 0;
         if (features.hasEnergy()) {
@@ -107,25 +107,25 @@ public final class MFCCBuilder {
         this.frameRemover = new ExcludedFrameRemover();
     }
 
-    public Features[] apply(final File file, final MasterLabelFile[] mlfs) throws UnsupportedAudioFileException,
+    public FeatureSet[] apply(final File file, final MasterLabelFile[] mlfs) throws UnsupportedAudioFileException,
             IOException {
         return apply(new FileInputStream(file), mlfs);
     }
 
-    public Features[] apply(final InputStream stream, final MasterLabelFile[] mlfs)
+    public FeatureSet[] apply(final InputStream stream, final MasterLabelFile[] mlfs)
             throws UnsupportedAudioFileException, IOException {
-        Features[] htkFeatures = htkmfcc.apply(stream);
-        Features[] phnRecVADFeatures = new Features[htkFeatures.length];
+        FeatureSet[] htkFeatures = htkmfcc.apply(stream);
+        FeatureSet[] phnRecVADFeatures = new FeatureSet[htkFeatures.length];
         for (int i = 0; i < htkFeatures.length; i++) {
             phnRecVADFeatures[i] = phnrecVAD.apply(htkFeatures[i], mlfs[i]);
         }
 
-        final Features[] features;
+        final FeatureSet[] features;
         if (true) {
             // use cross channel squelch on stereo data
-            features = new Features[htkFeatures.length];
+            features = new FeatureSet[htkFeatures.length];
             if (htkFeatures.length > 1) {
-                Features[] squelchFeatures = squelchVAD.apply(htkFeatures);
+                FeatureSet[] squelchFeatures = squelchVAD.apply(htkFeatures);
                 for (int i = 0; i < htkFeatures.length; i++) {
                     features[i] = vadFeatureCombiner.combine(phnRecVADFeatures[i], squelchFeatures[i]);
                     phnRecVADFeatures[i] = null;

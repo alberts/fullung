@@ -1,7 +1,7 @@
 package net.lunglet.features.mfcc;
 
 public final class IndexAppender {
-    public Features apply(final Features features) {
+    public FeatureSet apply(final FeatureSet features) {
         float[][] values = features.getValues();
         float[][] newValues = new float[values.length][];
         for (int i = 0; i < values.length; i++) {

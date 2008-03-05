@@ -48,11 +48,13 @@ public final class MasterLabelFile {
     }
 
     /**
-     * @param start start of frame in seconds
-     * @param end end of frame in seconds
+     * @param begin
+     *                start of frame in seconds
+     * @param end
+     *                end of frame in seconds
      */
-    public boolean isOnlySpeech(final double start, final double end) {
-        if (start < labels.get(0).getStartTime()) {
+    public boolean isOnlySpeech(final double begin, final double end) {
+        if (begin < labels.get(0).getStartTime()) {
             throw new IllegalArgumentException();
         }
         if (labels.get(labels.size() - 1).getEndTime() < end) {
@@ -66,7 +68,7 @@ public final class MasterLabelFile {
             // the less than comparison means that startIndex is never set
             // inside this loop if start and end are equal to the last timestamp
             // in the file
-            if (start >= label.getStartTime() && start < label.getEndTime()) {
+            if (begin >= label.getStartTime() && begin < label.getEndTime()) {
                 startIndex = i;
                 break;
             }
@@ -87,5 +89,51 @@ public final class MasterLabelFile {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns the number of valid phonemes in the segment.
+     * 
+     * @param begin
+     *                start of frame in seconds
+     * @param end
+     *                end of frame in seconds
+     */
+    public int getValidPhonemeCount(final double begin, final double end) {
+        if (begin < labels.get(0).getStartTime()) {
+            throw new IllegalArgumentException();
+        }
+        if (labels.get(labels.size() - 1).getEndTime() < end) {
+            throw new IllegalArgumentException();
+        }
+        // set startIndex to last block to handle the case where start and end
+        // are both the last timestamp in the file
+        int startIndex = labels.size() - 1;
+        for (int i = 0; i < labels.size(); i++) {
+            MasterLabel label = labels.get(i);
+            // the less than comparison means that startIndex is never set
+            // inside this loop if start and end are equal to the last timestamp
+            // in the file
+            if (begin >= label.getStartTime() && begin < label.getEndTime()) {
+                startIndex = i;
+                break;
+            }
+        }
+        int endIndex = -1;
+        for (int i = startIndex; i < labels.size(); i++) {
+            MasterLabel label = labels.get(i);
+            if (end >= label.getStartTime() && end <= label.getEndTime()) {
+                endIndex = i;
+                break;
+            }
+        }
+        AssertUtils.assertTrue(endIndex >= 0 && endIndex >= startIndex);
+        int validPhonemeCount = 0;
+        for (int i = startIndex; i <= endIndex; i++) {
+            if (labels.get(i).isValid()) {
+                validPhonemeCount++;
+            }
+        }
+        return validPhonemeCount;
     }
 }

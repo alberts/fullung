@@ -3,7 +3,7 @@ package net.lunglet.features.mfcc;
 import java.util.ArrayList;
 
 public final class ExcludedFrameRemover {
-    public Features apply(final Features features) {
+    public FeatureSet apply(final FeatureSet features) {
         float[][] values = features.getValues();
         ArrayList<float[]> nonNullFrames = new ArrayList<float[]>();
         for (float[] v : values) {
