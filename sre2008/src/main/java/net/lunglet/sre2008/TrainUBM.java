@@ -1,5 +1,12 @@
 package net.lunglet.sre2008;
 
+import com.dvsoft.sv.io.FileFolder;
+import com.dvsoft.sv.io.IO;
+import com.dvsoft.sv.io.IOReference;
+import com.dvsoft.sv.io.RWFolder;
+import com.dvsoft.sv.toolbox.gmm.VQ;
+import com.dvsoft.sv.toolbox.gmm.VQAccumulator;
+import com.dvsoft.sv.toolbox.gmm.VQStats;
 import com.dvsoft.sv.toolbox.matrix.JVector;
 import com.dvsoft.sv.toolbox.matrix.JVectorSequence;
 import java.io.BufferedReader;
