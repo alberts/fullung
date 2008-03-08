@@ -24,7 +24,7 @@ import net.lunglet.util.AssertUtils;
 // features have the same range
 
 public final class PhnRecMFCCBuilder {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     /// Threshold to discard blocks that contain too few feature vectors
     private static final int MIN_BLOCK_SIZE = 20;
@@ -49,7 +49,7 @@ public final class PhnRecMFCCBuilder {
         }
         FeatureSet[] features = mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
         for (int i = 0; i < channels; i++) {
-            File mfccFile = new File(sphFile.getAbsolutePath() + "." + i + ".mfc.gz");
+            File mfccFile = new File(sphFile.getAbsolutePath() + "." + i + ".mfc");
             System.err.println("Writing " + mfccFile);
             MFCCBuilder.writeMFCC(mfccFile, features[i]);
         }
@@ -100,6 +100,15 @@ public final class PhnRecMFCCBuilder {
                 }
             }
         }
+
+        if (DEBUG) {
+            for (FeatureBlock block : badBlocks) {
+                System.out.println("cross channel squelching block: " + block.getMeanEnergydB() + " "
+                        + block.getLength() + " " + block.getBeginIndex() * 10.0e-3 + " -> " + block.getEndIndex()
+                        * 10.0e-3);
+            }
+        }
+
         blocks.removeAll(badBlocks);
     }
 
@@ -229,6 +238,14 @@ public final class PhnRecMFCCBuilder {
                 badBlocks.add(block);
             }
         }
+
+        if (DEBUG && false) {
+            for (FeatureBlock block : badBlocks) {
+                System.out.println("removing noise block: " + block.getMeanEnergydB() + " " + block.getLength() + " "
+                        + block.getBeginIndex() * 10.0e-3 + " -> " + block.getEndIndex() * 10.0e-3);
+            }
+        }
+
         blocks.removeAll(badBlocks);
     }
 
@@ -239,6 +256,14 @@ public final class PhnRecMFCCBuilder {
                 badBlocks.add(block);
             }
         }
+
+        if (DEBUG) {
+            for (FeatureBlock block : badBlocks) {
+                System.out.println("removing silence block: " + block.getMeanEnergydB() + " " + block.getLength() + " "
+                        + block.getBeginIndex() * 10.0e-3 + " -> " + block.getEndIndex() * 10.0e-3);
+            }
+        }
+
         blocks.removeAll(badBlocks);
     }
 
@@ -268,7 +293,9 @@ public final class PhnRecMFCCBuilder {
             removeNoiseBlocks(blocks, mlf);
             double maxBlockEnergydB = getMaximumBlockEnergydB(blocks);
             removeSilenceBlocks(blocks, maxBlockEnergydB);
-            crossChannelSquelch(blocks, maxBlockEnergydB, otherChannels);
+            if (false) {
+                crossChannelSquelch(blocks, maxBlockEnergydB, otherChannels);
+            }
             validBlocksList.add(blocks);
         }
 
@@ -276,12 +303,6 @@ public final class PhnRecMFCCBuilder {
         FeatureSet[] newFeatures = new FeatureSet[channels.length];
         for (int channelIndex = 0; channelIndex < channels.length; channelIndex++) {
             List<FeatureBlock> blocks = validBlocksList.get(channelIndex);
-            if (false) {
-                for (FeatureBlock block : blocks) {
-                    System.out.println(block.getMeanEnergydB() + " " + block.getLength() + " " + block.getBeginIndex()
-                            * 10.0e-3 + " -> " + block.getEndIndex() * 10.0e-3);
-                }
-            }
             // gaussianize valid blocks in-place
             gaussianize(mergeBlockValues(blocks));
             // append deltas and delta-deltas
@@ -308,6 +329,8 @@ public final class PhnRecMFCCBuilder {
             }
             if (DEBUG) {
                 for (FeatureBlock block : blocks) {
+                    System.out.println(block.getMeanEnergydB() + " " + block.getLength() + " " + block.getBeginIndex()
+                            * 10.0e-3 + " -> " + block.getEndIndex() * 10.0e-3);
                     block.appendIndexes();
                 }
             }

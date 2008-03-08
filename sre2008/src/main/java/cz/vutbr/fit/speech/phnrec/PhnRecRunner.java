@@ -28,8 +28,7 @@ import net.lunglet.util.zip.ZipUtils;
 public final class PhnRecRunner {
     private static final String OUTPUT_SUFFIX = ".mlf";
 
-    //     private static final File BASE_TEMP_DIR = new File(System.getProperty("java.io.tmpdir"));
-    private static final File BASE_TEMP_DIR = new File("C:\\home\\albert\\temp\\temp");
+    private static final File BASE_TEMP_DIR = new File(System.getProperty("java.io.tmpdir"));
 
     private static final class Task {
         private final File filename;
@@ -195,12 +194,8 @@ public final class PhnRecRunner {
     public static void main(final String[] args) throws InterruptedException, IOException,
             UnsupportedAudioFileException {
         List<Task> tasks = new ArrayList<Task>();
-        tasks.addAll(createTasks("C:\\SRE2008\\SRE04"));
-        tasks.addAll(createTasks("C:\\SRE2008\\SRE05"));
-//        tasks.addAll(createTasks("C:\\SRE2008\\SRE06"));
-//        tasks.addAll(createTasks("C:\\SRE2008\\SRE00"));
-//        tasks.addAll(createTasks("C:\\SRE2008\\SRE99"));
-        final int nThreads = 4;
+        // TODO read tasks from standard input
+        final int nThreads = 1;
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
         for (final Task task : tasks) {

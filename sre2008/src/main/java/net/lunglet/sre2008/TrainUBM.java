@@ -1,4 +1,4 @@
-net.lunglet.sre2008;
+package net.lunglet.sre2008;
 
 import com.dvsoft.sv.toolbox.matrix.JVector;
 import com.dvsoft.sv.toolbox.matrix.JVectorSequence;

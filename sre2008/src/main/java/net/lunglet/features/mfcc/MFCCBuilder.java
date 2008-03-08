@@ -4,12 +4,10 @@ import cz.vutbr.fit.speech.phnrec.MasterLabelFile;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.zip.GZIPOutputStream;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -63,7 +61,7 @@ public final class MFCCBuilder {
     }
 
     public static void writeMFCC(final File file, final FeatureSet features) throws IOException {
-        HTKOutputStream out = new HTKOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
+        HTKOutputStream out = new HTKOutputStream(file);
         int flags = 0;
         if (features.hasEnergy()) {
             flags |= HTKFlags.HAS_ENERGY;
