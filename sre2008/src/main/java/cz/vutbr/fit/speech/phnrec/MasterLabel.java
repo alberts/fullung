@@ -31,9 +31,13 @@ public final class MasterLabel {
         return new EqualsBuilder().append(label, other.label).append(startTime, other.startTime).append(endTime,
                 other.endTime).append(score, other.score).isEquals();
     }
-    
-    public long getDuration() {
-        return endTime - startTime;
+
+    public double getDuration() {
+        return getEndTime() - getStartTime();
+    }
+
+    public long getDurationHTK() {
+        return getEndTimeHTK() - getStartTimeHTK();
     }
 
     public double getEndTime() {
@@ -59,7 +63,7 @@ public final class MasterLabel {
     public long getStartTimeHTK() {
         return startTime;
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(label).append(startTime).append(endTime).append(score).toHashCode();

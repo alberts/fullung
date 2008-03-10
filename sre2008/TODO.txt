@@ -1,3 +1,17 @@
+UBM:
+
+
+10 iterasies EM
+2048 mengsels
+39 dim
+100 vektore per parameter
+161792 parameters
+16e6 vektore
+10000-20000 vektore vir 5 minuut side
+
+
+========
+
 hard drive done
 but cz phoneme rec op al die nist data
 mfcc met htk

@@ -3,117 +3,44 @@ package net.lunglet.features.mfcc;
 import com.dvsoft.sv.toolbox.matrix.GaussWarp;
 import com.dvsoft.sv.toolbox.matrix.JMatrix;
 import com.dvsoft.sv.toolbox.matrix.JVector;
+import cz.vutbr.fit.speech.phnrec.MasterLabel;
 import cz.vutbr.fit.speech.phnrec.MasterLabelFile;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import net.lunglet.array4j.Order;
+import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.hdf.H5File;
+import net.lunglet.io.HDFWriter;
 import net.lunglet.util.AssertUtils;
+import net.lunglet.util.CommandUtils;
 
-// TODO maybe gaussianize each delta and delta-delta block on
-// its own, but not with a padded gaussianization -- more windows
-// to calculate when working with short segments, but then all
-// features have the same range
-
-// TODO convert MIN_PHONEMES_PER_BLOCK to MIN_PHONEMES_PER_SECOND
-
-public final class PhnRecMFCCBuilder {
-    private static final boolean DEBUG = true;
-
-    /// Threshold to discard blocks that contain too few feature vectors
+public final class YAMFCCBuilder {
     private static final int MIN_BLOCK_SIZE = 20;
-
-    /// Threshold to discard blocks that contain too few phonemes
-    private static final int MIN_PHONEMES_PER_BLOCK = 10;
 
     // use a window size of 302 to work around a bug in GaussWarp
     private static final int WINDOW_SIZE = 302;
 
-    private static void convertFile(final PhnRecMFCCBuilder mfccBuilder, final String name)
-            throws UnsupportedAudioFileException, IOException {
-        File sphFile = new File(name);
-        System.err.println("Reading " + sphFile);
-        AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
-        int channels = aff.getFormat().getChannels();
-        ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
-        for (int i = 0; i < channels; i++) {
-            File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
-            System.err.println("Reading " + mlfFile);
-            mlfs.add(new MasterLabelFile(mlfFile));
-        }
-        FeatureSet[] features = mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
-        for (int i = 0; i < channels; i++) {
-            File mfccFile = new File(sphFile.getAbsolutePath() + "." + i + ".mfc");
-            System.err.println("Writing " + mfccFile);
-            MFCCBuilder.writeMFCC(mfccFile, features[i]);
-        }
-    }
+    private static final boolean DEBUG = true;
 
-    private static List<FeatureBlock> createBlocks(final FeatureSet currentChannel, final MasterLabelFile mlf) {
-        List<FeatureBlock> blocks = new ArrayList<FeatureBlock>();
-        final double framePeriod = currentChannel.getFramePeriodHTK() / 1.0e7;
-        final double frameLength = currentChannel.getFrameLengthHTK() / 1.0e7;
-        float[][] mfcc = currentChannel.getValues();
-        ArrayList<float[]> blockValues = new ArrayList<float[]>();
-        int beginIndex = -1;
-        for (int i = 0; i < mfcc.length; i++) {
-            double start = framePeriod * i;
-            double end = start + frameLength;
-            if (!mlf.containsTimestamp(start) || !mlf.containsTimestamp(end)) {
-                break;
-            }
-            if (!mlf.isOnlySpeech(start, end)) {
-                if (blockValues.size() >= MIN_BLOCK_SIZE) {
-                    blocks.add(new FeatureBlock(beginIndex, i, blockValues.toArray(new float[0][])));
-                }
-                blockValues.clear();
-                beginIndex = -1;
-                continue;
-            }
-            if (beginIndex < 0) {
-                // start of new block
-                beginIndex = i;
-            }
-            blockValues.add(mfcc[i]);
-        }
-        if (blockValues.size() >= MIN_BLOCK_SIZE) {
-            blocks.add(new FeatureBlock(beginIndex, mfcc.length, blockValues.toArray(new float[0][])));
-        }
-        return blocks;
-    }
-
-    private static void crossChannelSquelch(final List<FeatureBlock> blocks, final double maxBlockEnergydB,
-            final List<FeatureSet> otherChannels) {
-
-        // TODO squelch net enkele foneme, nie hele blokke nie
-        
+    private static void crossChannelSquelch(final List<FeatureBlock> blocks, final double maxEnergydB,
+            final FeatureSet otherChannel) {
         List<FeatureBlock> badBlocks = new ArrayList<FeatureBlock>();
         for (FeatureBlock block : blocks) {
-            for (FeatureSet features : otherChannels) {
-                double otherBlockEnergy = block.getMeanEnergydB(features);
-                if (otherBlockEnergy > maxBlockEnergydB - 3.0) {
-                    badBlocks.add(block);
-                    break;
-                }
+            double otherEnergydB = block.getMeanEnergydB(otherChannel);
+            if (otherEnergydB > maxEnergydB - 3.0) {
+                badBlocks.add(block);
             }
         }
-
-        if (DEBUG) {
-            for (FeatureBlock block : badBlocks) {
-                System.out.println("cross channel squelching block: " + block.getMeanEnergydB() + " "
-                        + block.getLength() + " " + block.getFromIndex() * 10.0e-3 + " -> " + block.getToIndex()
-                        * 10.0e-3);
-            }
-        }
-
         blocks.removeAll(badBlocks);
     }
 
@@ -203,24 +130,22 @@ public final class PhnRecMFCCBuilder {
         return maxBlockEnergydB;
     }
 
-    public static void main(final String[] args) throws IOException {
-        PhnRecMFCCBuilder mfccBuilder = new PhnRecMFCCBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String line = reader.readLine();
-        while (line != null && line.trim().length() > 0) {
-            try {
-                String name = line.trim();
-                convertFile(mfccBuilder, name);
-            } catch (UnsupportedAudioFileException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Throwable e) {
-                e.printStackTrace();
+    private static List<FeatureBlock> getPhonemeBlocks(final FeatureSet channel, final MasterLabelFile mlf) {
+        final double framePeriod = channel.getFramePeriodHTK() / 1.0e7;
+        float[][] mfcc = channel.getValues();
+        List<FeatureBlock> phonemeBlocks = new ArrayList<FeatureBlock>();
+        for (MasterLabel label : mlf) {
+            if (!label.isValid() && label.getDuration() >= 20.0e-3) {
+                continue;
             }
-            line = reader.readLine();
+            int fromIndex = (int) (label.getStartTime() / framePeriod);
+            int toIndex = (int) (label.getEndTime() / framePeriod);
+            float[][] mfccPart = new float[toIndex - fromIndex][];
+            System.arraycopy(mfcc, fromIndex, mfccPart, 0, mfccPart.length);
+            FeatureBlock phonemeBlock = new FeatureBlock(fromIndex, toIndex, mfccPart);
+            phonemeBlocks.add(phonemeBlock);
         }
-        reader.close();
+        return phonemeBlocks;
     }
 
     private static float[][] mergeBlockValues(final Collection<FeatureBlock> blocks) {
@@ -233,78 +158,72 @@ public final class PhnRecMFCCBuilder {
         return valuesList.toArray(new float[0][]);
     }
 
-    private static void removeNoiseBlocks(final List<FeatureBlock> blocks, final MasterLabelFile mlf) {
-        List<FeatureBlock> badBlocks = new ArrayList<FeatureBlock>();
-        for (FeatureBlock block : blocks) {
-            int validPhonemeCount = mlf.getValidPhonemeCount(block.getStartTime(), block.getEndTime());
-            // block must contain some valid phonemes to make it here
-            AssertUtils.assertTrue(validPhonemeCount > 0);
-            if (validPhonemeCount < MIN_PHONEMES_PER_BLOCK) {
-                badBlocks.add(block);
+    private static List<FeatureBlock> mergePhonemeBlocks(final List<FeatureBlock> phonemeBlocks) {
+        List<FeatureBlock> mergedBlocks = new ArrayList<FeatureBlock>();
+        int fromIndex = -1;
+        int toIndex = -1;
+        int phonemeCount = 0;
+        ArrayList<float[]> valuesList = new ArrayList<float[]>();
+        for (FeatureBlock block : phonemeBlocks) {
+            if (toIndex != block.getFromIndex()) {
+                if (valuesList.size() > 0) {
+                    float[][] values = valuesList.toArray(new float[0][]);
+                    FeatureBlock mergedBlock = new FeatureBlock(fromIndex, toIndex, values);
+                    if (mergedBlock.getLength() >= MIN_BLOCK_SIZE) {
+                        mergedBlocks.add(mergedBlock);
+                    }
+                    valuesList.clear();
+                }
+                // new block starts
+                fromIndex = block.getFromIndex();
+                toIndex = block.getToIndex();
+                phonemeCount = 1;
+            } else {
+                // block continues
+                toIndex = block.getToIndex();
+                phonemeCount++;
+            }
+            for (float[] v : block.getValues()) {
+                valuesList.add(v);
             }
         }
-
-        if (DEBUG && false) {
-            for (FeatureBlock block : badBlocks) {
-                System.out.println("removing noise block: " + block.getMeanEnergydB() + " " + block.getLength() + " "
-                        + block.getFromIndex() * 10.0e-3 + " -> " + block.getToIndex() * 10.0e-3);
-            }
-        }
-
-        blocks.removeAll(badBlocks);
+        return mergedBlocks;
     }
 
-    private static void removeSilenceBlocks(final List<FeatureBlock> blocks, final double maxBlockEnergydB) {
+    private static void removeSilenceBlocks(final List<FeatureBlock> blocks, final double maxEnergydB) {
         List<FeatureBlock> badBlocks = new ArrayList<FeatureBlock>();
         for (FeatureBlock block : blocks) {
-            if (maxBlockEnergydB - block.getMeanEnergydB() > 30.0) {
+            if (maxEnergydB - block.getMeanEnergydB() > 30.0) {
                 badBlocks.add(block);
             }
         }
-
-        if (DEBUG) {
-            for (FeatureBlock block : badBlocks) {
-                System.out.println("removing silence block: " + block.getMeanEnergydB() + " " + block.getLength() + " "
-                        + block.getFromIndex() * 10.0e-3 + " -> " + block.getToIndex() * 10.0e-3);
-            }
-        }
-
         blocks.removeAll(badBlocks);
     }
 
     private final HTKMFCCBuilder htkmfcc;
 
-    public PhnRecMFCCBuilder() {
+    public YAMFCCBuilder() {
         this.htkmfcc = new HTKMFCCBuilder();
     }
 
     public FeatureSet[] apply(final FeatureSet[] channels, final MasterLabelFile[] mlfs) {
-        if (channels.length != mlfs.length) {
+        if (channels.length == 0 || channels.length > 2 || channels.length != mlfs.length) {
             throw new IllegalArgumentException();
         }
         List<List<FeatureBlock>> validBlocksList = new ArrayList<List<FeatureBlock>>();
         for (int channelIndex = 0; channelIndex < channels.length; channelIndex++) {
-            List<FeatureSet> otherChannels = new ArrayList<FeatureSet>();
-            FeatureSet currentChannel = null;
-            for (int otherChannelIndex = 0; otherChannelIndex < channels.length; otherChannelIndex++) {
-                if (channelIndex == otherChannelIndex) {
-                    currentChannel = channels[channelIndex];
-                } else {
-                    otherChannels.add(channels[channelIndex]);
-                }
-            }
             MasterLabelFile mlf = mlfs[channelIndex];
-            List<FeatureBlock> blocks = createBlocks(currentChannel, mlf);
-            removeNoiseBlocks(blocks, mlf);
-            double maxBlockEnergydB = getMaximumBlockEnergydB(blocks);
-            removeSilenceBlocks(blocks, maxBlockEnergydB);
-            if (false) {
-                crossChannelSquelch(blocks, maxBlockEnergydB, otherChannels);
+            List<FeatureBlock> phonemeBlocks = getPhonemeBlocks(channels[channelIndex], mlf);
+            double maxEnergydB = getMaximumBlockEnergydB(phonemeBlocks);
+            removeSilenceBlocks(phonemeBlocks, maxEnergydB);
+            if (channels.length > 1) {
+                FeatureSet otherChannel = channels[channelIndex == 0 ? 1 : 0];
+                crossChannelSquelch(phonemeBlocks, maxEnergydB, otherChannel);
             }
-            validBlocksList.add(blocks);
+            List<FeatureBlock> mergedBlocks = mergePhonemeBlocks(phonemeBlocks);
+            validBlocksList.add(mergedBlocks);
         }
 
-        // modify blocks afterwards, so that cross-channel checks work
         FeatureSet[] newFeatures = new FeatureSet[channels.length];
         for (int channelIndex = 0; channelIndex < channels.length; channelIndex++) {
             List<FeatureBlock> blocks = validBlocksList.get(channelIndex);
@@ -331,11 +250,7 @@ public final class PhnRecMFCCBuilder {
                     // replace value in block
                     values[i] = vddd;
                 }
-            }
-            if (DEBUG) {
-                for (FeatureBlock block : blocks) {
-                    System.out.println(block.getMeanEnergydB() + " " + block.getLength() + " " + block.getFromIndex()
-                            * 10.0e-3 + " -> " + block.getToIndex() * 10.0e-3);
+                if (DEBUG) {
                     block.appendIndexes();
                 }
             }
@@ -352,5 +267,44 @@ public final class PhnRecMFCCBuilder {
     public FeatureSet[] apply(final InputStream stream, final MasterLabelFile[] mlfs)
             throws UnsupportedAudioFileException, IOException {
         return apply(htkmfcc.apply(stream), mlfs);
+    }
+
+    private static FeatureSet[] convertFile(final YAMFCCBuilder mfccBuilder, final String name) {
+        try {
+            File sphFile = new File(name);
+            System.out.println("Reading " + sphFile);
+            AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
+            int channels = aff.getFormat().getChannels();
+            ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
+            for (int i = 0; i < channels; i++) {
+                File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
+                System.out.println("Reading " + mlfFile);
+                mlfs.add(new MasterLabelFile(mlfFile));
+            }
+            return mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void main(final String[] args) throws IOException {
+        List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder.class);
+        YAMFCCBuilder mfccBuilder = new YAMFCCBuilder();
+        H5File h5file = new H5File("mfcc.h5", H5File.H5F_ACC_TRUNC);
+        HDFWriter writer = new HDFWriter(h5file);
+        for (String filename : filenames) {
+            FeatureSet[] features = convertFile(mfccBuilder, filename);
+            String hdfName = new File(filename).getName().split("\\.")[0];
+            for (int i = 0; i < features.length; i++) {
+                float[][] values = features[i].getValues();
+                FloatDenseMatrix matrix = DenseFactory.valueOf(values, Order.ROW, Storage.DIRECT);
+                String fullHdfName = "/" + hdfName + "_" + i;
+                System.out.println("Writing to " + fullHdfName);
+                writer.write(fullHdfName, matrix);
+            }
+        }
+        writer.close();
     }
 }

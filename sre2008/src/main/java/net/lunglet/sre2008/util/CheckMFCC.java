@@ -2,10 +2,8 @@ package net.lunglet.sre2008.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.zip.GZIPInputStream;
 import net.lunglet.htk.HTKInputStream;
 import net.lunglet.util.AssertUtils;
 
@@ -16,11 +14,7 @@ public final class CheckMFCC {
         while (line != null && line.trim().length() > 0) {
             File file = new File(line);
             System.out.println("Checking " + file);
-            HTKInputStream in = new HTKInputStream(new GZIPInputStream(new FileInputStream(file)));
-//            HTKHeader header = in.readHeader();
-//            if (header.getFrames() == 0) {
-//                System.out.println("del " + file);
-//            }
+            HTKInputStream in = new HTKInputStream(file);
             float[][] mfcc = in.readMFCC();
             in.close();
             AssertUtils.assertTrue(mfcc.length > 0);

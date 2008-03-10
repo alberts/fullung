@@ -21,7 +21,7 @@ public final class PhnRecMFCCBuilderTest {
         String name = "xdac.sph";
         InputStream stream = getClass().getResourceAsStream(name);
         assertNotNull(stream);
-        PhnRecMFCCBuilder mfccBuilder = new PhnRecMFCCBuilder();
+        YAMFCCBuilder mfccBuilder = new YAMFCCBuilder();
         MasterLabelFile[] mlfs = {getMLF(name + ".0.mlf")};
         FeatureSet[] features = mfccBuilder.apply(stream, mlfs);
         assertEquals(1, features.length);
@@ -39,7 +39,7 @@ public final class PhnRecMFCCBuilderTest {
         String name = "jabo.sph";
         InputStream stream = getClass().getResourceAsStream(name);
         assertNotNull(stream);
-        PhnRecMFCCBuilder mfccBuilder = new PhnRecMFCCBuilder();
+        YAMFCCBuilder mfccBuilder = new YAMFCCBuilder();
         MasterLabelFile[] mlfs = {getMLF(name + ".0.mlf"), getMLF(name + ".1.mlf")};
         FeatureSet[] features = mfccBuilder.apply(stream, mlfs);
         assertEquals(2, features.length);
