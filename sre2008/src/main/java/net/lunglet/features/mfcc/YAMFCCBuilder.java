@@ -12,6 +12,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -30,7 +36,7 @@ public final class YAMFCCBuilder {
     // use a window size of 302 to work around a bug in GaussWarp
     private static final int WINDOW_SIZE = 302;
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static void crossChannelSquelch(final List<FeatureBlock> blocks, final double maxEnergydB,
             final FeatureSet otherChannel) {
@@ -289,22 +295,82 @@ public final class YAMFCCBuilder {
         }
     }
 
-    public static void main(final String[] args) throws IOException {
-        List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder.class);
-        YAMFCCBuilder mfccBuilder = new YAMFCCBuilder();
-        H5File h5file = new H5File("mfcc.h5", H5File.H5F_ACC_TRUNC);
-        HDFWriter writer = new HDFWriter(h5file);
-        for (String filename : filenames) {
+    private static void checkMFCC(final float[][] mfcc) {
+        AssertUtils.assertTrue(mfcc.length > 0);
+        for (int i = 0; i < mfcc.length; i++) {
+            AssertUtils.assertEquals(38, mfcc[i].length);
+            for (int j = 0; j < mfcc[i].length; j++) {
+                float v = mfcc[i][j];
+                AssertUtils.assertFalse(Float.isInfinite(v));
+                AssertUtils.assertFalse(Float.isNaN(v));
+                if (v < -3.0f) {
+                    throw new RuntimeException("value is too small: " + v);
+                }
+                if (v > 3.0f) {
+                    throw new RuntimeException("value is too big: " + v);
+                }
+            }
+        }
+    }
+
+    private static class MFCCTask implements Callable<Void> {
+        private final String filename;
+        
+        private final HDFWriter writer;
+
+        private static final ThreadLocal<YAMFCCBuilder> MFCC_BUILDER = new ThreadLocal<YAMFCCBuilder>() {
+            @Override
+            protected YAMFCCBuilder initialValue() {
+                return new YAMFCCBuilder();
+            }
+        };
+
+        public MFCCTask(final String filename, final HDFWriter writer) {
+            this.filename = filename;
+            this.writer = writer;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            YAMFCCBuilder mfccBuilder = MFCC_BUILDER.get();
             FeatureSet[] features = convertFile(mfccBuilder, filename);
             String hdfName = new File(filename).getName().split("\\.")[0];
             for (int i = 0; i < features.length; i++) {
                 float[][] values = features[i].getValues();
+                if (false) {
+                    checkMFCC(values);
+                }
                 FloatDenseMatrix matrix = DenseFactory.valueOf(values, Order.ROW, Storage.DIRECT);
                 String fullHdfName = "/" + hdfName + "_" + i;
                 System.out.println("Writing to " + fullHdfName);
-                writer.write(fullHdfName, matrix);
+                synchronized (MFCCTask.class) {
+                    writer.write(fullHdfName, matrix);
+                }
+            }
+            return null;
+        }
+    }
+
+    public static void main(final String[] args) throws IOException, InterruptedException {
+        List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder.class);
+        ExecutorService executorService = Executors.newFixedThreadPool(6);
+        H5File h5file = new H5File("mfcc.h5", H5File.H5F_ACC_TRUNC);
+        HDFWriter writer = new HDFWriter(h5file);
+        List<Future<Void>> futures = new ArrayList<Future<Void>>();
+        for (String filename : filenames) {
+            Future<Void> future = executorService.submit(new MFCCTask(filename, writer));
+            futures.add(future);
+        }
+        for (Future<Void> future : futures) {
+            try {
+                future.get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                System.exit(1);
             }
         }
         writer.close();
+        executorService.shutdown();
+        executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }
 }
