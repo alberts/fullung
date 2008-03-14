@@ -1,4 +1,4 @@
-package net.lunglet.sre2008;
+package net.lunglet.sre2008.ubm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,13 +11,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
-import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.gmm.DiagCovGMM;
 import net.lunglet.gmm.GMM;
 import net.lunglet.gmm.GMMMAPStats;
-import net.lunglet.gmm.GMMUtils;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.H5File;
@@ -27,20 +25,19 @@ import net.lunglet.sre2008.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class TrainUBM2 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainUBM2.class);
+public final class RetrainUBM2 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RetrainUBM2.class);
+
+    public static final int NTHREADS = 2;
+
+    public static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(NTHREADS);
 
     private static void trainGMM(final H5File dataFile, final GMM gmm) throws InterruptedException, ExecutionException {
         final HDFReader reader = new HDFReader(dataFile);
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
         List<Future<GMMMAPStats>> futures = new ArrayList<Future<GMMMAPStats>>();
-        // TODO put datasets in a list to make sure they stay in the same order
         for (DataSet ds : dataFile.getRootGroup().getDataSets()) {
             final String name;
             final int[] dims;
-            // TODO still haven't sorted out HDF5 thread issues?
-            // could be because executor service threads and main thread are
-            // accessing it at the "same"s time
             synchronized (H5Library.class) {
                 name = ds.getName();
                 LOGGER.debug("Scanning " + name);
@@ -49,7 +46,7 @@ public final class TrainUBM2 {
                 space.close();
                 ds.close();
             }
-            Future<GMMMAPStats> future = executorService.submit(new Callable<GMMMAPStats>() {
+            Future<GMMMAPStats> future = EXECUTOR_SERVICE.submit(new Callable<GMMMAPStats>() {
                 @Override
                 public GMMMAPStats call() throws Exception {
                     LOGGER.debug("Reading " + name + " " + Arrays.toString(dims));
@@ -72,34 +69,17 @@ public final class TrainUBM2 {
         }
         LOGGER.info("Total log likelihood of data = " + globalStats.getTotalLogLh());
         gmm.doEM(globalStats);
-        executorService.shutdown();
-        executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }
 
     public static void main(final String[] args) throws InterruptedException, ExecutionException {
-        H5File dataFile = new H5File(args[0]);
-        DiagCovGMM gmm = GMMUtils.createDiagCovGMM(1, 38);
-        FloatVector varianceFloor = null;
-        for (int i = 0; i < 11; i++) {
-            if (gmm != null) {
-                gmm = GMMUtils.splitAll(gmm);
-            }
-            // 1 iteration for the first time, 2 for the rest
-            for (int iter = 0; iter < 3; iter++) {
-                int mixtures = (int) Math.pow(2, i);
-                LOGGER.info("Training " + mixtures + " mixtures, iter = " + iter);
-                trainGMM(dataFile, gmm);
-                IOUtils.writeGMM("ubm_before_" + i + "_" + iter + ".h5", gmm);
-                if (i > 0) {
-                    gmm.floorVariances(varianceFloor);
-                } else {
-                    varianceFloor = gmm.getVariance(0);
-                    // use 50% of global variance when flooring
-                    varianceFloor.timesEquals(0.5f);
-                    break;
-                }
-                IOUtils.writeGMM("ubm_after_" + i + "_" + iter + ".h5", gmm);
-            }
+        DiagCovGMM gmm = IOUtils.readDiagCovGMM(args[0]);
+        H5File dataFile = new H5File(args[1]);
+        for (int i = 0; i < 5; i++) {
+            trainGMM(dataFile, gmm);
+            // TODO variance flooring
+            IOUtils.writeGMM("ubm_retrain_" + i + ".h5", gmm);
         }
+        EXECUTOR_SERVICE.shutdown();
+        EXECUTOR_SERVICE.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }
 }

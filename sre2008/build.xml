@@ -78,9 +78,9 @@
       <zipfileset src="${array4j.lib.dir}/jna.jar" />
       <zipfileset src="${array4j.lib.dir}/commons-lang-2.3.jar" />
       <zipfileset src="${array4j.lib.dir}/jcip-annotations.jar" />
-      <zipfileset src="${lib.dir}/commons-net-1.4.1.jar" />
-      <zipfileset src="${lib.dir}/slf4j-simple-1.4.3.jar" />
-      <zipfileset src="${lib.dir}/slf4j-api-1.4.3.jar" />
+      <zipfileset src="${lib.dir}/log4j-1.2.15.jar" />
+      <zipfileset src="${lib.dir}/slf4j-api-1.5.0.jar" />
+      <zipfileset src="${lib.dir}/slf4j-log4j12-1.5.0.jar" />
     </jarjar>
   </target>
 

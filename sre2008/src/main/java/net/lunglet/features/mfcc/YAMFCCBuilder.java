@@ -29,8 +29,12 @@ import net.lunglet.hdf.H5File;
 import net.lunglet.io.HDFWriter;
 import net.lunglet.util.AssertUtils;
 import net.lunglet.util.CommandUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class YAMFCCBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(YAMFCCBuilder.class);
+
     private static final int MIN_BLOCK_SIZE = 20;
 
     // use a window size of 302 to work around a bug in GaussWarp
@@ -278,13 +282,13 @@ public final class YAMFCCBuilder {
     private static FeatureSet[] convertFile(final YAMFCCBuilder mfccBuilder, final String name) {
         try {
             File sphFile = new File(name);
-            System.out.println("Reading " + sphFile);
             AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
             int channels = aff.getFormat().getChannels();
+            LOGGER.info("Read {} with {} channels", sphFile, channels);
             ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
             for (int i = 0; i < channels; i++) {
                 File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
-                System.out.println("Reading " + mlfFile);
+                LOGGER.info("Reading {}", mlfFile);
                 mlfs.add(new MasterLabelFile(mlfFile));
             }
             return mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
@@ -315,7 +319,7 @@ public final class YAMFCCBuilder {
 
     private static class MFCCTask implements Callable<Void> {
         private final String filename;
-        
+
         private final HDFWriter writer;
 
         private static final ThreadLocal<YAMFCCBuilder> MFCC_BUILDER = new ThreadLocal<YAMFCCBuilder>() {
@@ -332,20 +336,27 @@ public final class YAMFCCBuilder {
 
         @Override
         public Void call() throws Exception {
-            YAMFCCBuilder mfccBuilder = MFCC_BUILDER.get();
-            FeatureSet[] features = convertFile(mfccBuilder, filename);
-            String hdfName = new File(filename).getName().split("\\.")[0];
-            for (int i = 0; i < features.length; i++) {
-                float[][] values = features[i].getValues();
-                if (false) {
-                    checkMFCC(values);
+            try {
+                YAMFCCBuilder mfccBuilder = MFCC_BUILDER.get();
+                FeatureSet[] features = convertFile(mfccBuilder, filename);
+                String hdfName = new File(filename).getName().split("\\.")[0];
+                for (int i = 0; i < features.length; i++) {
+                    float[][] values = features[i].getValues();
+                    if (true) {
+                        checkMFCC(values);
+                    }
+                    if (false) {
+                        FloatDenseMatrix matrix = DenseFactory.valueOf(values, Order.ROW, Storage.DIRECT);
+                        String fullHdfName = "/" + hdfName + "_" + i;
+                        LOGGER.info("Writing to " + fullHdfName);
+                        synchronized (MFCCTask.class) {
+                            writer.write(fullHdfName, matrix);
+                        }
+                    }
                 }
-                FloatDenseMatrix matrix = DenseFactory.valueOf(values, Order.ROW, Storage.DIRECT);
-                String fullHdfName = "/" + hdfName + "_" + i;
-                System.out.println("Writing to " + fullHdfName);
-                synchronized (MFCCTask.class) {
-                    writer.write(fullHdfName, matrix);
-                }
+            } catch (Exception e) {
+                LOGGER.error("MFCC extraction for " + filename + " failed", e);
+                throw e;
             }
             return null;
         }
@@ -353,7 +364,7 @@ public final class YAMFCCBuilder {
 
     public static void main(final String[] args) throws IOException, InterruptedException {
         List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder.class);
-        ExecutorService executorService = Executors.newFixedThreadPool(6);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         H5File h5file = new H5File("mfcc.h5", H5File.H5F_ACC_TRUNC);
         HDFWriter writer = new HDFWriter(h5file);
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
@@ -365,8 +376,8 @@ public final class YAMFCCBuilder {
             try {
                 future.get();
             } catch (ExecutionException e) {
-                e.printStackTrace();
-                System.exit(1);
+                // ignore them for now
+                continue;
             }
         }
         writer.close();

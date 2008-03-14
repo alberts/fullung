@@ -20,30 +20,15 @@ import net.lunglet.gmm.GMMMAPStats;
 import net.lunglet.gmm.GMMUtils;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
-import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.H5Library;
 import net.lunglet.io.HDFReader;
-import net.lunglet.io.HDFWriter;
+import net.lunglet.sre2008.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class TrainUBM3 {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainUBM3.class);
-
-    private static void writeGMM(final H5File gmmFile, final GMM gmm) {
-        Group root = gmmFile.getRootGroup();
-        Group means = root.createGroup("/means");
-        means.close();
-        Group variances = root.createGroup("/variances");
-        variances.close();
-        HDFWriter writer = new HDFWriter(gmmFile);
-        writer.write("/weights", DenseFactory.directCopy(gmm.getWeights()));
-        for (int i = 0; i < gmm.getMixtureCount(); i++) {
-            writer.write("/means/" + i, DenseFactory.directCopy(gmm.getMean(i)));
-            writer.write("/variances/" + i, DenseFactory.directCopy(gmm.getVariance(i)));
-        }
-    }
 
     private static void trainGMM(final H5File dataFile, final GMM gmm) throws InterruptedException, ExecutionException {
         final HDFReader reader = new HDFReader(dataFile);
@@ -55,7 +40,7 @@ public final class TrainUBM3 {
             final int[] dims;
             // TODO still haven't sorted out HDF5 thread issues?
             // could be because executor service threads and main thread are
-            // accessing it at the same time
+            // accessing it at the "same"s time
             synchronized (H5Library.class) {
                 name = ds.getName();
                 LOGGER.debug("Scanning " + name);
@@ -92,13 +77,6 @@ public final class TrainUBM3 {
         executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }
 
-    private static void saveGMM(final String filename, final GMM gmm) {
-        LOGGER.info("Saving GMM to " + filename);
-        H5File ubmFile = new H5File(filename, H5File.H5F_ACC_TRUNC);
-        writeGMM(ubmFile, gmm);
-        ubmFile.close();
-    }
-
     private static void trainGMMwithFlooring(final H5File dataFile, final DiagCovGMM gmm, final FloatVector varFloor)
             throws InterruptedException, ExecutionException {
         final int maxiter = 3;
@@ -113,11 +91,11 @@ public final class TrainUBM3 {
             }
             LOGGER.info("Weights before: " + gmm.getWeights());
             trainGMM(dataFile, gmm);
-            saveGMM("ubm_orig_" + gmm.getMixtureCount() + "_" + iter + ".h5", gmm);
+            IOUtils.writeGMM("ubm_orig_" + gmm.getMixtureCount() + "_" + iter + ".h5", gmm);
             LOGGER.info("Weights after: " + gmm.getWeights());
             LOGGER.info("Flooring variances");
             gmm.floorVariances(varFloor);
-            saveGMM("ubm_floored_" + gmm.getMixtureCount() + "_" + iter + ".h5", gmm);
+            IOUtils.writeGMM("ubm_floored_" + gmm.getMixtureCount() + "_" + iter + ".h5", gmm);
         }
     }
 
