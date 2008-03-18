@@ -47,6 +47,7 @@ def submit_job(filename, channel, channels):
         }
     jobscript = """#$ -N %(jobname)s
 #$ -j y
+#$ -o /dev/null
 #$ -S /bin/bash
 #$ -cwd
 hostname 1>&2

@@ -1,0 +1,51 @@
+# field - meaning
+#
+ (1) - the name of the test segment
+
+ (2) - the type of the test segment
+
+ (3) - the call id where the test segment was taken
+
+ (4) - the original file name
+
+ (5) - the test segment speaker id; if it's a summed segment,
+       the ids of both speakers are listed whenever possible
+
+ (6) - the speaker's gender; if it's a summed segment,
+       the gender of both speakers are listed when possible
+
+ (7) - the channel the speaker speaks on: a, b, and for summed channel
+       sa, sb, or sx (if unable to determine the original channel before summing)
+
+ (8) - the test segment language
+
+ (9) - the corpus from which the test segment was drawn
+
+(10) - the model to be tested against this segment
+
+(11) - microphone channel c{1-8}, xx if it's not a mic'd call
+
+(12) - transmission type {cord, cell, land, mix};
+       if info is not available or unreliable, the value is "-"
+
+       cord = cordless
+       cell = cellular
+       land = landline
+       mix = more than one type of transmission types
+
+(13) - microphone type {ear, head, spkr, hand, mix} 
+       if info is not available or unreliable, the value is "-"
+
+       ear = earbud
+       head = head-mounted
+       spkr = speaker phone
+       hand = hand-held
+       mix = more than one type of microphone types
+
+(14) - the number of days elapsed since the first call
+
+(15) - XCHANNEL recording location
+
+(16) - indicates if this trial is a target, nontarget, or bad trial
+       bad trials are to be filtered prior to scoring
+

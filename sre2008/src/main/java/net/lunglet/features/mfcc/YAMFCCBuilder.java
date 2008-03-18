@@ -320,7 +320,7 @@ public final class YAMFCCBuilder {
     private static class MFCCTask implements Callable<Void> {
         private final String filename;
 
-        private final HDFWriter writer;
+        private final H5File h5file;
 
         private static final ThreadLocal<YAMFCCBuilder> MFCC_BUILDER = new ThreadLocal<YAMFCCBuilder>() {
             @Override
@@ -329,29 +329,31 @@ public final class YAMFCCBuilder {
             }
         };
 
-        public MFCCTask(final String filename, final HDFWriter writer) {
+        public MFCCTask(final String filename, final H5File h5file) {
             this.filename = filename;
-            this.writer = writer;
+            this.h5file = h5file;
         }
 
         @Override
         public Void call() throws Exception {
+            HDFWriter writer = new HDFWriter(h5file);
             try {
                 YAMFCCBuilder mfccBuilder = MFCC_BUILDER.get();
                 FeatureSet[] features = convertFile(mfccBuilder, filename);
                 String hdfName = new File(filename).getName().split("\\.")[0];
+                synchronized (h5file) {
+                    h5file.getRootGroup().createGroup(hdfName);
+                }
                 for (int i = 0; i < features.length; i++) {
                     float[][] values = features[i].getValues();
                     if (true) {
                         checkMFCC(values);
                     }
-                    if (false) {
-                        FloatDenseMatrix matrix = DenseFactory.valueOf(values, Order.ROW, Storage.DIRECT);
-                        String fullHdfName = "/" + hdfName + "_" + i;
-                        LOGGER.info("Writing to " + fullHdfName);
-                        synchronized (MFCCTask.class) {
-                            writer.write(fullHdfName, matrix);
-                        }
+                    FloatDenseMatrix matrix = DenseFactory.valueOf(values, Order.ROW, Storage.DIRECT);
+                    String fullHdfName = "/" + hdfName + "/" + i;
+                    LOGGER.info("Writing to " + fullHdfName);
+                    synchronized (h5file) {
+                        writer.write(fullHdfName, matrix);
                     }
                 }
             } catch (Exception e) {
@@ -364,12 +366,11 @@ public final class YAMFCCBuilder {
 
     public static void main(final String[] args) throws IOException, InterruptedException {
         List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder.class);
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
         H5File h5file = new H5File("mfcc.h5", H5File.H5F_ACC_TRUNC);
-        HDFWriter writer = new HDFWriter(h5file);
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
         for (String filename : filenames) {
-            Future<Void> future = executorService.submit(new MFCCTask(filename, writer));
+            Future<Void> future = executorService.submit(new MFCCTask(filename, h5file));
             futures.add(future);
         }
         for (Future<Void> future : futures) {
@@ -380,7 +381,7 @@ public final class YAMFCCBuilder {
                 continue;
             }
         }
-        writer.close();
+        h5file.close();
         executorService.shutdown();
         executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }

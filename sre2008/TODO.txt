@@ -1,86 +1,14 @@
-TRY SPRO FOR FEATURE EXTRACTION!!!!!!!!!!1
+Todo:
 
+UBM data: SRE04, SRE03, SRE02, SRE00, SRE99, Fisher
+GMM-SVM 512, 2048
+GMM 512, 2047
+LPT Eigenchannel
+Patrick Kenny Eigenvoices + Eigenchannel
+HLDA: triple deltas
+Fusion
 
-UBM:
+Maybe:
 
-
-10 iterasies EM
-2048 mengsels
-39 dim
-100 vektore per parameter
-161792 parameters
-16e6 vektore
-10000-20000 vektore vir 5 minuut side
-
-
-========
-
-hard drive done
-but cz phoneme rec op al die nist data
-mfcc met htk
-gaussianization (pelecanos en ziang 2002) of CMS + variance normalization
-gmm
-loquendo eigenchannel features en dan eigenvoice MAP
-pkenny eigenvoices, diagonal, dan eigenchannel
-GMM-SVM van loquendo en pkenny
-fusion
-
-
-
-VOICEBOX HTK code
-GMMBAYES GMM code + logsumexp dinge
-fix BUT phnrec java code
-
-
-
-data:
-
-2004 vir ubm, eigenchannel
-2005 vir devtest
-2006 vir nog toetse
-
-ook lekker data in 1999, 2000
-
-fisher en switchboard data by du preez (middel maart)
-
-
-
-
-userpower aan of af vir die features (kwadrate ding waarvan niko praat)
-liftering ipv variance normalization
- -- moet dalk anyway altwee doen
- -- laat net variance flooring beter werk
-
-niko het usepower=true
-
-
-experiment with phoneme insertion penalty when calculating mlfs
-
-
-
-echo cancellation? niko se^ los liewer 
-
-
-combine mfcc en plp in een groot feature en doen dan HLDA
-
-
-
-
-
-
-
-TODO features:
-before and after plot en lusiter
-'n kort enkel channel file
-lang enkel channel
-kort stereo (altwee... som dalk output)
-lang stereo
-
-
-
-
-HUNGARIAN PHONEME REC IPV CZECH
-
-
-
-COLLECT BAD FILES FROM ALL EVALUATIONS AS A TEST SET
+LRE PHNSVM
+HLDA: MFCC + PLP

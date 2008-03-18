@@ -1,0 +1,50 @@
+# The following training models are considered *problematic* due
+# to their having only silence, not enough speech, etc. Any trials
+# involving these models will be removed prior to scoring
+#
+t2117
+t4070
+m7818
+m8993
+m8076
+t1909
+t1794
+t2977
+t1076
+t1580
+t4216
+t4042
+t1160
+t3846
+t3886
+t4281
+t1607
+t1682
+t1891
+t1252
+t4050
+t3295
+t2875
+t1623
+t4241
+t1660
+t2395
+t3306
+t2008
+t1217
+t3134
+t3682
+t3284
+t1149
+t1537
+t1036
+t2486
+t3116
+t3866
+# DAR
+# The train file kafq:b has both side summed (102614 + 102579)
+t1378
+# The speaker on kayy:a sounds like 102629 (not 102631)
+t2577
+# The speaker 6301 is on kewa:a not kewa:b
+t2546

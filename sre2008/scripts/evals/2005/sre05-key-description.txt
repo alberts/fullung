@@ -1,0 +1,28 @@
+# (Fields) - Meaning
+
+(1) - True Model
+(2) - Segment
+(3) - Segment language
+(4) - Original base file name
+(5) - Channel model speaks on
+(6) - LDC speaker pin
+(7) - Filename
+(8) - Microphone channel (c1-c8, xx)
+(9) - Gender of model
+(10) - Number of handsets used in training
+(11) - Language of conversations used in training
+(12) - LDC/ISIP/xxx same/diff handset numbers in training
+(13) - Natural language of the Model speaker
+
+# Fields apply to 1 conversation training
+
+(14) - Test marker (not used)
+(15) - Microphone type of the test segment
+(16) - Test segment recording day (from beginning of the corpus collection)
+(17) - *unreliable* handset type of test segment (STaNDard, CELLular, CORDless)
+(18) - MODel marker (not used)
+(19) - Microphone type of the model segment
+(20) - Model conversation recording day (from beginning of the corpus collection)
+(21) - *Unreliable* handset type of model (STaNDard, CELLular, CORDless)
+(22) - The model speaker speaks in this channel of telephone data
+(23) - The location where the cross channel data was collected
