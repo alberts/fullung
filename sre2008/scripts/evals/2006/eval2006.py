@@ -145,7 +145,9 @@ def check_models(models):
 def print_eval(models):
     print '<?xml version="1.0" encoding="UTF-8"?>'
     print '<eval name="SRE2006">'
-    for id in models:
+    modelkeys = models.keys()
+    modelkeys.sort()
+    for id in modelkeys:
         model = models[id]
         gender = model['gender']
         pin = model['pin']
@@ -155,7 +157,9 @@ def print_eval(models):
             print '<segment name="%s" channel="%s" />' % (sph, channel)
         print '</train>'
         print '<trials>'
-        for trialkey in model['trials']:
+        trialkeys = model['trials'].keys()
+        trialkeys.sort()
+        for trialkey in trialkeys:
             sph, channel = trialkey
             trial = model['trials'][trialkey]
             condition = trial['condition']

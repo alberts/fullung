@@ -38,7 +38,7 @@ def main():
         trials = model[1]
         for trial in trials:
             assert trial.get('gender') == gender
-            if not trial.get('condition') != testcond:
+            if trial.get('condition') != testcond:
                 continue
             name = trial.get('name')
             channel = trial.get('channel')
