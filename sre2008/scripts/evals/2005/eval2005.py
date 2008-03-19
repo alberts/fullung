@@ -61,10 +61,18 @@ def remove_trial_errors(filename, models):
     lines = open(filename).readlines()
     for line in lines:
         line = line.strip()
+        if line.find('#') == 0: continue
         testseg, testsegmod = re.split('\\s+', line, 1)
         testsegmod = re.split('\\s+', testsegmod)
-        testsegmod = [m.lower() for m in testsegmod]
+        badids = []
         for id in testsegmod:
+            # remove for all models
+            if id.strip().lower() == 'm0000':
+                badids = models.keys()
+                break
+            else:
+                badids.append(id.strip().lower())
+        for id in badids:
             if not models.has_key(id): continue
             for channel in ('a', 'b'):
                 testkey = testseg, channel

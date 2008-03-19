@@ -45,6 +45,8 @@ def main():
             trialtype = trial.get('type')
             trialline.append(':'.join([name,channel,trialtype]))
         trialline.sort()
+        # skip models with no trials
+        if len(trialline) == 0: continue
         trialline = ','.join(trialline)
 
         line = ' '.join([id, gender, trainline, trialline])
