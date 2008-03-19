@@ -50,7 +50,7 @@ public final class MasterLabelFile implements Iterable<MasterLabel> {
 
     /**
      * Returns the number of valid phonemes in the segment.
-     * 
+     *
      * @param begin
      *                start of frame in seconds
      * @param end

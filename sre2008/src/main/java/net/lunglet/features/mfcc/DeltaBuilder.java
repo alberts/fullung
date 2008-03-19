@@ -43,7 +43,7 @@ public final class DeltaBuilder {
     private final int endIndex;
 
     private final int minBlockSize;
-    
+
     public DeltaBuilder(final int beginIndex, final int endIndex) {
         this(2, beginIndex, endIndex);
     }

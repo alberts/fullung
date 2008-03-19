@@ -357,7 +357,7 @@ public final class YAMFCCBuilder {
                     if (true) {
                         checkMFCC(values);
                     }
-                    FloatDenseMatrix matrix = DenseFactory.valueOf(values, Order.ROW, Storage.DIRECT);
+                    FloatDenseMatrix matrix = DenseFactory.floatMatrix(values, Order.ROW, Storage.DIRECT);
                     String fullHdfName = "/" + hdfName + "/" + i;
                     LOGGER.info("Writing to " + fullHdfName);
                     synchronized (h5file) {

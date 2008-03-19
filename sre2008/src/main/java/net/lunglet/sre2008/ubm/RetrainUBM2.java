@@ -50,7 +50,7 @@ public final class RetrainUBM2 {
                 @Override
                 public GMMMAPStats call() throws Exception {
                     LOGGER.debug("Reading " + name + " " + Arrays.toString(dims));
-                    FloatDenseMatrix data = DenseFactory.createFloatMatrix(dims, Order.ROW, Storage.DIRECT);
+                    FloatDenseMatrix data = DenseFactory.floatMatrix(dims, Order.ROW, Storage.DIRECT);
                     synchronized (H5Library.class) {
                         reader.read(name, data);
                     }

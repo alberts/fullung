@@ -134,7 +134,7 @@ public final class PhnRecJob extends GridJobAdapter<Serializable> {
         }
         return null;
     }
-    
+
     @Override
     public Serializable execute() throws GridException {
         try {
@@ -192,6 +192,7 @@ public final class PhnRecJob extends GridJobAdapter<Serializable> {
         }
     }
 
+    @Override
     public String toString() {
         return name + " channel = " + channel;
     }

@@ -14,6 +14,7 @@ import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.math.MatrixMath;
 import net.lunglet.gmm.DiagCovGMM;
 import net.lunglet.gmm.GMM;
 import net.lunglet.gmm.GMMMAPStats;
@@ -58,7 +59,7 @@ public final class TrainUBM4 {
                 @Override
                 public GMMMAPStats call() throws Exception {
                     LOGGER.debug("Reading " + name + " " + Arrays.toString(dims));
-                    FloatDenseMatrix data = DenseFactory.createFloatMatrix(dims, Order.ROW, Storage.DIRECT);
+                    FloatDenseMatrix data = DenseFactory.floatMatrix(dims, Order.ROW, Storage.DIRECT);
                     synchronized (H5Library.class) {
                         reader.read(name, data);
                     }
@@ -119,7 +120,7 @@ public final class TrainUBM4 {
         LOGGER.info("Setting variance floor to 50% of global variance");
         varianceFloor = gmm.getVariance(0);
         // XXX maybe tune this flooring constant
-        varianceFloor.timesEquals(0.5f);
+        MatrixMath.timesEquals(varianceFloor, 0.5f);
 
         for (int i = 2; i <= 32; i++) {
             LOGGER.info("GMM weights before split: " + gmm.getWeights());

@@ -32,9 +32,9 @@ public final class IOUtils {
             int mixtures = space.getIntDims()[0];
             space.close();
             dataset.close();
-            FloatDenseVector weights = DenseFactory.directRowVector(mixtures);
+            FloatDenseVector weights = DenseFactory.floatRowDirect(mixtures);
             reader.read("/weights", weights);
-            FloatDenseVector temp = DenseFactory.directRowVector(dimension);
+            FloatDenseVector temp = DenseFactory.floatRowDirect(dimension);
             List<FloatVector> means = new ArrayList<FloatVector>();
             List<FloatVector> variances = new ArrayList<FloatVector>();
             for (int i = 0; i < mixtures; i++) {
@@ -59,10 +59,10 @@ public final class IOUtils {
             means.close();
             Group variances = root.createGroup("/variances");
             variances.close();
-            writer.write("/weights", DenseFactory.directCopy(gmm.getWeights()));
+            writer.write("/weights", DenseFactory.copyOfDirect(gmm.getWeights()));
             for (int i = 0; i < gmm.getMixtureCount(); i++) {
-                writer.write("/means/" + i, DenseFactory.directCopy(gmm.getMean(i)));
-                writer.write("/variances/" + i, DenseFactory.directCopy(gmm.getVariance(i)));
+                writer.write("/means/" + i, DenseFactory.copyOfDirect(gmm.getMean(i)));
+                writer.write("/variances/" + i, DenseFactory.copyOfDirect(gmm.getVariance(i)));
             }
         } finally {
             writer.close();

@@ -41,7 +41,7 @@ public final class CheckMLF {
         }
         return md5StringBuilder.toString();
     }
-    
+
     private static Map<String, String> readMD5sums() throws IOException {
         String[] files = {"F:\\md5sum_pt1.txt", "F:\\md5sum_pt2.txt"};
         Map<String, String> md5sums = new HashMap<String, String>();
@@ -58,7 +58,7 @@ public final class CheckMLF {
         }
         return md5sums;
     }
-    
+
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
         Map<String, String> md5sums = readMD5sums();
         boolean ignoreCase = true;

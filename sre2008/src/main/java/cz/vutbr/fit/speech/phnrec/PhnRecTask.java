@@ -11,7 +11,7 @@ import org.gridgain.grid.resources.GridLoggerResource;
 
 public final class PhnRecTask extends GridTaskSplitAdapter<PhnRecJob, Void> {
     private static final long serialVersionUID = 1L;
-    
+
     @GridLoggerResource
     private GridLogger log = null;
 

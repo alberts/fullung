@@ -24,7 +24,7 @@ public class Segment {
     public final String getHDFName() {
         return "/" + name + "/" + channel;
     }
-    
+
     @Override
     public String toString() {
         return name + ":" + channel;

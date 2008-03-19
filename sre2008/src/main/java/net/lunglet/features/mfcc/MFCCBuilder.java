@@ -84,7 +84,7 @@ public final class MFCCBuilder {
     private final ExcludedFrameRemover frameRemover;
 
     private final GaussianWarper gaussianWarper;
-    
+
     private final HTKMFCCBuilder htkmfcc;
 
     private final PhnRecVAD phnrecVAD;

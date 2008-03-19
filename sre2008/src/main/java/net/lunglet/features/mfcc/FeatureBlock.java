@@ -3,7 +3,7 @@ package net.lunglet.features.mfcc;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-// TODO construct with feature spacing so that it can calculate timestamps 
+// TODO construct with feature spacing so that it can calculate timestamps
 
 // TODO rename begin -> first and end -> last
 

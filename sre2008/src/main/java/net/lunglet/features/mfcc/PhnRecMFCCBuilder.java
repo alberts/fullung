@@ -94,7 +94,7 @@ public final class PhnRecMFCCBuilder {
             final List<FeatureSet> otherChannels) {
 
         // TODO squelch net enkele foneme, nie hele blokke nie
-        
+
         List<FeatureBlock> badBlocks = new ArrayList<FeatureBlock>();
         for (FeatureBlock block : blocks) {
             for (FeatureSet features : otherChannels) {

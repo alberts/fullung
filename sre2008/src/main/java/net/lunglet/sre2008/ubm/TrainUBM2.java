@@ -14,6 +14,7 @@ import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.math.MatrixMath;
 import net.lunglet.gmm.DiagCovGMM;
 import net.lunglet.gmm.GMM;
 import net.lunglet.gmm.GMMMAPStats;
@@ -53,7 +54,7 @@ public final class TrainUBM2 {
                 @Override
                 public GMMMAPStats call() throws Exception {
                     LOGGER.debug("Reading " + name + " " + Arrays.toString(dims));
-                    FloatDenseMatrix data = DenseFactory.createFloatMatrix(dims, Order.ROW, Storage.DIRECT);
+                    FloatDenseMatrix data = DenseFactory.floatMatrix(dims, Order.ROW, Storage.DIRECT);
                     synchronized (H5Library.class) {
                         reader.read(name, data);
                     }
@@ -95,7 +96,7 @@ public final class TrainUBM2 {
                 } else {
                     varianceFloor = gmm.getVariance(0);
                     // use 50% of global variance when flooring
-                    varianceFloor.timesEquals(0.5f);
+                    MatrixMath.timesEquals(varianceFloor, 0.5f);
                     break;
                 }
                 IOUtils.writeGMM("ubm_after_" + i + "_" + iter + ".h5", gmm);

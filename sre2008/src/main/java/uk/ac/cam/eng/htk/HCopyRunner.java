@@ -22,7 +22,7 @@ import net.lunglet.sound.util.SoundUtils;
 
 public final class HCopyRunner {
     private static final String OUTPUT_SUFFIX = ".mfc1";
-    
+
     private static final File TEMP_DIR = new File(System.getProperty("java.io.tmpdir"));
 
     private static class Task {
