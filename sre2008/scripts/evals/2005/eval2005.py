@@ -33,6 +33,8 @@ def read_train(filename, models, gender, condition):
 def remove_model_errors(filename, models):
     lines = open(filename).readlines()
     for line in lines:
+        line = line.strip()
+        if line.find('#') == 0: continue
         id = line.strip().lower()
         if not models.has_key(id): continue
         print >>sys.stderr, 'removing bad model %s' % id
