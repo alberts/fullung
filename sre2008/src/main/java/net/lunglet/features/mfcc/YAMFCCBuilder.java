@@ -233,12 +233,16 @@ public final class YAMFCCBuilder {
             List<FeatureBlock> mergedBlocks = mergePhonemeBlocks(phonemeBlocks);
             validBlocksList.add(mergedBlocks);
         }
-
         FeatureSet[] newFeatures = new FeatureSet[channels.length];
         for (int channelIndex = 0; channelIndex < channels.length; channelIndex++) {
             List<FeatureBlock> blocks = validBlocksList.get(channelIndex);
+            float[][] blockValues = mergeBlockValues(blocks);
+            if (blockValues.length == 0) {
+                // skip channel that had no valid data
+                continue;
+            }
             // gaussianize valid blocks in-place
-            gaussianize(mergeBlockValues(blocks));
+            gaussianize(blockValues);
             // append deltas and delta-deltas
             for (FeatureBlock block : blocks) {
                 float[][] delta = delta(block.getValues(), 0, 13);
@@ -345,6 +349,10 @@ public final class YAMFCCBuilder {
                     h5file.getRootGroup().createGroup(hdfName);
                 }
                 for (int i = 0; i < features.length; i++) {
+                    if (features[i] == null) {
+                        LOGGER.info("Skipping invalid channel " + i + " in " + filename);
+                        continue;
+                    }
                     float[][] values = features[i].getValues();
                     if (true) {
                         checkMFCC(values);
@@ -356,9 +364,9 @@ public final class YAMFCCBuilder {
                         writer.write(fullHdfName, matrix);
                     }
                 }
-            } catch (Exception e) {
-                LOGGER.error("MFCC extraction for " + filename + " failed", e);
-                throw e;
+            } catch (Throwable t) {
+                LOGGER.error("MFCC extraction for " + filename + " failed", t);
+                throw new Exception(t);
             }
             return null;
         }
@@ -377,7 +385,7 @@ public final class YAMFCCBuilder {
             try {
                 future.get();
             } catch (ExecutionException e) {
-                // ignore them for now
+                LOGGER.error("Execution failed", e);
                 continue;
             }
         }
