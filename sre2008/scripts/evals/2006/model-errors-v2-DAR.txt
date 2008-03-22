@@ -45,6 +45,7 @@ t3866
 # The train file kafq:b has both side summed (102614 + 102579)
 t1378
 # The speaker on kayy:a sounds like 102629 (not 102631)
-t2577
+# fixed by latest sre06_newkey
+#t2577
 # The speaker 6301 is on kewa:a not kewa:b
 t2546

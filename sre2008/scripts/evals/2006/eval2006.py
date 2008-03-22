@@ -193,8 +193,8 @@ def main():
         read_trials(filename, models, traincond, testcond)
     remove_model_errors('model-errors-v2-DAR.txt', models)
     remove_trial_errors('testseg-errors-v5.txt', models)
-    read_model_key('sre06_model_key_v9-DAR.txt', models)
-    read_key('sre06_test_seg_key_v11-small-DAR.txt', models)
+    read_model_key('sre06_model_key_v9.txt', models)
+    read_key('sre06_test_seg_key_v11.txt', models)
     check_models(models)
     print_eval(models)
 
