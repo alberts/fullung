@@ -21,10 +21,10 @@ pbhw m0000 m0000 m0000 m0000 m0000
 pboc m0000 m0000 m0000 m0000 m0000
 pctp m0000 m0000 m0000 m0000 m0000
 ncnr m0000 m0000 m0000 m0000 m0000
-# obww m0000 m0000 m0000 m0000 m0000 
-# oikl m0000 m0000 m0000 m0000 m0000 
-# oerf m0000 m0000 m0000 m0000 m0000 
-# odne m0000 m0000 m0000 m0000 m0000 
+# obww m0000 m0000 m0000 m0000 m0000
+# oikl m0000 m0000 m0000 m0000 m0000
+# oerf m0000 m0000 m0000 m0000 m0000
+# odne m0000 m0000 m0000 m0000 m0000
 # the following test segment/training model pairs are considered *bad* because
 # the test segment came from the data making up the training model.
 # the trials involving these pairs will be removed prior to scoring
