@@ -59,10 +59,10 @@ public final class IOUtils {
             means.close();
             Group variances = root.createGroup("/variances");
             variances.close();
-            writer.write("/weights", DenseFactory.copyOfDirect(gmm.getWeights()));
+            writer.write("/weights", DenseFactory.directCopyOf(gmm.getWeights()));
             for (int i = 0; i < gmm.getMixtureCount(); i++) {
-                writer.write("/means/" + i, DenseFactory.copyOfDirect(gmm.getMean(i)));
-                writer.write("/variances/" + i, DenseFactory.copyOfDirect(gmm.getVariance(i)));
+                writer.write("/means/" + i, DenseFactory.directCopyOf(gmm.getMean(i)));
+                writer.write("/variances/" + i, DenseFactory.directCopyOf(gmm.getVariance(i)));
             }
         } finally {
             writer.close();
