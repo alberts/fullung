@@ -6,24 +6,89 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import org.gridgain.grid.Grid;
-import org.gridgain.grid.GridConfigurationAdapter;
+import net.lunglet.array4j.Order;
+import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.blas.FloatDenseBLAS;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.gridgain.grid.GridException;
-import org.gridgain.grid.GridFactory;
 import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
 import org.gridgain.grid.GridNode;
 import org.gridgain.grid.GridTaskAdapter;
-import org.gridgain.grid.GridTaskFuture;
 import org.gridgain.grid.logger.GridLogger;
 import org.gridgain.grid.resources.GridLoggerResource;
-import org.gridgain.grid.spi.communication.tcp.GridTcpCommunicationSpi;
-import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 
 public final class TestGrid {
+    public static class TestJob implements GridJob {
+        private static final Random rng = new Random(0);
+
+        private static final long serialVersionUID = 1L;
+
+        private final int i;
+
+        @GridLoggerResource
+        private GridLogger logger = null;
+
+        public TestJob(final int i) {
+            this.i = i;
+        }
+
+        @Override
+        public void cancel() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Serializable execute() throws GridException {
+            if (false && rng.nextInt(100) == 0) {
+                throw new RuntimeException("BORK");
+            }
+            if (false) {
+                try {
+                    Thread.sleep(5000L);
+                } catch (InterruptedException e) {
+                    throw new GridException(e);
+                }
+            }
+            logger.info("Hello " + i);
+            return null;
+        }
+
+        public Serializable execute2() throws GridException {
+            int n = 100;
+            final int r;
+            if (n < 100) {
+                r = 5000;
+            } else {
+                r = 500;
+            }
+            float alpha = 1.0f;
+            Order order = Order.COLUMN;
+            Storage storage = Storage.DIRECT;
+            FloatDenseMatrix a = DenseFactory.floatMatrix(n, n, order, storage);
+            FloatDenseMatrix b = DenseFactory.floatMatrix(n, n, order, storage);
+            float beta = 1.0f;
+            FloatDenseMatrix c = DenseFactory.floatMatrix(n, n, order, storage);
+            FloatMatrixUtils.fillRandom(a, rng);
+            FloatMatrixUtils.fillRandom(b, rng);
+            FloatMatrixUtils.fillRandom(c, rng);
+            for (int i = 0; i < 10; i++) {
+                FloatDenseBLAS.DEFAULT.gemm(alpha, a, b, beta, c);
+            }
+            long startTime = System.nanoTime();
+            for (int i = 0; i < r; i++) {
+                FloatDenseBLAS.DEFAULT.gemm(alpha, a, b, beta, c);
+            }
+            long t = System.nanoTime() - startTime;
+            int f = 2 * (n + 1) * n * n;
+            double mfs = f / (t / 1000.0) * r;
+            System.out.println(String.format("n = %d, mfs = %f", n, mfs));
+            return null;
+        }
+    }
+
     public static class TestTask extends GridTaskAdapter<TestJob, Object> {
         private static final long serialVersionUID = 1L;
 
@@ -42,76 +107,15 @@ public final class TestGrid {
         }
     }
 
-    public static class TestJob implements GridJob {
-        private static final long serialVersionUID = 1L;
-
-        private final int i;
-
-        public TestJob(final int i) {
-            this.i = i;
-        }
-
-        @Override
-        public void cancel() {
-            throw new UnsupportedOperationException();
-        }
-
-        @GridLoggerResource
-        private GridLogger logger = null;
-
-        @Override
-        public Serializable execute() throws GridException {
-            logger.info("Hello " + i);
-            return null;
-        }
-    }
-
     public static void main(final String[] args) throws Exception {
-        System.setProperty("GRIDGAIN_HOME", System.getProperty("user.dir"));
-        System.setProperty("gridgain.update.notifier", "false");
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        GridConfigurationAdapter cfg = new GridConfigurationAdapter();
-        final String gridName = "grid";
-        cfg.setGridName(gridName);
-        GridBasicTopologySpi topologySpi = new GridBasicTopologySpi();
-        topologySpi.setLocalNode(true);
-        topologySpi.setRemoteNodes(false);
-        cfg.setPeerClassLoadingEnabled(true);
-        cfg.setTopologySpi(topologySpi);
-        cfg.setExecutorService(executorService);
-        cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
-//        TopicConnectionFactory connectionFactory = new TopicConnectionFactory();
-//        connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, "asok.dsp.sun.ac.za");
-//        connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, "7676");
-//        GridJmsCommunicationSpi commSpi = new GridJmsCommunicationSpi();
-//        commSpi.setConnectionFactory(connectionFactory);
-//        commSpi.setTopic(new Topic("gridgaincomm"));
-//        cfg.setCommunicationSpi(commSpi);
-//        cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
-//        GridJmsDiscoverySpi discoSpi = new GridJmsDiscoverySpi();
-//        discoSpi.setConnectionFactory(connectionFactory);
-//        discoSpi.setTopic(new Topic("gridgaindisco"));
-//        discoSpi.setTimeToLive(600L);
-//        discoSpi.setHeartbeatFrequency(3000L);
-//        discoSpi.setMaximumMissedHeartbeats(10L);
-//        discoSpi.setHandshakeWaitTime(10000L);
-//        cfg.setDiscoverySpi(discoSpi);
-        try {
-            final Grid grid = GridFactory.start(cfg);
-            // without this sleep, things break
-            Thread.sleep(10000L);
-            List<GridTaskFuture<Object>> futures = new ArrayList<GridTaskFuture<Object>>();
-            for (int i = 0; i < 1000; i++) {
-                GridTaskFuture<Object> future = grid.execute(TestTask.class.getName(), new TestJob(i));
-                futures.add(future);
-            }
-            for (GridTaskFuture<Object> future : futures) {
-                future.get();
-            }
-        } finally {
-            GridFactory.stop(gridName, false);
-            executorService.shutdown();
-            executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
+        List<TestJob> tasks = new ArrayList<TestJob>();
+        for (int i = 0; i < 1000; i++) {
+            tasks.add(new TestJob(i));
+        }
+        if (true) {
+            new DefaultGrid<TestJob, Object>(TestTask.class, tasks, null).run();
+        } else {
+            new LocalGrid<TestJob, Object>(TestTask.class, tasks, null).run();
         }
     }
 }

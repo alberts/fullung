@@ -1,8 +1,5 @@
 package cz.vutbr.fit.speech.phnrec;
 
-import com.sun.messaging.ConnectionConfiguration;
-import com.sun.messaging.Topic;
-import com.sun.messaging.TopicConnectionFactory;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.Serializable;
@@ -14,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import javax.jms.JMSException;
+import javax.jms.Topic;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import net.lunglet.io.FileUtils;
@@ -54,18 +51,18 @@ public final class PhnRecGrid2 {
         cfg.setPeerClassLoadingEnabled(true);
         cfg.setCommunicationSpi(new GridTcpCommunicationSpi());
         GridJmsDiscoverySpi discoSpi = new GridJmsDiscoverySpi();
-        TopicConnectionFactory connectionFactory = new TopicConnectionFactory();
+//        TopicConnectionFactory connectionFactory = new TopicConnectionFactory();
         Topic topic = null;
-        try {
-            String imqBrokerHostName = "asok.dsp.sun.ac.za";
+//        try {
+//            String imqBrokerHostName = "asok.dsp.sun.ac.za";
 //            String imqBrokerHostName = "localhost";
-            connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, imqBrokerHostName);
-            connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, "7676");
-            topic = new Topic("gridgaindisco");
-        } catch (JMSException e) {
-            throw new RuntimeException(e);
-        }
-        discoSpi.setConnectionFactory(connectionFactory);
+//            connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, imqBrokerHostName);
+//            connectionFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, "7676");
+//            topic = new Topic("gridgaindisco");
+//        } catch (JMSException e) {
+//            throw new RuntimeException(e);
+//        }
+//        discoSpi.setConnectionFactory(connectionFactory);
         discoSpi.setTopic(topic);
         discoSpi.setTimeToLive(600L);
         discoSpi.setHeartbeatFrequency(3000L);

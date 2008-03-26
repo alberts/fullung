@@ -5,6 +5,9 @@ import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 
+// TODO leave-one-out of background to train tnorm models
+// TODO make sure we remove all vectors from speaker
+
 public final class SpeakerKernelMatrix extends AbstractMatrix<FloatVector> implements FloatMatrix {
     private static final long serialVersionUID = 1L;
 
