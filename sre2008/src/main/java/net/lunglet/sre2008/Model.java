@@ -10,18 +10,25 @@ public final class Model {
 
     private final String id;
 
-    private final List<Segment> test;
+    private final List<Trial> test;
+
+    private final String testCondition;
 
     private final List<Segment> train;
 
-    public Model(final String id, final Gender gender, final Collection<Segment> train, final Collection<Trial> test) {
+    private final String trainCondition;
+
+    public Model(final String id, final Gender gender, final String trainCondition, final Collection<Segment> train,
+            final String testCondition, final Collection<Trial> test) {
         if (train.size() < 1) {
             throw new IllegalArgumentException();
         }
         this.id = id;
         this.gender = gender;
+        this.trainCondition = trainCondition;
         this.train = Collections.unmodifiableList(new ArrayList<Segment>(train));
-        this.test = Collections.unmodifiableList(new ArrayList<Segment>(test));
+        this.testCondition = testCondition;
+        this.test = Collections.unmodifiableList(new ArrayList<Trial>(test));
     }
 
     public Gender getGender() {
@@ -32,12 +39,20 @@ public final class Model {
         return id;
     }
 
-    public List<Segment> getTest() {
+    public List<Trial> getTest() {
         return test;
+    }
+
+    public String getTestCondition() {
+        return testCondition;
     }
 
     public List<Segment> getTrain() {
         return train;
+    }
+
+    public String getTrainCondition() {
+        return trainCondition;
     }
 
     @Override

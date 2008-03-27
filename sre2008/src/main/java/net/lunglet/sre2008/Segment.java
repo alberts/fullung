@@ -6,10 +6,13 @@ public class Segment {
     private final String name;
 
     public Segment(final String name, final int channel) {
+        if (channel != 0 && channel != 1) {
+            throw new IllegalArgumentException();
+        }
         this.name = name;
         this.channel = channel;
     }
-
+    
     public Segment(final String name, final String channel) {
         this.name = name;
         if (channel.toLowerCase().equals("a")) {
@@ -21,8 +24,16 @@ public class Segment {
         }
     }
 
+    public final String getChannel() {
+        return channel == 0 ? "a" : "b";
+    }
+
     public final String getHDFName() {
         return "/" + name + "/" + channel;
+    }
+
+    public final String getName() {
+        return name;
     }
 
     @Override
