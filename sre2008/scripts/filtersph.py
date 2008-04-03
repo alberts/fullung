@@ -6,6 +6,7 @@ import sys
 
 if len(sys.argv) != 3:
     print >>sys.stderr, 'usage: %s sphfilelist evaltxt' % sys.argv[0]
+    sys.exit(1)
 
 sphs = open(sys.argv[1]).readlines()
 lines = open(sys.argv[2]).readlines()
