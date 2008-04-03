@@ -45,7 +45,7 @@ public final class TrainUBM4 {
             final int[] dims;
             // TODO still haven't sorted out HDF5 thread issues?
             // could be because executor service threads and main thread are
-            // accessing it at the "same"s time
+            // accessing it at the "same" time
             synchronized (H5Library.class) {
                 name = ds.getName();
                 LOGGER.debug("Scanning " + name);

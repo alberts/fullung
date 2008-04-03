@@ -9,9 +9,7 @@ import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.gmm.DiagCovGMM;
 import net.lunglet.gmm.GMMUtils;
-import net.lunglet.gridgain.DefaultGrid;
-import net.lunglet.gridgain.LocalGrid;
-import net.lunglet.gridgain.ResultHandler;
+import net.lunglet.gridgain.ResultListener;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.H5File;
 import net.lunglet.io.HDFWriter;
@@ -40,7 +38,7 @@ public final class TrainBackground {
         for (DataSet dataset : dataFile.getRootGroup().getDataSets()) {
             String name = dataset.getName();
             dataset.close();
-            jobs.add(new SpeakerTrainJob(name, UBM_FILE, DATA_FILE));
+            jobs.add(new SpeakerTrainJob(name, DATA_FILE));
         }
         dataFile.close();
         Collections.sort(jobs);
@@ -48,23 +46,23 @@ public final class TrainBackground {
         H5File gmmFile = new H5File(GMM_FILE, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(gmmFile);
         final List<SpeakerTrainResult> results = new ArrayList<SpeakerTrainResult>();
-        ResultHandler<SpeakerTrainResult> resultHandler = new ResultHandler<SpeakerTrainResult>() {
+        ResultListener<SpeakerTrainResult> resultHandler = new ResultListener<SpeakerTrainResult>() {
             private int resultCount = 0;
 
             @Override
             public void onResult(final SpeakerTrainResult result) {
                 results.add(result);
                 LOGGER.info("Got result for {} [{}]", result.getName(), ++resultCount);
+                FloatDenseVector sv = DenseFactory.floatVector(result.getModel(), Direction.ROW, Storage.DIRECT);
                 synchronized (H5File.class) {
-                    FloatDenseVector sv = DenseFactory.floatVector(result.getModel(), Direction.ROW, Storage.DIRECT);
                     writer.write(result.getName(), sv);
                 }
             }
         };
         if (true) {
-            new DefaultGrid<SpeakerTrainJob, SpeakerTrainResult>(SpeakerTrainTask.class, jobs, resultHandler).run();
+//            new DefaultGrid<SpeakerTrainJob, SpeakerTrainResult>(SpeakerTrainTask.class, jobs, resultHandler).run();
         } else {
-            new LocalGrid<SpeakerTrainJob, SpeakerTrainResult>(SpeakerTrainTask.class, jobs, resultHandler).run();
+//            new LocalGrid<SpeakerTrainJob, SpeakerTrainResult>(SpeakerTrainTask.class, jobs, resultHandler).run();
         }
         writer.close();
     }

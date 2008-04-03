@@ -18,7 +18,7 @@ public final class Trial extends Segment {
             throw new IllegalArgumentException("invalid target");
         }
     }
-    
+
     public boolean isTarget() {
         return target;
     }

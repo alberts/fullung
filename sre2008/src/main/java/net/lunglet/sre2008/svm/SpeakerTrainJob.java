@@ -9,7 +9,6 @@ import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.H5File;
 import net.lunglet.io.HDFReader;
 import net.lunglet.sre2008.GMMTrainer;
-import net.lunglet.sre2008.io.IOUtils;
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
 import org.slf4j.Logger;
@@ -24,11 +23,8 @@ public final class SpeakerTrainJob implements GridJob, Comparable<SpeakerTrainJo
 
     private final String name;
 
-    private final String ubmh5;
-
-    public SpeakerTrainJob(final String name, final String ubmh5, final String datah5) {
+    public SpeakerTrainJob(final String name, final String datah5) {
         this.name = name;
-        this.ubmh5 = ubmh5;
         this.datah5 = datah5;
     }
 
@@ -46,8 +42,13 @@ public final class SpeakerTrainJob implements GridJob, Comparable<SpeakerTrainJo
     public SpeakerTrainResult execute() throws GridException {
         LOGGER.info("Training GMM supervector for {}", name);
         FloatDenseMatrix data = readData();
-        DiagCovGMM ubm = readUBM();
-        return new SpeakerTrainResult(name, GMMTrainer.train(ubm, data));
+        // TODO get ubm from context
+        DiagCovGMM ubm = null;
+        if (!GMMUtils.isGMMParametersFinite(ubm)) {
+            LOGGER.error("UBM contains invalid parameters");
+            throw new RuntimeException();
+        }
+        return new SpeakerTrainResult(name, GMMTrainer.train(ubm, data.rowsIterator()));
     }
 
     private FloatDenseMatrix readData() {
@@ -61,15 +62,5 @@ public final class SpeakerTrainJob implements GridJob, Comparable<SpeakerTrainJo
         reader.read(name, data);
         reader.close();
         return data;
-    }
-
-    private DiagCovGMM readUBM() {
-        LOGGER.info("Reading UBM from " + ubmh5);
-        DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmh5);
-        if (!GMMUtils.isGMMParametersFinite(ubm)) {
-            LOGGER.error("UBM contains invalid parameters");
-            throw new RuntimeException();
-        }
-        return ubm;
     }
 }

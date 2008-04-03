@@ -2,7 +2,7 @@ package net.lunglet.sre2008;
 
 import java.util.List;
 import net.lunglet.array4j.matrix.FloatVector;
-import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import net.lunglet.gmm.DiagCovGMM;
 import net.lunglet.gmm.GMMMAPStats;
@@ -19,10 +19,10 @@ public final class GMMTrainer {
 
     private static final float RELEVANCE = 16.0f;
 
-    public static FloatVector train(final DiagCovGMM ubm, final FloatDenseMatrix data) {
+    public static FloatVector train(final DiagCovGMM ubm, final Iterable<FloatDenseVector> data) {
         LOGGER.info("Calculating stats on UBM");
         GMMMAPStats ubmStats = new GMMMAPStats(ubm);
-        List<int[]> indices = ubmStats.add(data.rowsIterator(), C);
+        List<int[]> indices = ubmStats.add(data, C);
         DiagCovGMM gmm = ubm.copy();
         for (int i = 1; i <= MAP_ITERATIONS; i++) {
             if (!GMMUtils.isGMMParametersFinite(gmm)) {
@@ -30,7 +30,7 @@ public final class GMMTrainer {
                 throw new RuntimeException();
             }
             GMMMAPStats stats = new GMMMAPStats(gmm);
-            stats.add(data.rowsIterator(), indices);
+            stats.add(data, indices);
             LOGGER.info("MAP iteration {}, log likelihood = {}", i, stats.getTotalLogLh());
             gmm.doMAPonMeans(stats, RELEVANCE);
             if (!GMMUtils.isGMMParametersFinite(gmm)) {
