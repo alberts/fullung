@@ -155,9 +155,12 @@ public final class TrainSVM {
             SvmClassifier compactSvm = svm.compact();
             FloatVector model = compactSvm.getModel();
 
-            if (false) {
-                // check scores of training data
-                System.out.println(compactSvm.score(svmData).transpose());
+            if (true) {
+                float[] scores = compactSvm.score(svmData).toArray();
+                for (int i = 0; i < scores.length - 1; i++) {
+                    AssertUtils.assertTrue(scores[i] < 0);
+                }
+                AssertUtils.assertTrue(scores[scores.length - 1] > 0);
             }
 
             return new Result(modelId, model);
@@ -219,7 +222,7 @@ public final class TrainSVM {
 
         static {
             // background data
-            String svmFile = "C:/home/albert/SRE2008/data/sre04gmm_1s1s.h5";
+            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmnap.h5";
             svmData = new ArrayList<Handle>();
             List<String> names = getNames(svmFile);
             int index = 0;
@@ -229,7 +232,7 @@ public final class TrainSVM {
             }
 
             // kernel
-            String kernelFile = "C:/home/albert/SRE2008/data/sre04gmm_1s1s_kernel.h5";
+            String kernelFile = "C:/home/albert/SRE2008/data/sre04_background_kernel.h5";
             HDFReader kernelReader = new HDFReader(kernelFile);
             kernel = PackedFactory.floatSymmetricDirect(1790);
             kernelReader.read("/kernel", kernel);
@@ -269,10 +272,10 @@ public final class TrainSVM {
     private static List<String> getNames(final String h5) {
         List<String> names = new ArrayList<String>();
         H5File h5file = new H5File(h5);
-        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
-            names.add(ds.getName());
-            ds.close();
-        }
+//        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
+//            names.add(ds.getName());
+//            ds.close();
+//        }
         for (Group group : h5file.getRootGroup().getGroups()) {
             for (DataSet ds : group.getDataSets()) {
                 names.add(ds.getName());
@@ -287,9 +290,11 @@ public final class TrainSVM {
 
     public static void main(final String[] args) throws Exception {
         // evaluation data
-        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
+//        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
+        String evalFile = "C:/home/albert/SRE2008/scripts/sre06-1conv4w_1conv4w.txt";
         List<Model> models = Evaluation2.readModels(evalFile);
-        String dataFile = "C:/home/albert/SRE2008/data/sre05gmm_1s1s.h5";
+//        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmnap.h5";
+        String dataFile = "C:/home/albert/SRE2008/data/sre06_1s1s_gmmnap.h5";
         H5File trainh5 = new H5File(dataFile);
         Evaluation2.checkData(trainh5, models);
         trainh5.close();
@@ -304,7 +309,8 @@ public final class TrainSVM {
             jobs.add(job);
         }
 
-        String svmFile = "C:/home/albert/SRE2008/data/sre05svm_1s1s.h5";
+//        String svmFile = "C:/home/albert/SRE2008/data/sre05_1s1s_svmnap.h5";
+        String svmFile = "C:/home/albert/SRE2008/data/sre06_1s1s_svmnap.h5";
         final H5File svmh5 = new H5File(svmFile, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(svmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {

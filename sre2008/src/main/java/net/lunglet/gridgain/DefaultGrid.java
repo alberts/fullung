@@ -31,10 +31,17 @@ public final class DefaultGrid<J, R> extends AbstractGrid<J, R> {
         cfg.setPeerClassLoadingEnabled(true);
         cfg.setExecutorService(executorService);
         GridJobStealingCollisionSpi collisionSpi = new GridJobStealingCollisionSpi();
-        collisionSpi.setActiveJobsThreshold(0);
-        collisionSpi.setWaitJobsThreshold(0);
-        collisionSpi.setStealingEnabled(false);
-        collisionSpi.setMaximumStealingAttempts(5);
+        if (false) {
+            collisionSpi.setActiveJobsThreshold(0);
+            collisionSpi.setWaitJobsThreshold(0);
+            collisionSpi.setStealingEnabled(false);
+            collisionSpi.setMaximumStealingAttempts(5);
+        } else {
+            collisionSpi.setActiveJobsThreshold(2);
+            collisionSpi.setWaitJobsThreshold(4);
+            collisionSpi.setStealingEnabled(true);
+            collisionSpi.setMaximumStealingAttempts(5);
+        }
         cfg.setCollisionSpi(collisionSpi);
         GridJobStealingFailoverSpi failoverSpi = new GridJobStealingFailoverSpi();
         failoverSpi.setMaximumFailoverAttempts(5);

@@ -160,10 +160,10 @@ public final class TrainGMM {
     private static List<String> getNames(final String h5) {
         List<String> names = new ArrayList<String>();
         H5File h5file = new H5File(h5);
-        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
-            names.add(ds.getName());
-            ds.close();
-        }
+//        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
+//            names.add(ds.getName());
+//            ds.close();
+//        }
         for (Group group : h5file.getRootGroup().getGroups()) {
             for (DataSet ds : group.getDataSets()) {
                 names.add(ds.getName());
@@ -176,6 +176,7 @@ public final class TrainGMM {
         return names;
     }
 
+    // XXX make sure this program is run with lots of heap... maybe a GG leak somewhere
     public static void main(final String[] args) throws Exception {
         if (false) {
             String ubmFile = "Z:/data/ubm_floored_512_3.h5";
@@ -185,18 +186,27 @@ public final class TrainGMM {
         DiagCovGMM ubm = null;
 
 //        String datah5 = "Z:/data/sre05mfcc_1s1s.h5";
-        String datah5 = "Z:/data/sre06mfcc_1s1s.h5";
+        String datah5 = "Z:/data/sre06_1s1s_mfcc.h5";
+//        String datah5 = "Z:\\data\\sre04_nap_mfcc.h5";
+//        String datah5 = "Z:\\data\\sre04_background_mfcc.h5";
         List<String> names = getNames(datah5);
+
+//      String gmmFile = "Z:/data/sre05gmm_1s1s.h5";
+        String gmmFile = "Z:/data/sre06_1s1s_gmm.h5";
+//        String gmmFile = "Z:/data/sre04_nap_gmm.h5";
+//        String gmmFile = "Z:/data/sre04_background_gmm.h5";
+        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_RDWR);
+
         Task task = new Task(ubm);
         List<Job> jobs = new ArrayList<Job>();
         for (String name : names) {
+            if (gmmh5.getRootGroup().existsDataSet(name)) {
+                continue;
+            }
             Job job = new Job(name, datah5);
             jobs.add(job);
         }
 
-//        String gmmFile = "Z:/data/sre05gmm_1s1s.h5";
-        String gmmFile = "Z:/data/sre06gmm_1s1s.h5";
-        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(gmmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {
             @Override

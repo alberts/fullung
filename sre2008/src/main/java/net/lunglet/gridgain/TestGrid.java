@@ -9,6 +9,8 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.gridgain.grid.Grid;
 import org.gridgain.grid.GridConfigurationAdapter;
 import org.gridgain.grid.GridException;
@@ -167,6 +169,8 @@ public final class TestGrid {
     }
 
     public static void main(final String[] args) throws Exception {
+        Logger logger = Logger.getLogger("org.gridgain");
+        logger.setLevel(Level.DEBUG);
         List<TestJob> tasks = new ArrayList<TestJob>();
         for (int i = 0; i < 1000; i++) {
             tasks.add(new TestJob(i));

@@ -14,6 +14,7 @@ import net.lunglet.hdf.DataSetCreatePropListBuilder;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.DataType;
 import net.lunglet.hdf.FloatType;
+import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.hdf.DataSetCreatePropListBuilder.FillTime;
@@ -69,24 +70,34 @@ public final class CalculateKernel {
             }
         }
     }
+    
+    private static List<String> getNames(final H5File h5file) {
+        List<String> names = new ArrayList<String>();
+//        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
+//            names.add(ds.getName());
+//            ds.close();
+//        }
+        for (Group group : h5file.getRootGroup().getGroups()) {
+            for (DataSet ds : group.getDataSets()) {
+                names.add(ds.getName());
+                ds.close();
+            }
+            group.close();
+        }
+        Collections.sort(names);
+        return names;
+    }
 
     public static void main(final String[] args) {
         final int bufferColumns = 1790;
         final int bufferRows = 512 * 38;
 
         LOGGER.info("starting kernel calculator with " + bufferColumns + " buffer columns");
-        H5File datah5 = new H5File("sre04gmm_1s1s.h5");
-        H5File kernelh5 = new H5File("sre04gmm_1s1s_kernel.h5", H5File.H5F_ACC_TRUNC);
+        H5File datah5 = new H5File("sre04_background_gmmnap.h5");
+        H5File kernelh5 = new H5File("sre04_kernel.h5", H5File.H5F_ACC_TRUNC);
 
         LOGGER.info("reading data");
-        List<String> data = new ArrayList<String>();
-        // get map of handles that discard their data after every read
-        for (DataSet dataset : datah5.getRootGroup().getDataSets()) {
-            final String name = dataset.getName();
-            dataset.close();
-            data.add(name);
-        }
-        Collections.sort(data);
+        List<String> data = getNames(datah5);
 
         LOGGER.info("creating kernel dataset");
         DataSet kernelds = createKernelDataSet(kernelh5, data.size());
