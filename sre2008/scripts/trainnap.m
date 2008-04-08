@@ -1,4 +1,4 @@
-function napstuff
+function trainnap
 dim = 512 * 38;
 naph5 = 'C:\home\albert\SRE2008\data\sre04_nap_gmm.h5';
 
@@ -18,8 +18,7 @@ while 1
 end
 fclose(fid);
 
-global D;
-if 0
+if 1
     D = zeros(dim, Nses, 'single');
     index = 1;
     for i=1:1:length(models)
@@ -41,41 +40,23 @@ if 0
     save D.mat D;
     return;
 else
-    load D.mat;
+    load D.mat D;
 end
-
-size(D)
-% looks like this plots gender info using our baseline UBM
-%plot(D(1,:));
-%plot(D(2,:));
 
 % number of eigenvectors
 k = 40;
-% make tolerance larger for quicker operation
-options.tol = 1.0e-6;
-% problem should be solved in less than 200 iterations
-options.maxit = 200;  
-options.issym = 1;
-% calcuylate eigenvectors of D'*D
-[V, S] = eigs(@Dmult,size(D,2),k,'LM',options);
 
-diag(S)
+[E, S] = nap(D, k);
 
-size(V)
+U = zeros(size(E));
+for i=1:1:length(S)
+    U(:,i) = sqrt(S(i)) * E(:,i);
+end
 
-% convert to eigenvectors of D*D'
-V = D*V;
-
-size(V)
-
-% XXX do we need to normalize sizes of V here?
-
-% orthogonalize
-[E,SS,VV] = svd(V, 0);
+% U*U' is almost equal to D*D'/n
 
 save E.mat E;
+save U.mat U;
 
-function prod = Dmult(v)
-global D;
-% calculate D'*D * v
-prod = ((D*v)'*D)';
+% transpose matrix to write it in C order
+hdf5write('fcu.h5', '/U', U');

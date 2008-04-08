@@ -13,9 +13,12 @@ import org.gridgain.grid.spi.discovery.multicast.GridMulticastDiscoverySpi;
 import org.gridgain.grid.spi.failover.jobstealing.GridJobStealingFailoverSpi;
 import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 
-public final class DefaultGrid<J, R> extends AbstractGrid<J, R> {
-    public DefaultGrid(final GridTask<J, R> task, final Iterable<J> jobs, final ResultListener<R> resultListener) {
-        super(task, jobs, resultListener);
+public final class DefaultGrid<R> extends AbstractGrid<R> {
+    // XXX use remote jrockit and local = false for 2048 component GMM-SVM
+    private static final boolean LOCAL = true;
+
+    public DefaultGrid(final Iterable<? extends GridTask<?, R>> tasks, final ResultListener<R> resultListener) {
+        super(tasks, resultListener);
     }
 
     public void run() throws Exception {
@@ -31,15 +34,15 @@ public final class DefaultGrid<J, R> extends AbstractGrid<J, R> {
         cfg.setPeerClassLoadingEnabled(true);
         cfg.setExecutorService(executorService);
         GridJobStealingCollisionSpi collisionSpi = new GridJobStealingCollisionSpi();
-        if (false) {
-            collisionSpi.setActiveJobsThreshold(0);
-            collisionSpi.setWaitJobsThreshold(0);
-            collisionSpi.setStealingEnabled(false);
-            collisionSpi.setMaximumStealingAttempts(5);
-        } else {
+        if (LOCAL) {
             collisionSpi.setActiveJobsThreshold(2);
             collisionSpi.setWaitJobsThreshold(4);
             collisionSpi.setStealingEnabled(true);
+            collisionSpi.setMaximumStealingAttempts(5);
+        } else {
+            collisionSpi.setActiveJobsThreshold(0);
+            collisionSpi.setWaitJobsThreshold(0);
+            collisionSpi.setStealingEnabled(false);
             collisionSpi.setMaximumStealingAttempts(5);
         }
         cfg.setCollisionSpi(collisionSpi);

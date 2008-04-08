@@ -21,14 +21,17 @@ public final class Evaluation {
 
     public static void main(final String[] args) throws IOException {
         int dim = 512 * 38 + 1;
-//        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
-        String evalFile = "C:/home/albert/SRE2008/scripts/sre06-1conv4w_1conv4w.txt";
+//        int dim = 2048 * 38 + 1;
+        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
+//        String evalFile = "C:/home/albert/SRE2008/scripts/sre06-1conv4w_1conv4w.txt";
         List<Model> models = Evaluation2.readModels(evalFile);
+        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmfc.h5";
 //        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmnap.h5";
-        String dataFile = "C:/home/albert/SRE2008/data/sre06_1s1s_gmmnap.h5";
+//        String dataFile = "C:/home/albert/SRE2008/data/sre06_1s1s_gmmnap.h5";
         H5File datah5 = new H5File(dataFile);
+        String svmFile = "C:/home/albert/SRE2008/data/sre05_1s1s_svmfc.h5";
 //        String svmFile = "C:/home/albert/SRE2008/data/sre05_1s1s_svmnap.h5";
-        String svmFile = "C:/home/albert/SRE2008/data/sre06_1s1s_svmnap.h5";
+//        String svmFile = "C:/home/albert/SRE2008/data/sre06_1s1s_svmnap.h5";
         H5File svmh5 = new H5File(svmFile);
         HDFReader svmReader = new HDFReader(svmh5);
         BufferedWriter outputWriter = new BufferedWriter(new FileWriter("eval.txt"));

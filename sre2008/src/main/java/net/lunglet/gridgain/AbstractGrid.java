@@ -1,6 +1,7 @@
 package net.lunglet.gridgain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.gridgain.grid.Grid;
 import org.gridgain.grid.GridException;
@@ -9,29 +10,27 @@ import org.gridgain.grid.GridTaskFuture;
 import org.gridgain.grid.GridTaskListener;
 import org.gridgain.grid.GridTaskTimeoutException;
 
-public abstract class AbstractGrid<J, R> {
-    private final Iterable<J> jobs;
+public abstract class AbstractGrid<R> {
+    private final Iterable<? extends GridTask<?, R>> tasks;
 
     private final ResultListener<R> resultListener;
 
-    private final GridTask<J, R> task;
-
-    public AbstractGrid(final GridTask<J, R> task, final Iterable<J> jobs, final ResultListener<R> resultListener) {
-        this.task = task;
-        this.jobs = jobs;
+    public AbstractGrid(final Iterable<? extends GridTask<?, R>> tasks, final ResultListener<R> resultListener) {
+        this.tasks = tasks;
         this.resultListener = resultListener;
     }
 
     protected void execute(final Grid grid) {
+        final List<GridTaskFuture<R>> futures = Collections.synchronizedList(new ArrayList<GridTaskFuture<R>>());
         GridTaskListener taskListener = new GridTaskListener() {
             @SuppressWarnings("unchecked")
             @Override
             public void onFinished(final GridTaskFuture<?> future) {
                 try {
-                    if (resultListener == null) {
-                        return;
+                    futures.remove(future);
+                    if (resultListener != null) {
+                        resultListener.onResult((R) future.get());
                     }
-                    resultListener.onResult((R) future.get());
                 } catch (GridTaskTimeoutException e) {
                     e.printStackTrace();
                 } catch (GridException e) {
@@ -39,18 +38,16 @@ public abstract class AbstractGrid<J, R> {
                 }
             }
         };
-        List<GridTaskFuture<R>> futures = new ArrayList<GridTaskFuture<R>>();
-        for (J job : jobs) {
-            GridTaskFuture<R> future = grid.execute(task, job, taskListener);
+        for (GridTask<?, R> task : tasks) {
+            final GridTaskFuture<R> future;
+            future = grid.execute(task, null, taskListener);
             futures.add(future);
         }
-        for (GridTaskFuture<R> future : futures) {
+        while (futures.size() > 0) {
             try {
-                future.get();
-            } catch (GridTaskTimeoutException e) {
-                e.printStackTrace();
-            } catch (GridException e) {
-                e.printStackTrace();
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                continue;
             }
         }
     }

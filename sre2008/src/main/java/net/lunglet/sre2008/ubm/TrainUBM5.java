@@ -30,10 +30,8 @@ import net.lunglet.sre2008.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO record maximum mutual information
-
-public final class TrainUBM4 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainUBM4.class);
+public final class TrainUBM5 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainUBM5.class);
 
     private static List<String> getNames(final H5File h5file) {
         List<String> names = new ArrayList<String>();
@@ -62,20 +60,16 @@ public final class TrainUBM4 {
         // XXX maybe tune this flooring constant
         MatrixMath.timesEquals(varianceFloor, 0.5f);
 
-        DiagCovGMM gmm = null;
-//        gmm = gmmVarFloor;
-        gmm = IOUtils.readDiagCovGMM("origubm.h5");
-
-        while (gmm.getMixtureCount() < 2048) {
-            if (gmm.getMixtureCount() < 32) {
-                LOGGER.info("GMM weights before split: " + gmm.getWeights());
+        DiagCovGMM gmm = IOUtils.readDiagCovGMM("origubm.h5");
+        for (int i = 0; i < 2; i++) {
+            // dump weakest components
+            gmm = GMMUtils.keepHeaviest(gmm, 2048 - 384);
+            // replace weakest components
+            while (gmm.getMixtureCount() < 2048) {
                 gmm = GMMUtils.splitHeaviest(gmm);
-                LOGGER.info("GMM weights after split: " + gmm.getWeights());
-                trainGMMwithFlooring(dataFile, names, gmm, varianceFloor, 3);
-            } else {
-                gmm = GMMUtils.splitAll(gmm);
-                trainGMMwithFlooring(dataFile, names, gmm, varianceFloor, 5);
             }
+            // train
+            trainGMMwithFlooring(dataFile, names, gmm, varianceFloor, 5);
         }
 
         dataFile.close();

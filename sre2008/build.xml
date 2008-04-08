@@ -53,12 +53,13 @@
     </copy>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
       <classpath refid="build.classpath" />
-      <include name="**/*.java" />
+      <patternset refid="java.src.pattern" />
       <exclude name="cz/vutbr/fit/speech/phnrec/PhnRecGrid2.java" />
       <exclude name="cz/vutbr/fit/speech/phnrec/PhnRecJob.java" />
       <exclude name="cz/vutbr/fit/speech/phnrec/PhnRecTask.java" />
       <exclude name="net/lunglet/gridgain/**/*" />
-      <patternset refid="java.src.pattern" />
+      <exclude name="net/lunglet/sre2008/TrainSVM.java" />
+      <exclude name="net/lunglet/sre2008/TrainGMM.java" />
     </javac>
   </target>
 
@@ -78,8 +79,8 @@
       <zipfileset src="${array4j.lib.dir}/jna.jar" />
       <zipfileset src="${array4j.lib.dir}/commons-lang-2.3.jar" />
       <zipfileset src="${array4j.lib.dir}/jcip-annotations.jar" />
+      <zipfileset src="${array4j.lib.dir}/slf4j-api-1.5.0.jar" />
       <zipfileset src="${lib.dir}/log4j-1.2.15.jar" />
-      <zipfileset src="${lib.dir}/slf4j-api-1.5.0.jar" />
       <zipfileset src="${lib.dir}/slf4j-log4j12-1.5.0.jar" />
     </jarjar>
   </target>

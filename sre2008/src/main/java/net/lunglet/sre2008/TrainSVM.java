@@ -39,6 +39,8 @@ import org.gridgain.grid.resources.GridTaskSessionResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO use SoftReference in HDFHandle
+
 public final class TrainSVM {
     private static final class HDFHandle implements Handle, Serializable {
         private static final long serialVersionUID = 1L;
@@ -71,6 +73,7 @@ public final class TrainSVM {
             DataSet dataset = h5file.getRootGroup().openDataSet(name);
             int[] dims = dataset.getIntDims();
             dataset.close();
+            // XXX can't use direct buffers for all this stuff
             data = DenseFactory.floatRowDirect(ArrayMath.max(dims));
             LOGGER.info("Loading background data from {} {}", name, Arrays.toString(dims));
             reader.read(name, data);
@@ -155,6 +158,7 @@ public final class TrainSVM {
             SvmClassifier compactSvm = svm.compact();
             FloatVector model = compactSvm.getModel();
 
+            // XXX better to disable this check if we need to reload background data all the time
             if (true) {
                 float[] scores = compactSvm.score(svmData).toArray();
                 for (int i = 0; i < scores.length - 1; i++) {
@@ -162,6 +166,9 @@ public final class TrainSVM {
                 }
                 AssertUtils.assertTrue(scores[scores.length - 1] > 0);
             }
+
+            // TODO znorm
+            // TODO tnorm
 
             return new Result(modelId, model);
         }
@@ -213,7 +220,7 @@ public final class TrainSVM {
         }
     }
 
-    public static final class Task extends GridTaskAdapter<Job, Result> {
+    public static final class Task extends GridTaskAdapter<Object, Result> {
         private static final FloatPackedMatrix kernel;
 
         private static final long serialVersionUID = 1L;
@@ -222,7 +229,10 @@ public final class TrainSVM {
 
         static {
             // background data
-            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmnap.h5";
+//            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmnap.h5";
+//            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmm.h5";
+//            String svmFile = "Z:/data/sre04_background_gmm.h5";
+            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmfc.h5";
             svmData = new ArrayList<Handle>();
             List<String> names = getNames(svmFile);
             int index = 0;
@@ -232,7 +242,9 @@ public final class TrainSVM {
             }
 
             // kernel
-            String kernelFile = "C:/home/albert/SRE2008/data/sre04_background_kernel.h5";
+//            String kernelFile = "C:/home/albert/SRE2008/data/sre04_background_kernel.h5";
+//            String kernelFile = "Z:/data/sre04_background_kernel.h5";
+            String kernelFile = "C:/home/albert/SRE2008/data/sre04_background_kernelfc.h5";
             HDFReader kernelReader = new HDFReader(kernelFile);
             kernel = PackedFactory.floatSymmetricDirect(1790);
             kernelReader.read("/kernel", kernel);
@@ -243,13 +255,19 @@ public final class TrainSVM {
         @GridTaskSessionResource
         private GridTaskSession session = null;
 
-        public Task(final List<Handle> svmData, final FloatMatrix kernel) {
-//            this.svmData = new ArrayList<Handle>(svmData);
-//            this.kernel = kernel;
+        private final Job job;
+
+        public Task(final Job job) {
+            this.job = job;
         }
 
+//        public Task(final List<Handle> svmData, final FloatMatrix kernel) {
+//            this.svmData = new ArrayList<Handle>(svmData);
+//            this.kernel = kernel;
+//        }
+
         @Override
-        public Map<Job, GridNode> map(final List<GridNode> subgrid, final Job job) throws GridException {
+        public Map<Job, GridNode> map(final List<GridNode> subgrid, final Object arg) throws GridException {
 //            session.setAttribute(SVM_DATA_KEY, svmData);
 //            session.setAttribute(KERNEL_KEY, kernel);
             Map<Job, GridNode> map = new HashMap<Job, GridNode>();
@@ -290,27 +308,30 @@ public final class TrainSVM {
 
     public static void main(final String[] args) throws Exception {
         // evaluation data
-//        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
-        String evalFile = "C:/home/albert/SRE2008/scripts/sre06-1conv4w_1conv4w.txt";
+//        String evalFile = "Z:/scripts/sre05-1conv4w_1conv4w.txt";
+        String evalFile = "Z:/scripts/sre05-1conv4w_1conv4w.txt";
         List<Model> models = Evaluation2.readModels(evalFile);
-//        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmnap.h5";
-        String dataFile = "C:/home/albert/SRE2008/data/sre06_1s1s_gmmnap.h5";
+
+//        String dataFile = "Z:/data/sre05_1s1s_gmm.h5";
+//        String dataFile = "C:/home/albert/SRE2008/data/sre06_1s1s_gmmnap.h5";
+        String dataFile = "Z:/data/sre05_1s1s_gmmfc.h5";
         H5File trainh5 = new H5File(dataFile);
         Evaluation2.checkData(trainh5, models);
         trainh5.close();
 
         final double cost = 1000.0;
-        Task task = new Task(null, null);
-        List<Job> jobs = new ArrayList<Job>();
+        List<Task> tasks = new ArrayList<Task>();
         for (Model model : models) {
             List<Segment> train = model.getTrain();
             AssertUtils.assertEquals(1, train.size());
             Job job = new Job(model.getId(), train.get(0).getHDFName(), dataFile, cost);
-            jobs.add(job);
+            tasks.add(new Task(job));
         }
 
-//        String svmFile = "C:/home/albert/SRE2008/data/sre05_1s1s_svmnap.h5";
-        String svmFile = "C:/home/albert/SRE2008/data/sre06_1s1s_svmnap.h5";
+//        String svmFile = "Z:/data/sre05_1s1s_svm.h5";
+//        String svmFile = "C:/home/albert/SRE2008/data/sre06_1s1s_svmnap.h5";
+//        String svmFile = "C:/home/albert/SRE2008/data/sre05_1s1s_svmfc.h5";
+        String svmFile = "Z:/data/sre05_1s1s_svmfc.h5";
         final H5File svmh5 = new H5File(svmFile, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(svmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {
@@ -324,7 +345,7 @@ public final class TrainSVM {
             }
         };
 
-        new LocalGrid<Job, Result>(task, jobs, resultListener).run();
+        new LocalGrid<Result>(tasks, resultListener).run();
 
         writer.close();
     }

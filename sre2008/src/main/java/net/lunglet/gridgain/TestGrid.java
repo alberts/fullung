@@ -32,30 +32,30 @@ import org.gridgain.grid.spi.communication.tcp.GridTcpCommunicationSpi;
 import org.gridgain.grid.spi.discovery.multicast.GridMulticastDiscoverySpi;
 import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 
-public final class TestGrid {
-    public static abstract class AbstractGrid<J, R> {
-        private final Iterable<J> jobs;
+// TODO derive job from GridJobAdapter
 
+public final class TestGrid {
+    public static abstract class AbstractGrid<R> {
         private final ResultListener<R> resultListener;
 
-        private final GridTask<J, R> task;
+        private final Iterable<? extends GridTask<Object, R>> tasks;
 
-        public AbstractGrid(final GridTask<J, R> task, final Iterable<J> jobs, final ResultListener<R> resultListener) {
-            this.task = task;
-            this.jobs = jobs;
+        public AbstractGrid(final Iterable<? extends GridTask<Object, R>> tasks, final ResultListener<R> resultListener) {
+            this.tasks = tasks;
             this.resultListener = resultListener;
         }
 
         protected void execute(final Grid grid) {
+//            final List<GridTaskFuture<R>> futures = Collections.synchronizedList(new ArrayList<GridTaskFuture<R>>());
             GridTaskListener taskListener = new GridTaskListener() {
                 @SuppressWarnings("unchecked")
                 @Override
                 public void onFinished(final GridTaskFuture<?> future) {
                     try {
-                        if (resultListener == null) {
-                            return;
+//                        futures.remove(future);
+                        if (resultListener != null) {
+                            resultListener.onResult((R) future.get());
                         }
-                        resultListener.onResult((R) future.get());
                     } catch (GridTaskTimeoutException e) {
                         e.printStackTrace();
                     } catch (GridException e) {
@@ -63,26 +63,24 @@ public final class TestGrid {
                     }
                 }
             };
-            List<GridTaskFuture<R>> futures = new ArrayList<GridTaskFuture<R>>();
-            for (J job : jobs) {
-                GridTaskFuture<R> future = grid.execute(task, job, taskListener);
-                futures.add(future);
+            for (GridTask<?, R> task : tasks) {
+                final GridTaskFuture<R> future;
+                future = grid.execute(task, null, taskListener);
+//                futures.add(future);
             }
-            for (GridTaskFuture<R> future : futures) {
-                try {
-                    future.get();
-                } catch (GridTaskTimeoutException e) {
-                    e.printStackTrace();
-                } catch (GridException e) {
-                    e.printStackTrace();
-                }
-            }
+//            while (futures.size() > 0) {
+//                try {
+//                    Thread.sleep(1000L);
+//                } catch (InterruptedException e) {
+//                    continue;
+//                }
+//            }
         }
     }
 
-    public static final class LocalGrid<J, R> extends AbstractGrid<J, R> {
-        public LocalGrid(final GridTask<J, R> task, final Iterable<J> jobs, final ResultListener<R> resultListener) {
-            super(task, jobs, resultListener);
+    public static final class LocalGrid<R> extends AbstractGrid<R> {
+        public LocalGrid(final Iterable<? extends GridTask<Object, R>> tasks, final ResultListener<R> resultListener) {
+            super(tasks, resultListener);
         }
 
         public void run() throws Exception {
@@ -115,6 +113,12 @@ public final class TestGrid {
         }
     }
 
+    public static final class Result implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final double[] data = new double[2048 * 38];
+    }
+
     public static class TestJob implements GridJob {
         private static final long serialVersionUID = 1L;
 
@@ -137,44 +141,50 @@ public final class TestGrid {
 
         @Override
         public Serializable execute() throws GridException {
-            if (session.getAttribute("key") == null) {
-                logger.error("BORK " + i + " " + session.getId());
-            }
-            return null;
+            return new Result();
         }
     }
 
-    public static class TestTask extends GridTaskAdapter<TestJob, Object> {
+    public static class TestTask extends GridTaskAdapter<Object, Result> {
         private static final long serialVersionUID = 1L;
+
+        private final TestJob job;
 
         private final Random rng = new Random();
 
         @GridTaskSessionResource
         private GridTaskSession session = null;
 
+        public TestTask(final int i) {
+            this.job = new TestJob(i);
+        }
+
         @Override
-        public Map<? extends GridJob, GridNode> map(List<GridNode> subgrid, TestJob arg) throws GridException {
+        public Map<? extends GridJob, GridNode> map(List<GridNode> subgrid, Object arg) throws GridException {
             session.setAttribute("key", new Serializable() {
                 private static final long serialVersionUID = 1L;
             });
             Map<TestJob, GridNode> map = new HashMap<TestJob, GridNode>();
-            map.put(arg, subgrid.get(rng.nextInt(subgrid.size())));
+            map.put(job, subgrid.get(rng.nextInt(subgrid.size())));
             return map;
         }
 
         @Override
-        public Object reduce(List<GridJobResult> results) throws GridException {
-            return null;
+        public Result reduce(final List<GridJobResult> results) throws GridException {
+            return results.get(0).getData();
         }
     }
 
     public static void main(final String[] args) throws Exception {
-        Logger logger = Logger.getLogger("org.gridgain");
-        logger.setLevel(Level.DEBUG);
-        List<TestJob> tasks = new ArrayList<TestJob>();
-        for (int i = 0; i < 1000; i++) {
-            tasks.add(new TestJob(i));
+        if (false) {
+            Logger logger = Logger.getLogger("org.gridgain");
+            logger.setLevel(Level.DEBUG);
         }
-        new LocalGrid<TestJob, Object>(new TestTask(), tasks, null).run();
+        List<TestTask> tasks = new ArrayList<TestTask>();
+        for (int i = 0; i < 5000; i++) {
+            tasks.add(new TestTask(i));
+        }
+        // TODO test multiple GG threads calling into task listener
+        new LocalGrid<Result>(tasks, null).run();
     }
 }

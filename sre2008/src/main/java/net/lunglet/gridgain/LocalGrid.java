@@ -12,9 +12,9 @@ import org.gridgain.grid.spi.communication.tcp.GridTcpCommunicationSpi;
 import org.gridgain.grid.spi.discovery.multicast.GridMulticastDiscoverySpi;
 import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 
-public final class LocalGrid<J, R> extends AbstractGrid<J, R> {
-    public LocalGrid(final GridTask<J, R> task, final Iterable<J> jobs, final ResultListener<R> resultListener) {
-        super(task, jobs, resultListener);
+public final class LocalGrid<R> extends AbstractGrid<R> {
+    public LocalGrid(final Iterable<? extends GridTask<?, R>> tasks, final ResultListener<R> resultListener) {
+        super(tasks, resultListener);
     }
 
     public void run() throws Exception {

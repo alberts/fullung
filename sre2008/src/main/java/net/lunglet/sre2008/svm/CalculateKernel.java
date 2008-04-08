@@ -89,14 +89,20 @@ public final class CalculateKernel {
     }
 
     public static void main(final String[] args) {
+//        final int bufferColumns = 500;
         final int bufferColumns = 1790;
         final int bufferRows = 512 * 38;
+//        final int bufferRows = 2048 * 38;
 
         LOGGER.info("starting kernel calculator with " + bufferColumns + " buffer columns");
-        H5File datah5 = new H5File("sre04_background_gmmnap.h5");
-        H5File kernelh5 = new H5File("sre04_kernel.h5", H5File.H5F_ACC_TRUNC);
+//        H5File datah5 = new H5File("sre04_background_gmmnap.h5");
+        H5File datah5 = new H5File("sre04_background_gmmfc.h5");
+//        H5File kernelh5 = new H5File("sre04_kernel.h5", H5File.H5F_ACC_TRUNC);
+        H5File kernelh5 = new H5File("sre04_background_kernelfc.h5", H5File.H5F_ACC_TRUNC);
 
         LOGGER.info("reading data");
+        // TODO read names from a list instead of using all names so that we can
+        // combine SRE04 UBM data and NAP data in a single file
         List<String> data = getNames(datah5);
 
         LOGGER.info("creating kernel dataset");

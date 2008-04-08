@@ -24,7 +24,6 @@ import net.lunglet.hdf.H5File;
 import net.lunglet.io.HDFReader;
 import net.lunglet.io.HDFWriter;
 import net.lunglet.sre2008.io.IOUtils;
-import net.lunglet.util.AssertUtils;
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
@@ -42,7 +41,7 @@ public final class TrainGMM {
         private static final DiagCovGMM UBM;
 
         static {
-            String ubmFile = "Z:/data/ubm_floored_512_3.h5";
+            String ubmFile = "Z:/data/ubm_floored_2048_4.h5";
             UBM = IOUtils.readDiagCovGMM(ubmFile);
             checkGMM(UBM);
         }
@@ -73,11 +72,6 @@ public final class TrainGMM {
         }
 
         private DiagCovGMM getUBM() {
-            if (false) {
-                DiagCovGMM ubm = (DiagCovGMM) session.getAttribute(UBM_KEY);
-                AssertUtils.assertNotNull(ubm);
-                return ubm;
-            }
             return UBM;
         }
 
@@ -116,8 +110,10 @@ public final class TrainGMM {
         }
     }
 
-    public static final class Task extends GridTaskAdapter<Job, Result> {
+    public static final class Task extends GridTaskAdapter<Object, Result> {
         private static final long serialVersionUID = 1L;
+
+        private final Job job;
 
         private final Random rng = new Random();
 
@@ -126,13 +122,15 @@ public final class TrainGMM {
 
         private final DiagCovGMM ubm;
 
-        public Task(final DiagCovGMM ubm) {
+        public Task(final String name, final String datah5, final DiagCovGMM ubm) {
+            this.job = new Job(name, datah5);
             this.ubm = ubm;
         }
 
         @Override
-        public Map<Job, GridNode> map(final List<GridNode> subgrid, final Job job) throws GridException {
+        public Map<Job, GridNode> map(final List<GridNode> subgrid, final Object arg) throws GridException {
             if (false) {
+                // XXX classloading during deserialization fails on remove nodes
                 session.setAttribute(UBM_KEY, ubm);
             }
             Map<Job, GridNode> map = new HashMap<Job, GridNode>();
@@ -150,20 +148,16 @@ public final class TrainGMM {
 
     private static final String UBM_KEY = "ubm";
 
-    private static void checkGMM(final DiagCovGMM gmm) {
+    public static void checkGMM(final DiagCovGMM gmm) {
         if (!GMMUtils.isGMMParametersFinite(gmm)) {
             LOGGER.error("GMM contains invalid parameters");
             throw new RuntimeException();
         }
     }
 
-    private static List<String> getNames(final String h5) {
+    public static List<String> getNames(final String h5) {
         List<String> names = new ArrayList<String>();
         H5File h5file = new H5File(h5);
-//        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
-//            names.add(ds.getName());
-//            ds.close();
-//        }
         for (Group group : h5file.getRootGroup().getGroups()) {
             for (DataSet ds : group.getDataSets()) {
                 names.add(ds.getName());
@@ -176,35 +170,32 @@ public final class TrainGMM {
         return names;
     }
 
-    // XXX make sure this program is run with lots of heap... maybe a GG leak somewhere
+    // XXX make sure this program is run with lots of heap... maybe a GG leak
+    // somewhere
     public static void main(final String[] args) throws Exception {
-        if (false) {
-            String ubmFile = "Z:/data/ubm_floored_512_3.h5";
-            DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFile);
-            checkGMM(ubm);
-        }
-        DiagCovGMM ubm = null;
+        String ubmFile = "Z:/data/ubm_floored_2048_4.h5";
+        DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFile);
+        checkGMM(ubm);
 
-//        String datah5 = "Z:/data/sre05mfcc_1s1s.h5";
-        String datah5 = "Z:/data/sre06_1s1s_mfcc.h5";
+//        String datah5 = "Z:/data/sre05_1s1s_mfcc.h5";
+//        String datah5 = "Z:/data/sre06_1s1s_mfcc.h5";
 //        String datah5 = "Z:\\data\\sre04_nap_mfcc.h5";
-//        String datah5 = "Z:\\data\\sre04_background_mfcc.h5";
+        String datah5 = "Z:\\data\\sre04_background_mfcc.h5";
         List<String> names = getNames(datah5);
 
-//      String gmmFile = "Z:/data/sre05gmm_1s1s.h5";
-        String gmmFile = "Z:/data/sre06_1s1s_gmm.h5";
-//        String gmmFile = "Z:/data/sre04_nap_gmm.h5";
-//        String gmmFile = "Z:/data/sre04_background_gmm.h5";
-        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_RDWR);
+//        String gmmFile = "Z:/data/sre05_1s1s_gmm.h5";
+//      String gmmFile = "Z:/data/sre06_1s1s_gmm.h5";
+//      String gmmFile = "Z:/data/sre04_nap_gmm.h5";
+        String gmmFile = "Z:/data/sre04_background_gmm.h5";
+        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
 
-        Task task = new Task(ubm);
-        List<Job> jobs = new ArrayList<Job>();
+        List<Task> tasks = new ArrayList<Task>();
         for (String name : names) {
             if (gmmh5.getRootGroup().existsDataSet(name)) {
                 continue;
             }
-            Job job = new Job(name, datah5);
-            jobs.add(job);
+            Task task = new Task(name, datah5, ubm);
+            tasks.add(task);
         }
 
         final HDFWriter writer = new HDFWriter(gmmh5);
@@ -212,6 +203,7 @@ public final class TrainGMM {
             @Override
             public void onResult(final Result result) {
                 LOGGER.info("Received GMM for {}", result.getName());
+                // TODO synchronize this code to avoid problems with multiple reducer threads
                 String name = result.getName();
                 String groupName = name.split("/")[1];
                 if (!gmmh5.getRootGroup().existsGroup(groupName)) {
@@ -222,9 +214,7 @@ public final class TrainGMM {
                 writer.write(result.getName(), v);
             }
         };
-
-        new DefaultGrid<Job, Result>(task, jobs, resultListener).run();
-
+        new DefaultGrid<Result>(tasks, resultListener).run();
         writer.close();
     }
 }
