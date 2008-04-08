@@ -25,11 +25,11 @@ public final class Evaluation {
         String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
 //        String evalFile = "C:/home/albert/SRE2008/scripts/sre06-1conv4w_1conv4w.txt";
         List<Model> models = Evaluation2.readModels(evalFile);
-        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmfc.h5";
+        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmfc_fixed.h5";
 //        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmnap.h5";
 //        String dataFile = "C:/home/albert/SRE2008/data/sre06_1s1s_gmmnap.h5";
         H5File datah5 = new H5File(dataFile);
-        String svmFile = "C:/home/albert/SRE2008/data/sre05_1s1s_svmfc.h5";
+        String svmFile = "C:/home/albert/SRE2008/data/svm.h5";
 //        String svmFile = "C:/home/albert/SRE2008/data/sre05_1s1s_svmnap.h5";
 //        String svmFile = "C:/home/albert/SRE2008/data/sre06_1s1s_svmnap.h5";
         H5File svmh5 = new H5File(svmFile);

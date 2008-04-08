@@ -96,9 +96,9 @@ public final class CalculateKernel {
 
         LOGGER.info("starting kernel calculator with " + bufferColumns + " buffer columns");
 //        H5File datah5 = new H5File("sre04_background_gmmnap.h5");
-        H5File datah5 = new H5File("sre04_background_gmmfc.h5");
+        H5File datah5 = new H5File("sre04_background_gmmfc_fixed.h5");
 //        H5File kernelh5 = new H5File("sre04_kernel.h5", H5File.H5F_ACC_TRUNC);
-        H5File kernelh5 = new H5File("sre04_background_kernelfc.h5", H5File.H5F_ACC_TRUNC);
+        H5File kernelh5 = new H5File("kernel.h5", H5File.H5F_ACC_TRUNC);
 
         LOGGER.info("reading data");
         // TODO read names from a list instead of using all names so that we can

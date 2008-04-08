@@ -11,7 +11,7 @@ n = size(D,2);
 % calculate eigenvectors of D'*D
 [E, S] = eigs(@(x)mult(D,x),n,k,'LM',options);
 
-% scale eigenvalues afterwards instead of scaling matrix
+% scale eigenvalues afterwards instead of scaling D
 S = diag(S)/n;
 
 % convert to eigenvectors of D*D'

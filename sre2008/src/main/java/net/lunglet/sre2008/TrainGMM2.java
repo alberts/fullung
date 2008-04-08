@@ -142,15 +142,15 @@ public final class TrainGMM2 {
                 EigenMapTrain channelTrain = new EigenMapTrain(u, ubm);
                 channelTrain.setData(data, bgr);
                 channelTrain.channelEMIteration();
-                SuperVector channel = channelTrain.getChannel();
+                SuperVector ux = channelTrain.getFeatureUx();
                 LOGGER.info("Performing feature space channel compensation");
                 data.reset();
-                JVector dataVector = data.getNextVector();
                 int i = 0;
                 List<FloatVector> fixedDataList = new ArrayList<FloatVector>();
+                JVector dataVector = data.getNextVector();
                 while (dataVector != null) {
                     int top1 = bgr.getMixtureVector(i++)[0];
-                    JVector uxpart = channel.subVectors[top1];
+                    JVector uxpart = ux.subVectors[top1];
                     JVector x = dataVector.minus(uxpart);
                     fixedDataList.add(DenseFactory.floatVector(x.toDoubles()));
                     dataVector = data.getNextVector();
@@ -161,15 +161,14 @@ public final class TrainGMM2 {
             }
 
             LOGGER.info("Training speaker model");
-//            JMapGMM gmm = ubm.copy();
             EigenMapTrain speakerTrain = new EigenMapTrain(null, ubm);
             speakerTrain.setData(fixedData, bgr);
             for (int iter = 1; iter <= MAP_ITERATIONS; iter++) {
-//                gmm.doEM(fixedData, false, true, false, ubm, RELEVANCE, bgr);
                 double ll = speakerTrain.EMIteration(false);
                 LOGGER.info("MAP iteration {}, log likelihood = {}", iter, ll);
             }
-//            return new Result(name, GMMUtils.createSupervector(convert(gmm), convert(ubm)).toArray());
+
+            // return supervector minus UBM, divided by standard deviation
             return new Result(name, speakerTrain.getSModel().data);
         }
 
@@ -252,12 +251,16 @@ public final class TrainGMM2 {
     }
 
     public static void main(final String[] args) throws Exception {
+//        System.out.println(Job.CHANNEL_SPACE.getElement(1, 0));
+//        System.out.println(Job.CHANNEL_SPACE.getElement(0, 1));
+//        System.exit(1);
+
         String datah5 = "Z:/data/sre05_1s1s_mfcc.h5";
 //        String datah5 = "Z:/data/sre04_background_mfcc.h5";
 //        String datah5 = "Z:/data/sre04_nap_mfcc.h5";
         List<String> names = TrainGMM.getNames(datah5);
         String gmmFile = "Z:/data/sre05_1s1s_gmmfc.h5";
-//        String gmmFile = "Z:/data/sre04_background_gmm.h5";
+//        String gmmFile = "Z:/data/sre04_background_gmmfc.h5";
 //        String gmmFile = "Z:/data/sre04_nap_gmm.h5";
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
 
@@ -290,6 +293,7 @@ public final class TrainGMM2 {
             }
         };
         new DefaultGrid<Result>(tasks, resultListener).run();
+//        new LocalGrid<Result>(tasks, resultListener).run();
         writer.close();
     }
 }

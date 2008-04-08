@@ -60,6 +60,7 @@
       <exclude name="net/lunglet/gridgain/**/*" />
       <exclude name="net/lunglet/sre2008/TrainSVM.java" />
       <exclude name="net/lunglet/sre2008/TrainGMM.java" />
+      <exclude name="net/lunglet/sre2008/TrainGMM2.java" />
     </javac>
   </target>
 

@@ -32,6 +32,9 @@ import net.lunglet.util.CommandUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO ICSI wiener filtering
+// http://www.icsi.berkeley.edu/ftp/global/pub/speech/papers/qio/
+
 public final class YAMFCCBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(YAMFCCBuilder.class);
 
@@ -245,24 +248,29 @@ public final class YAMFCCBuilder {
             gaussianize(blockValues);
             // append deltas and delta-deltas
             for (FeatureBlock block : blocks) {
-                float[][] delta = delta(block.getValues(), 0, 13);
-                float[][] deltaDelta = delta(delta, 0, 13);
+                float[][] delta = delta(block.getValues(), 0, 20);
+                float[][] delta2 = delta(delta, 0, 20);
+                float[][] delta3 = delta(delta2, 0, 20);
                 float[][] values = block.getValues();
                 AssertUtils.assertEquals(values.length, delta.length);
-                AssertUtils.assertEquals(values.length, deltaDelta.length);
+                AssertUtils.assertEquals(values.length, delta2.length);
+                AssertUtils.assertEquals(values.length, delta3.length);
                 for (int i = 0; i < values.length; i++) {
                     float[] v = values[i];
                     float[] d = delta[i];
-                    float[] dd = deltaDelta[i];
-                    float[] vddd = new float[v.length - 1 + d.length + dd.length];
+                    float[] d2 = delta2[i];
+                    float[] d3 = delta3[i];
+                    float[] vdd2d3 = new float[v.length - 1 + d.length + d2.length + d3.length];
                     // exclude log energy
-                    System.arraycopy(v, 0, vddd, 0, v.length - 1);
+                    System.arraycopy(v, 0, vdd2d3, 0, v.length - 1);
                     // append deltas
-                    System.arraycopy(d, 0, vddd, v.length - 1, d.length);
+                    System.arraycopy(d, 0, vdd2d3, v.length - 1, d.length);
                     // append delta-deltas
-                    System.arraycopy(dd, 0, vddd, v.length - 1 + d.length, dd.length);
+                    System.arraycopy(d2, 0, vdd2d3, v.length - 1 + d.length, d2.length);
+                    // appen triple-deltas
+                    System.arraycopy(d3, 0, vdd2d3, v.length - 1 + d.length + d2.length, d3.length);
                     // replace value in block
-                    values[i] = vddd;
+                    values[i] = vdd2d3;
                 }
                 if (DEBUG) {
                     block.appendIndexes();
@@ -306,7 +314,8 @@ public final class YAMFCCBuilder {
     private static void checkMFCC(final float[][] mfcc) {
         AssertUtils.assertTrue(mfcc.length > 0);
         for (int i = 0; i < mfcc.length; i++) {
-            AssertUtils.assertEquals(38, mfcc[i].length);
+//            AssertUtils.assertEquals(38, mfcc[i].length);
+            AssertUtils.assertEquals(79, mfcc[i].length);
             for (int j = 0; j < mfcc[i].length; j++) {
                 float v = mfcc[i][j];
                 AssertUtils.assertFalse(Float.isInfinite(v));

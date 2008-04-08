@@ -232,7 +232,7 @@ public final class TrainSVM {
 //            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmnap.h5";
 //            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmm.h5";
 //            String svmFile = "Z:/data/sre04_background_gmm.h5";
-            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmfc.h5";
+            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmfc_fixed.h5";
             svmData = new ArrayList<Handle>();
             List<String> names = getNames(svmFile);
             int index = 0;
@@ -244,7 +244,7 @@ public final class TrainSVM {
             // kernel
 //            String kernelFile = "C:/home/albert/SRE2008/data/sre04_background_kernel.h5";
 //            String kernelFile = "Z:/data/sre04_background_kernel.h5";
-            String kernelFile = "C:/home/albert/SRE2008/data/sre04_background_kernelfc.h5";
+            String kernelFile = "C:/home/albert/SRE2008/data/kernel.h5";
             HDFReader kernelReader = new HDFReader(kernelFile);
             kernel = PackedFactory.floatSymmetricDirect(1790);
             kernelReader.read("/kernel", kernel);
@@ -309,12 +309,12 @@ public final class TrainSVM {
     public static void main(final String[] args) throws Exception {
         // evaluation data
 //        String evalFile = "Z:/scripts/sre05-1conv4w_1conv4w.txt";
-        String evalFile = "Z:/scripts/sre05-1conv4w_1conv4w.txt";
+        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
         List<Model> models = Evaluation2.readModels(evalFile);
 
 //        String dataFile = "Z:/data/sre05_1s1s_gmm.h5";
-//        String dataFile = "C:/home/albert/SRE2008/data/sre06_1s1s_gmmnap.h5";
-        String dataFile = "Z:/data/sre05_1s1s_gmmfc.h5";
+        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmfc_fixed.h5";
+//        String dataFile = "Z:/data/sre05_1s1s_gmmfc.h5";
         H5File trainh5 = new H5File(dataFile);
         Evaluation2.checkData(trainh5, models);
         trainh5.close();
@@ -330,8 +330,8 @@ public final class TrainSVM {
 
 //        String svmFile = "Z:/data/sre05_1s1s_svm.h5";
 //        String svmFile = "C:/home/albert/SRE2008/data/sre06_1s1s_svmnap.h5";
-//        String svmFile = "C:/home/albert/SRE2008/data/sre05_1s1s_svmfc.h5";
-        String svmFile = "Z:/data/sre05_1s1s_svmfc.h5";
+        String svmFile = "C:/home/albert/SRE2008/data/svm.h5";
+//        String svmFile = "Z:/data/sre05_1s1s_svmfc.h5";
         final H5File svmh5 = new H5File(svmFile, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(svmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {
