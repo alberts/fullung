@@ -25,7 +25,6 @@ import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
-import net.lunglet.hdf.H5Library;
 import net.lunglet.io.HDFReader;
 import net.lunglet.sre2008.io.IOUtils;
 import org.slf4j.Logger;
@@ -50,6 +49,7 @@ public final class TrainUBM6 {
     }
 
     public static void main(final String[] args) throws InterruptedException, ExecutionException {
+        LOGGER.info("Reading names of datasets in data file");
         H5File dataFile = new H5File(args[0]);
         List<String> names = getNames(dataFile);
 
@@ -90,33 +90,28 @@ public final class TrainUBM6 {
 
     private static GMMMAPStats trainGMM(final H5File dataFile, List<String> names, final GMM gmm)
             throws InterruptedException, ExecutionException {
-        final HDFReader reader = new HDFReader(dataFile);
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        // use a large buffer here and heap matrices for the data
+        final HDFReader reader = new HDFReader(dataFile, 8388608);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         List<Future<GMMMAPStats>> futures = new ArrayList<Future<GMMMAPStats>>();
-
         for (final String name : names) {
             final int[] dims;
-            // TODO still haven't sorted out HDF5 thread issues?
-            // could be because executor service threads and main thread are
-            // accessing it at the "same" time
-            synchronized (H5Library.class) {
-                DataSet ds = dataFile.getRootGroup().openDataSet(name);
-                LOGGER.debug("Scanning " + name);
-                DataSpace space = ds.getSpace();
-                dims = space.getIntDims();
-                space.close();
-                // XXX this tended to blow up
-                ds.close();
-            }
+            DataSet ds = dataFile.getRootGroup().openDataSet(name);
+            LOGGER.debug("Scanning " + name);
+            DataSpace space = ds.getSpace();
+            dims = space.getIntDims();
+            space.close();
+            // XXX this tended to blow up
+            ds.close();
+
             Future<GMMMAPStats> future = executorService.submit(new Callable<GMMMAPStats>() {
                 @Override
                 public GMMMAPStats call() throws Exception {
                     LOGGER.debug("Reading " + name + " " + Arrays.toString(dims));
-                    // XXX when too many of these direct buffers are created, the JVM goes nuts
-                    FloatDenseMatrix data = DenseFactory.floatMatrix(dims, Order.ROW, Storage.DIRECT);
-                    synchronized (H5Library.class) {
-                        reader.read(name, data);
-                    }
+                    // use heap storage here to avoid problems with allocation
+                    // of many large direct buffers
+                    FloatDenseMatrix data = DenseFactory.floatMatrix(dims, Order.ROW, Storage.HEAP);
+                    reader.read(name, data);
                     // TODO maybe tune fraction as we go along
                     GMMMAPStats stats = new GMMMAPStats(gmm, 0.01);
                     stats.add(data.rowsIterator());
@@ -139,6 +134,7 @@ public final class TrainUBM6 {
 
     private static void trainGMMwithFlooring(final H5File dataFile, final List<String> names, final DiagCovGMM gmm,
             final FloatVector varFloor, final int maxiter) throws InterruptedException, ExecutionException {
+        // TODO keep global counter over all GMMs so that everything is saved
         int count = 1;
         int iter = 1;
         LOGGER.info("Flooring weights to be equal on first iteration");
