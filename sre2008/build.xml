@@ -74,6 +74,8 @@
              classpath="${build.lib.dir}/jarjar-1.0rc6.jar" />
     <jarjar destfile="${dist.dir}/${filename}">
       <fileset dir="${classes.dir}" />
+      <fileset dir="${src.dir}" />
+      <fileset dir="${array4j.src.dir}" />
       <zipfileset src="${array4j.lib.dir}/blas.jar" />
       <zipfileset src="${array4j.lib.dir}/f2jutil.jar" />
       <zipfileset src="${array4j.lib.dir}/lapack.jar" />

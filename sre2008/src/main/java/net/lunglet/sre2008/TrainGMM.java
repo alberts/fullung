@@ -29,8 +29,6 @@ import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
 import org.gridgain.grid.GridNode;
 import org.gridgain.grid.GridTaskAdapter;
-import org.gridgain.grid.GridTaskSession;
-import org.gridgain.grid.resources.GridTaskSessionResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +39,9 @@ public final class TrainGMM {
         private static final DiagCovGMM UBM;
 
         static {
-            String ubmFile = "Z:/data/ubm_floored_2048_4.h5";
+            // XXX this hack is here to work around issues with GridGain's
+            // serialization of DiagCovGMM
+            String ubmFile = "Z:\\data\\hlda_ubm_final_512.h5";
             UBM = IOUtils.readDiagCovGMM(ubmFile);
             checkGMM(UBM);
         }
@@ -49,9 +49,6 @@ public final class TrainGMM {
         private final String datah5;
 
         private final String name;
-
-        @GridTaskSessionResource
-        private GridTaskSession session = null;
 
         public Job(final String name, final String datah5) {
             this.name = name;
@@ -117,22 +114,12 @@ public final class TrainGMM {
 
         private final Random rng = new Random();
 
-        @GridTaskSessionResource
-        private GridTaskSession session = null;
-
-        private final DiagCovGMM ubm;
-
-        public Task(final String name, final String datah5, final DiagCovGMM ubm) {
+        public Task(final String name, final String datah5) {
             this.job = new Job(name, datah5);
-            this.ubm = ubm;
         }
 
         @Override
         public Map<Job, GridNode> map(final List<GridNode> subgrid, final Object arg) throws GridException {
-            if (false) {
-                // XXX classloading during deserialization fails on remove nodes
-                session.setAttribute(UBM_KEY, ubm);
-            }
             Map<Job, GridNode> map = new HashMap<Job, GridNode>();
             map.put(job, subgrid.get(rng.nextInt(subgrid.size())));
             return map;
@@ -145,8 +132,6 @@ public final class TrainGMM {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainGMM.class);
-
-    private static final String UBM_KEY = "ubm";
 
     public static void checkGMM(final DiagCovGMM gmm) {
         if (!GMMUtils.isGMMParametersFinite(gmm)) {
@@ -170,23 +155,13 @@ public final class TrainGMM {
         return names;
     }
 
-    // XXX make sure this program is run with lots of heap... maybe a GG leak
-    // somewhere
     public static void main(final String[] args) throws Exception {
-        String ubmFile = "Z:/data/ubm_floored_2048_4.h5";
-        DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFile);
-        checkGMM(ubm);
-
-//        String datah5 = "Z:/data/sre05_1s1s_mfcc.h5";
-//        String datah5 = "Z:/data/sre06_1s1s_mfcc.h5";
-//        String datah5 = "Z:\\data\\sre04_nap_mfcc.h5";
-        String datah5 = "Z:\\data\\sre04_background_mfcc.h5";
+        // XXX change ubm file at the top
+//        String datah5 = "Z:\\data\\sre04_background_mfcc2_hlda.h5";
+//        String gmmFile = "Z:\\data\\sre04_background_hlda_gmm.h5";
+        String datah5 = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_hlda.h5";
+        String gmmFile = "Z:\\data\\sre05_1conv4w_1conv4w_hlda_gmm.h5";
         List<String> names = getNames(datah5);
-
-//        String gmmFile = "Z:/data/sre05_1s1s_gmm.h5";
-//      String gmmFile = "Z:/data/sre06_1s1s_gmm.h5";
-//      String gmmFile = "Z:/data/sre04_nap_gmm.h5";
-        String gmmFile = "Z:/data/sre04_background_gmm.h5";
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
 
         List<Task> tasks = new ArrayList<Task>();
@@ -194,7 +169,7 @@ public final class TrainGMM {
             if (gmmh5.getRootGroup().existsDataSet(name)) {
                 continue;
             }
-            Task task = new Task(name, datah5, ubm);
+            Task task = new Task(name, datah5);
             tasks.add(task);
         }
 
@@ -203,15 +178,18 @@ public final class TrainGMM {
             @Override
             public void onResult(final Result result) {
                 LOGGER.info("Received GMM for {}", result.getName());
-                // TODO synchronize this code to avoid problems with multiple reducer threads
-                String name = result.getName();
-                String groupName = name.split("/")[1];
-                if (!gmmh5.getRootGroup().existsGroup(groupName)) {
-                    gmmh5.getRootGroup().createGroup(groupName);
+                // XXX synchronize here to avoid problems with multiple threads
+                // calling into resultListener at the same time
+                synchronized (H5File.class) {
+                    String name = result.getName();
+                    String groupName = name.split("/")[1];
+                    if (!gmmh5.getRootGroup().existsGroup(groupName)) {
+                        gmmh5.getRootGroup().createGroup(groupName);
+                    }
+                    float[] model = result.getModel();
+                    FloatDenseVector v = DenseFactory.floatVector(model, Direction.ROW, Storage.DIRECT);
+                    writer.write(result.getName(), v);
                 }
-                float[] model = result.getModel();
-                FloatDenseVector v = DenseFactory.floatVector(model, Direction.ROW, Storage.DIRECT);
-                writer.write(result.getName(), v);
             }
         };
         new DefaultGrid<Result>(tasks, resultListener).run();

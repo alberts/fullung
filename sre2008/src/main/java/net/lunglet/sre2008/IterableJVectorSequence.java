@@ -27,6 +27,7 @@ public final class IterableJVectorSequence implements JVectorSequence {
             Iterator<? extends FloatVector> iterator = iterable.iterator();
             while (iterator.hasNext()) {
                 count++;
+                iterator.next();
             }
             this.noVectors = count;
         } else {

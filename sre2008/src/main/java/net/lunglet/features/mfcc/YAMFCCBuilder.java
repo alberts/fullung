@@ -246,7 +246,6 @@ public final class YAMFCCBuilder {
             }
             // gaussianize valid blocks in-place
             gaussianize(blockValues);
-            // append deltas and delta-deltas
             for (FeatureBlock block : blocks) {
                 float[][] delta = delta(block.getValues(), 0, 20);
                 float[][] delta2 = delta(delta, 0, 20);
@@ -261,13 +260,13 @@ public final class YAMFCCBuilder {
                     float[] d2 = delta2[i];
                     float[] d3 = delta3[i];
                     float[] vdd2d3 = new float[v.length - 1 + d.length + d2.length + d3.length];
-                    // exclude log energy
+                    // exclude absolute log energy
                     System.arraycopy(v, 0, vdd2d3, 0, v.length - 1);
                     // append deltas
                     System.arraycopy(d, 0, vdd2d3, v.length - 1, d.length);
                     // append delta-deltas
                     System.arraycopy(d2, 0, vdd2d3, v.length - 1 + d.length, d2.length);
-                    // appen triple-deltas
+                    // append triple-deltas
                     System.arraycopy(d3, 0, vdd2d3, v.length - 1 + d.length + d2.length, d3.length);
                     // replace value in block
                     values[i] = vdd2d3;
@@ -321,10 +320,10 @@ public final class YAMFCCBuilder {
                 AssertUtils.assertFalse(Float.isInfinite(v));
                 AssertUtils.assertFalse(Float.isNaN(v));
                 if (v < -3.0f) {
-                    throw new RuntimeException("value is too small: " + v);
+                    throw new RuntimeException("value is too negative: " + v);
                 }
                 if (v > 3.0f) {
-                    throw new RuntimeException("value is too big: " + v);
+                    throw new RuntimeException("value is too positive: " + v);
                 }
             }
         }

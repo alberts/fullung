@@ -1,5 +1,7 @@
 function plotdet(evalfile,plot_code)
 
+disp(evalfile);
+
 fid = fopen(evalfile);
 C = textscan(fid,'%s%s%s%s%s%s%s%s%f%s');
 fclose(fid);

@@ -34,12 +34,8 @@ import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
 import org.gridgain.grid.GridNode;
 import org.gridgain.grid.GridTaskAdapter;
-import org.gridgain.grid.GridTaskSession;
-import org.gridgain.grid.resources.GridTaskSessionResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-// TODO use SoftReference in HDFHandle
 
 public final class TrainSVM {
     private static final class HDFHandle implements Handle, Serializable {
@@ -73,6 +69,9 @@ public final class TrainSVM {
             DataSet dataset = h5file.getRootGroup().openDataSet(name);
             int[] dims = dataset.getIntDims();
             dataset.close();
+            if (dims.length > 2 || (dims.length == 2 && dims[0] > 1 && dims[1] > 1)) {
+                throw new RuntimeException();
+            }
             // XXX can't use direct buffers for all this stuff
             data = DenseFactory.floatRowDirect(ArrayMath.max(dims));
             LOGGER.info("Loading background data from {} {}", name, Arrays.toString(dims));
@@ -103,9 +102,6 @@ public final class TrainSVM {
 
         private final String name;
 
-        @GridTaskSessionResource
-        private GridTaskSession session = null;
-
         public Job(final String modelId, final String name, final String datah5, final double cost) {
             this.modelId = modelId;
             this.name = name;
@@ -122,12 +118,12 @@ public final class TrainSVM {
         public Result execute() throws GridException {
             FloatMatrix background = getKernel();
             final FloatVector sv = readData();
-            List<Handle> svmData = getSvmData();
+            List<Handle> backgroundData = getBackgroundData();
 
             // do remaining kernel evaluations
-            FloatVector speaker = DenseFactory.floatColumn(svmData.size() + 1);
-            for (int i = 0; i < svmData.size(); i++) {
-                FloatVector x = svmData.get(i).getData();
+            FloatVector speaker = DenseFactory.floatColumn(backgroundData.size() + 1);
+            for (int i = 0; i < backgroundData.size(); i++) {
+                FloatVector x = backgroundData.get(i).getData();
                 speaker.set(i, FloatMatrixMath.dot(sv, x));
             }
             speaker.set(speaker.length() - 1, FloatMatrixMath.dot(sv, sv));
@@ -135,7 +131,8 @@ public final class TrainSVM {
             // create complete kernel matrix
             SpeakerKernelMatrix kernel = new SpeakerKernelMatrix(background, speaker);
 
-            final int index = svmData.size();
+            final int index = backgroundData.size();
+            List<Handle> svmData = new ArrayList<Handle>(backgroundData);
             svmData.add(new Handle() {
                 @Override
                 public FloatVector getData() {
@@ -158,31 +155,33 @@ public final class TrainSVM {
             SvmClassifier compactSvm = svm.compact();
             FloatVector model = compactSvm.getModel();
 
-            // XXX better to disable this check if we need to reload background data all the time
-            if (true) {
-                float[] scores = compactSvm.score(svmData).toArray();
-                for (int i = 0; i < scores.length - 1; i++) {
-                    AssertUtils.assertTrue(scores[i] < 0);
-                }
-                AssertUtils.assertTrue(scores[scores.length - 1] > 0);
+            // check scores
+            float targetScore = compactSvm.score(sv.transpose()).get(0, 0);
+            AssertUtils.assertTrue(targetScore > 0);
+            float[] scores = compactSvm.score(backgroundData).toArray();
+            for (int i = 0; i < scores.length - 1; i++) {
+                AssertUtils.assertTrue(scores[i] < 0);
             }
 
-            // TODO znorm
-            // TODO tnorm
+            // Z-Norm using background data (might need other data)
+            if (false) {
+                float meanScore = 0.0f;
+                for (int i = 0; i < scores.length - 1; i++) {
+                    meanScore += (scores[i] - meanScore) / (i + 1);
+                }
+                float rho = model.get(model.length() - 1);
+                model.set(model.length() - 1, rho + meanScore);
+            }
 
             return new Result(modelId, model);
         }
 
         private FloatMatrix getKernel() {
-//            return (FloatMatrx) session.getAttribute(KERNEL_KEY);
-            return Task.kernel;
+            return Task.KERNEL;
         }
 
-        @SuppressWarnings("unchecked")
-        private List<Handle> getSvmData() {
-//            return (ArrayList<Handle>) session.getAttribute(SVM_DATA_KEY);
-            // copy so that speaker data can safely be added
-            return new ArrayList<Handle>(Task.svmData);
+        private List<Handle> getBackgroundData() {
+            return Task.BACKGROUND_DATA;
         }
 
         private FloatDenseVector readData() {
@@ -221,39 +220,32 @@ public final class TrainSVM {
     }
 
     public static final class Task extends GridTaskAdapter<Object, Result> {
-        private static final FloatPackedMatrix kernel;
+        private static final FloatPackedMatrix KERNEL;
 
         private static final long serialVersionUID = 1L;
 
-        private static final ArrayList<Handle> svmData;
+        public static final List<Handle> BACKGROUND_DATA;
 
         static {
             // background data
-//            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmnap.h5";
-//            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmm.h5";
-//            String svmFile = "Z:/data/sre04_background_gmm.h5";
-            String svmFile = "C:/home/albert/SRE2008/data/sre04_background_gmmfc_fixed.h5";
-            svmData = new ArrayList<Handle>();
+            String svmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
+            List<Handle> temp = new ArrayList<Handle>();
             List<String> names = getNames(svmFile);
             int index = 0;
             for (String name : names) {
                 // use label 1 here to make signs come out right
-                svmData.add(new HDFHandle(svmFile, name, index++, 1));
+                temp.add(new HDFHandle(svmFile, name, index++, 1));
             }
+            BACKGROUND_DATA = Collections.unmodifiableList(temp);
 
             // kernel
-//            String kernelFile = "C:/home/albert/SRE2008/data/sre04_background_kernel.h5";
-//            String kernelFile = "Z:/data/sre04_background_kernel.h5";
             String kernelFile = "C:/home/albert/SRE2008/data/kernel.h5";
             HDFReader kernelReader = new HDFReader(kernelFile);
-            kernel = PackedFactory.floatSymmetricDirect(1790);
-            kernelReader.read("/kernel", kernel);
+            KERNEL = PackedFactory.floatSymmetricDirect(1790);
+            kernelReader.read("/kernel", KERNEL);
         }
 
         private final Random rng = new Random();
-
-        @GridTaskSessionResource
-        private GridTaskSession session = null;
 
         private final Job job;
 
@@ -261,15 +253,8 @@ public final class TrainSVM {
             this.job = job;
         }
 
-//        public Task(final List<Handle> svmData, final FloatMatrix kernel) {
-//            this.svmData = new ArrayList<Handle>(svmData);
-//            this.kernel = kernel;
-//        }
-
         @Override
         public Map<Job, GridNode> map(final List<GridNode> subgrid, final Object arg) throws GridException {
-//            session.setAttribute(SVM_DATA_KEY, svmData);
-//            session.setAttribute(KERNEL_KEY, kernel);
             Map<Job, GridNode> map = new HashMap<Job, GridNode>();
             map.put(job, subgrid.get(rng.nextInt(subgrid.size())));
             return map;
@@ -281,19 +266,11 @@ public final class TrainSVM {
         }
     }
 
-    private static final String KERNEL_KEY = "kernel";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainSVM.class);
-
-    private static final String SVM_DATA_KEY = "svmdata";
 
     private static List<String> getNames(final String h5) {
         List<String> names = new ArrayList<String>();
         H5File h5file = new H5File(h5);
-//        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
-//            names.add(ds.getName());
-//            ds.close();
-//        }
         for (Group group : h5file.getRootGroup().getGroups()) {
             for (DataSet ds : group.getDataSets()) {
                 names.add(ds.getName());
@@ -308,13 +285,11 @@ public final class TrainSVM {
 
     public static void main(final String[] args) throws Exception {
         // evaluation data
-//        String evalFile = "Z:/scripts/sre05-1conv4w_1conv4w.txt";
         String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
         List<Model> models = Evaluation2.readModels(evalFile);
-
-//        String dataFile = "Z:/data/sre05_1s1s_gmm.h5";
-        String dataFile = "C:/home/albert/SRE2008/data/sre05_1s1s_gmmfc_fixed.h5";
-//        String dataFile = "Z:/data/sre05_1s1s_gmmfc.h5";
+        // XXX remember to update dataFile in Evaluation
+        String dataFile = "Z:/data/sre05_1conv4w_1conv4w_hlda_gmm2.h5";
+        LOGGER.info("Checking data file");
         H5File trainh5 = new H5File(dataFile);
         Evaluation2.checkData(trainh5, models);
         trainh5.close();
@@ -328,10 +303,7 @@ public final class TrainSVM {
             tasks.add(new Task(job));
         }
 
-//        String svmFile = "Z:/data/sre05_1s1s_svm.h5";
-//        String svmFile = "C:/home/albert/SRE2008/data/sre06_1s1s_svmnap.h5";
         String svmFile = "C:/home/albert/SRE2008/data/svm.h5";
-//        String svmFile = "Z:/data/sre05_1s1s_svmfc.h5";
         final H5File svmh5 = new H5File(svmFile, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(svmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {

@@ -38,6 +38,7 @@ public final class GMMTrainer {
                 throw new RuntimeException();
             }
         }
+        // XXX adding sqrt of weight doesn't seem to work with SVM
         FloatVector sv = GMMUtils.createSupervector(gmm, ubm);
         if (!FloatMatrixUtils.isAllFinite(sv)) {
             LOGGER.error("GMM supervector contains invalid values");

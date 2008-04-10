@@ -124,12 +124,14 @@ public final class TrainUBM7 {
     }
 
     private static void train(final DataCache dataCache, final ExecutorService executorService) {
-        LOGGER.info("Training one component GMM");
-        DiagCovGMM gmmVarFloor = GMMUtils.createDiagCovGMM(1, 79);
+//        DiagCovGMM gmmVarFloor = GMMUtils.createDiagCovGMM(1, 79);
+        DiagCovGMM gmmVarFloor = GMMUtils.createDiagCovGMM(1, 39);
+        LOGGER.info("Training one component GMM with dimension {}", gmmVarFloor.getDimension());
         train(gmmVarFloor, dataCache, executorService);
         IOUtils.writeGMM("ubm_varfloor.h5", gmmVarFloor);
 
         final FloatVector varFloor = gmmVarFloor.getVariance(0);
+        // TODO experiment with 1% variance floor and larger data per component requirement
         if (false) {
             LOGGER.info("Setting variance floor to 50% of global variance");
             MatrixMath.timesEquals(varFloor, 0.5f);
@@ -149,6 +151,9 @@ public final class TrainUBM7 {
             }
         } else {
             gmm = gmmVarFloor;
+        }
+        if (gmm.getDimension() != varFloor.length()) {
+            throw new RuntimeException("GMM dimensions don't match");
         }
 
         while (gmm.getMixtureCount() < 512) {

@@ -46,14 +46,15 @@ public final class TrainGMM2 {
         private static final JMapGMM UBM;
 
         static {
-            String ubmFile = "Z:/data/ubm_floored_512_3.h5";
+//            String ubmFile = "Z:/data/ubm_floored_512_3.h5"
+            String ubmFile = "Z:/data/hlda_ubm_final_512.h5";
             DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFile);
             TrainGMM.checkGMM(ubm);
             UBM = Converters.convert(ubm);
-            if (true) {
+            if (false) {
                 String umatFile = "Z:/data/fcu.h5";
                 HDFReader reader = new HDFReader(umatFile);
-                int dim = 512 * 38;
+                int dim = 512 * 39;
                 int k = 40;
                 FloatDenseMatrix channelSpace = DenseFactory.floatRowDirect(new int[]{dim, k});
                 reader.read("/U", channelSpace);
@@ -80,7 +81,7 @@ public final class TrainGMM2 {
 
         @Override
         public Result execute() throws GridException {
-            JVectorSequence data = new IterableJVectorSequence(readData().rowsIterator());
+            JVectorSequence data = new IterableJVectorSequence(readData().rowsIterator(), true);
             JMapGMM ubm = getUBM();
             LOGGER.info("Evaluating frame level background");
             FrameLvlBgr bgr = ubm.evalFrameLvlBgr(data);
@@ -137,7 +138,7 @@ public final class TrainGMM2 {
             int[] dims = dataset.getIntDims();
             dataset.close();
             FloatDenseMatrix data = DenseFactory.floatRowDirect(dims);
-            LOGGER.info("Loaded data from {} {}", name, Arrays.toString(dims));
+            LOGGER.info("Reading data from {} {}", name, Arrays.toString(dims));
             reader.read(name, data);
             reader.close();
             return data;
@@ -172,20 +173,16 @@ public final class TrainGMM2 {
 
     private static final int MAP_ITERATIONS = 10;
 
-    private static final double RELEVANCE = 16.0;
-
     public static void main(final String[] args) throws Exception {
 //        System.out.println(Job.CHANNEL_SPACE.getElement(1, 0));
 //        System.out.println(Job.CHANNEL_SPACE.getElement(0, 1));
 //        System.exit(1);
 
-        String datah5 = "Z:/data/sre05_1s1s_mfcc.h5";
-//        String datah5 = "Z:/data/sre04_background_mfcc.h5";
-//        String datah5 = "Z:/data/sre04_nap_mfcc.h5";
+        String datah5 = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_hlda.h5";
+        String gmmFile = "Z:\\data\\sre05_1conv4w_1conv4w_hlda_gmm2.h5";
+//        String datah5 = "Z:\\data\\sre04_background_mfcc2_hlda.h5";
+//        String gmmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
         List<String> names = TrainGMM.getNames(datah5);
-        String gmmFile = "Z:/data/sre05_1s1s_gmmfc.h5";
-//        String gmmFile = "Z:/data/sre04_background_gmmfc.h5";
-//        String gmmFile = "Z:/data/sre04_nap_gmm.h5";
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
 
         List<Task> tasks = new ArrayList<Task>();
@@ -217,7 +214,6 @@ public final class TrainGMM2 {
             }
         };
         new DefaultGrid<Result>(tasks, resultListener).run();
-//        new LocalGrid<Result>(tasks, resultListener).run();
         writer.close();
     }
 }
