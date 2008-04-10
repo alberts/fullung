@@ -129,17 +129,24 @@ public final class TrainUBM7 {
         train(gmmVarFloor, dataCache, executorService);
         IOUtils.writeGMM("ubm_varfloor.h5", gmmVarFloor);
 
-        LOGGER.info("Setting variance floor to 50% of global variance");
         final FloatVector varFloor = gmmVarFloor.getVariance(0);
-        MatrixMath.timesEquals(varFloor, 0.5f);
+        if (false) {
+            LOGGER.info("Setting variance floor to 50% of global variance");
+            MatrixMath.timesEquals(varFloor, 0.5f);
+        } else {
+            LOGGER.info("Setting variance floor to 10% of global variance");
+            MatrixMath.timesEquals(varFloor, 0.10f);
+        }
         LOGGER.info("Variance floor: {}", varFloor);
 
         DiagCovGMM gmm = null;
         if (new File("origubm.h5").exists()) {
             LOGGER.info("Loading GMM to continue training");
             gmm = IOUtils.readDiagCovGMM("origubm.h5");
-            // train here first so that we don't immediately split the original
-            trainIterations(gmm, varFloor, 3, dataCache, executorService);
+            if (gmm.getMixtureCount() < 512) {
+                // train here first so that we don't immediately split the original
+                trainIterations(gmm, varFloor, 3, dataCache, executorService);
+            }
         } else {
             gmm = gmmVarFloor;
         }
@@ -148,14 +155,17 @@ public final class TrainUBM7 {
             gmm = GMMUtils.splitAll(gmm);
             trainIterations(gmm, varFloor, 3, dataCache, executorService);
         }
-        for (int i = 0; i < 5; i++) {
-            gmm = GMMUtils.keepHeaviest(gmm, 512 - 128);
-            while (gmm.getMixtureCount() < 512) {
-                gmm = GMMUtils.splitHeaviest(gmm);
+        // XXX this didn't seem to work too well...
+        if (false) {
+            for (int i = 0; i < 5; i++) {
+                gmm = GMMUtils.keepHeaviest(gmm, 512 - 128);
+                while (gmm.getMixtureCount() < 512) {
+                    gmm = GMMUtils.splitHeaviest(gmm);
+                }
+                trainIterations(gmm, varFloor, 3, dataCache, executorService);
             }
-            trainIterations(gmm, varFloor, 3, dataCache, executorService);
         }
-        trainIterations(gmm, varFloor, 5, dataCache, executorService);
+        trainIterations(gmm, varFloor, 10, dataCache, executorService);
     }
 
     private static GMMMAPStats train(final DiagCovGMM gmm, final DataCache dataCache,

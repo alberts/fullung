@@ -1,5 +1,6 @@
 package net.lunglet.sre2008.ubm;
 
+import com.google.common.collect.Iterators;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
@@ -55,37 +57,69 @@ public final class DataCache implements Iterable<FloatDenseMatrix> {
         reader.close();
     }
 
+    public FloatDenseMatrix get(final String name) {
+        SoftReference<FloatDenseMatrix> ref = cache.get(name);
+        if (ref != null) {
+            FloatDenseMatrix data = ref.get();
+            if (data != null) {
+                logger.info("Returning {} from the cache", name);
+                return data;
+            }
+            logger.info("Reading {} again (was in the cache, but was gc'ed)", name);
+        } else {
+            logger.info("Reading {}", name);
+        }
+        DataSet dataset = h5file.getRootGroup().openDataSet(name);
+        int[] dims = dataset.getIntDims();
+        dataset.close();
+        FloatDenseMatrix data = DenseFactory.floatMatrix(dims, Order.ROW, Storage.HEAP);
+        reader.read(name, data);
+        if (false) {
+            // XXX caching is disabled for now...
+            cache.put(name, new SoftReference<FloatDenseMatrix>(data));
+        }
+        return data;
+    }
+
+    public Iterable<FloatDenseVector> rowsIterator() {
+        Collections.reverse(names);
+        final Iterator<String> namesIterator = names.iterator();
+        return new Iterable<FloatDenseVector>() {
+            @Override
+            public Iterator<FloatDenseVector> iterator() {
+                return Iterators.concat(new Iterator<Iterator<FloatDenseVector>>() {
+                    @Override
+                    public boolean hasNext() {
+                        return namesIterator.hasNext();
+                    }
+
+                    @Override
+                    public Iterator<FloatDenseVector> next() {
+                        return get(namesIterator.next()).rowsIterator().iterator();
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                });
+            }
+        };
+    }
+
     @Override
     public Iterator<FloatDenseMatrix> iterator() {
         Collections.reverse(names);
-        final Iterator<String> iter = names.iterator();
+        final Iterator<String> namesIterator = names.iterator();
         return new Iterator<FloatDenseMatrix>() {
             @Override
             public boolean hasNext() {
-                return iter.hasNext();
+                return namesIterator.hasNext();
             }
 
             @Override
             public FloatDenseMatrix next() {
-                String name = iter.next();
-                SoftReference<FloatDenseMatrix> ref = cache.get(name);
-                if (ref != null) {
-                    FloatDenseMatrix data = ref.get();
-                    if (data != null) {
-                        logger.info("Returning {} from the cache", name);
-                        return data;
-                    }
-                    logger.info("Reading {} again (was in the cache, but was gc'ed)", name);
-                } else {
-                    logger.info("Reading {}", name);
-                }
-                DataSet dataset = h5file.getRootGroup().openDataSet(name);
-                int[] dims = dataset.getIntDims();
-                dataset.close();
-                FloatDenseMatrix data = DenseFactory.floatMatrix(dims, Order.ROW, Storage.HEAP);
-                reader.read(name, data);
-                cache.put(name, new SoftReference<FloatDenseMatrix>(data));
-                return data;
+                return get(namesIterator.next());
             }
 
             @Override

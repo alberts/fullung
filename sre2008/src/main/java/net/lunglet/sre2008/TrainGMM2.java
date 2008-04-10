@@ -10,7 +10,6 @@ import com.dvsoft.sv.toolbox.matrix.JVectorSequence;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -29,6 +28,7 @@ import net.lunglet.io.HDFReader;
 import net.lunglet.io.HDFWriter;
 import net.lunglet.sre2008.TrainGMM.Result;
 import net.lunglet.sre2008.io.IOUtils;
+import net.lunglet.sre2008.util.Converters;
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
@@ -38,56 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class TrainGMM2 {
-    private static final class IterableJVectorSequence implements JVectorSequence {
-        private final int dimension;
-
-        private Iterator<? extends FloatVector> iter;
-
-        private final Iterable<? extends FloatVector> iterable;
-
-        private final int noVectors;
-
-        public IterableJVectorSequence(final Iterable<? extends FloatVector> iterable) {
-            this.iterable = iterable;
-            this.dimension = iterable.iterator().next().length();
-            this.iter = iterable.iterator();
-            int count = 0;
-            for (FloatVector x : iterable) {
-                count++;
-            }
-            this.noVectors = count;
-        }
-
-        @Override
-        public int getDimension() {
-            return dimension;
-        }
-
-        @Override
-        public JVector getNextVector() {
-            if (!iter.hasNext()) {
-                return null;
-            }
-            return new JVector(iter.next().toArray());
-        }
-
-        @Override
-        public int noVectors() {
-
-            return noVectors;
-        }
-
-        @Override
-        public void reset() {
-            iter = iterable.iterator();
-        }
-
-        @Override
-        public int skip(int noVectors) {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     private static final class Job implements GridJob {
         private static final JMatrix CHANNEL_SPACE;
 
@@ -99,7 +49,7 @@ public final class TrainGMM2 {
             String ubmFile = "Z:/data/ubm_floored_512_3.h5";
             DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFile);
             TrainGMM.checkGMM(ubm);
-            UBM = convert(ubm);
+            UBM = Converters.convert(ubm);
             if (true) {
                 String umatFile = "Z:/data/fcu.h5";
                 HDFReader reader = new HDFReader(umatFile);
@@ -223,32 +173,6 @@ public final class TrainGMM2 {
     private static final int MAP_ITERATIONS = 10;
 
     private static final double RELEVANCE = 16.0;
-
-    private static JMapGMM convert(final DiagCovGMM src) {
-        float[] srcWeights = src.getWeights().toArray();
-        double[] destWeights = new double[srcWeights.length];
-        for (int i = 0; i < srcWeights.length; i++) {
-            destWeights[i] = srcWeights[i];
-        }
-        ArrayList<JVector> means = new ArrayList<JVector>();
-        ArrayList<JVector> vars = new ArrayList<JVector>();
-        for (int i = 0; i < src.getMixtureCount(); i++) {
-            means.add(new JVector(src.getMean(i).toArray()));
-            vars.add(new JVector(src.getVariance(i).toArray()));
-        }
-        return new JMapGMM(destWeights, means.toArray(new JVector[0]), vars.toArray(new JVector[0]));
-    }
-
-    private static DiagCovGMM convert(final JMapGMM src) {
-        FloatVector weights = DenseFactory.floatVector(src.getWeights());
-        ArrayList<FloatVector> means = new ArrayList<FloatVector>();
-        ArrayList<FloatVector> vars = new ArrayList<FloatVector>();
-        for (int i = 0; i < src.getNoMixtures(); i++) {
-            means.add(DenseFactory.floatVector(src.getMeans()[i].data));
-            vars.add(DenseFactory.floatVector(src.getVariances()[i].data));
-        }
-        return new DiagCovGMM(weights, means, vars);
-    }
 
     public static void main(final String[] args) throws Exception {
 //        System.out.println(Job.CHANNEL_SPACE.getElement(1, 0));

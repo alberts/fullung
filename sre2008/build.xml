@@ -83,6 +83,7 @@
       <zipfileset src="${array4j.lib.dir}/slf4j-api-1.5.0.jar" />
       <zipfileset src="${lib.dir}/log4j-1.2.15.jar" />
       <zipfileset src="${lib.dir}/slf4j-log4j12-1.5.0.jar" />
+      <zipfileset src="${lib.dir}/google-collect-snapshot-20080321.jar" />
     </jarjar>
   </target>
 

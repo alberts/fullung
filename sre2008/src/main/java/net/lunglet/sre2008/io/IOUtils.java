@@ -1,7 +1,10 @@
 package net.lunglet.sre2008.io;
 
+import com.dvsoft.sv.toolbox.matrix.JMatrix;
 import java.util.ArrayList;
 import java.util.List;
+import net.lunglet.array4j.Order;
+import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
@@ -63,6 +66,26 @@ public final class IOUtils {
             for (int i = 0; i < gmm.getMixtureCount(); i++) {
                 writer.write("/means/" + i, DenseFactory.directCopyOf(gmm.getMean(i)));
                 writer.write("/variances/" + i, DenseFactory.directCopyOf(gmm.getVariance(i)));
+            }
+        } finally {
+            writer.close();
+        }
+    }
+
+    public static void writeHLDA(final String filename, final double[] gamma, final JMatrix globalCov,
+            final List<JMatrix> classCovs) {
+        H5File h5file = new H5File(filename, H5File.H5F_ACC_TRUNC);
+        HDFWriter writer = new HDFWriter(h5file);
+        try {
+            FloatDenseVector g = DenseFactory.floatVector(gamma);
+            writer.write("/counts", g);
+            writer.write("/globalcov", DenseFactory.floatMatrix(globalCov.toFloatArray(), Order.ROW, Storage.DIRECT));
+            int i = 0;
+            h5file.getRootGroup().createGroup("classcov").close();
+            for (JMatrix classCov : classCovs) {
+                String name = "/classcov/" + i;
+                writer.write(name, DenseFactory.floatMatrix(classCov.toFloatArray(), Order.ROW, Storage.DIRECT));
+                i++;
             }
         } finally {
             writer.close();
