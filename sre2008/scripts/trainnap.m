@@ -1,6 +1,6 @@
 function trainnap
 dim = 512 * 38;
-naph5 = 'C:\home\albert\SRE2008\data\sre04_nap_gmm.h5';
+naph5 = 'Z:\data\sre04_nap_gmm.h5';
 
 fid = fopen('2004_1s.txt');
 
@@ -18,7 +18,7 @@ while 1
 end
 fclose(fid);
 
-if 1
+if 0
     D = zeros(dim, Nses, 'single');
     index = 1;
     for i=1:1:length(models)

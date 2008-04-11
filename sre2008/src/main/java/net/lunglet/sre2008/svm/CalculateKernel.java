@@ -86,10 +86,12 @@ public final class CalculateKernel {
 
     public static void main(final String[] args) {
         final int bufferColumns = 1790;
-        final int bufferRows = 512 * 39;
+        final int bufferRows = 512 * 38;
 
         LOGGER.info("starting kernel calculator with " + bufferColumns + " buffer columns");
-        H5File datah5 = new H5File("Z:\\data\\sre04_background_hlda_gmm2.h5");
+//        String svmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
+        String svmFile = "Z:\\data\\lptfc512.niko\\sre04_background_gmmfc.h5";
+        H5File datah5 = new H5File(svmFile);
         H5File kernelh5 = new H5File("kernel.h5", H5File.H5F_ACC_TRUNC);
 
         LOGGER.info("reading data");

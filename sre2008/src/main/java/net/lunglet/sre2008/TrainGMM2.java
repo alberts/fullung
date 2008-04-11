@@ -47,14 +47,16 @@ public final class TrainGMM2 {
 
         static {
 //            String ubmFile = "Z:/data/ubm_floored_512_3.h5"
-            String ubmFile = "Z:/data/hlda_ubm_final_512.h5";
+//            String ubmFile = "Z:/data/hlda_ubm_final_512.h5";
+//            String ubmFile = "Z:\\data\\orig_ubm_final_512.h5";
+            String ubmFile = "Z:/data/lptfc512.niko/ubm_floored_512_3.h5";
             DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFile);
             TrainGMM.checkGMM(ubm);
             UBM = Converters.convert(ubm);
-            if (false) {
-                String umatFile = "Z:/data/fcu.h5";
+            if (true) {
+                String umatFile = "Z:/data/lptfc512.niko/fcu.h5";
                 HDFReader reader = new HDFReader(umatFile);
-                int dim = 512 * 39;
+                int dim = 512 * 38;
                 int k = 40;
                 FloatDenseMatrix channelSpace = DenseFactory.floatRowDirect(new int[]{dim, k});
                 reader.read("/U", channelSpace);
@@ -178,10 +180,12 @@ public final class TrainGMM2 {
 //        System.out.println(Job.CHANNEL_SPACE.getElement(0, 1));
 //        System.exit(1);
 
-        String datah5 = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_hlda.h5";
-        String gmmFile = "Z:\\data\\sre05_1conv4w_1conv4w_hlda_gmm2.h5";
+//        String datah5 = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_hlda.h5";
+//        String gmmFile = "Z:\\data\\sre05_1conv4w_1conv4w_hlda_gmm2.h5";
 //        String datah5 = "Z:\\data\\sre04_background_mfcc2_hlda.h5";
 //        String gmmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
+        String datah5 = "Z:\\data\\lptfc512\\sre06_1s1s_mfcc.h5";
+        String gmmFile = "Z:\\data\\lptfc512.niko\\sre06_1s1s_gmmfc.h5";
         List<String> names = TrainGMM.getNames(datah5);
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
 

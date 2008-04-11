@@ -228,7 +228,8 @@ public final class TrainSVM {
 
         static {
             // background data
-            String svmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
+//            String svmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
+            String svmFile = "Z:\\data\\lptfc512.niko\\sre04_background_gmmfc.h5";
             List<Handle> temp = new ArrayList<Handle>();
             List<String> names = getNames(svmFile);
             int index = 0;
@@ -285,12 +286,15 @@ public final class TrainSVM {
 
     public static void main(final String[] args) throws Exception {
         // evaluation data
-        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
+//        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
+        String evalFile = "C:/home/albert/SRE2008/scripts/sre06-1conv4w_1conv4w.txt";
         List<Model> models = Evaluation2.readModels(evalFile);
         // XXX remember to update dataFile in Evaluation
-        String dataFile = "Z:/data/sre05_1conv4w_1conv4w_hlda_gmm2.h5";
+//        String gmmFile = "Z:/data/sre05_1conv4w_1conv4w_hlda_gmm2.h5";
+//        String gmmFile = "Z:\\data\\lptfc512.niko\\sre05_1s1s_gmmfc.h5";
+        String gmmFile = "Z:\\data\\lptfc512.niko\\sre06_1s1s_gmmfc.h5";
         LOGGER.info("Checking data file");
-        H5File trainh5 = new H5File(dataFile);
+        H5File trainh5 = new H5File(gmmFile);
         Evaluation2.checkData(trainh5, models);
         trainh5.close();
 
@@ -299,7 +303,7 @@ public final class TrainSVM {
         for (Model model : models) {
             List<Segment> train = model.getTrain();
             AssertUtils.assertEquals(1, train.size());
-            Job job = new Job(model.getId(), train.get(0).getHDFName(), dataFile, cost);
+            Job job = new Job(model.getId(), train.get(0).getHDFName(), gmmFile, cost);
             tasks.add(new Task(job));
         }
 

@@ -39,9 +39,10 @@ public final class TrainGMM {
         private static final DiagCovGMM UBM;
 
         static {
-            // XXX this hack is here to work around issues with GridGain's
-            // serialization of DiagCovGMM
-            String ubmFile = "Z:\\data\\hlda_ubm_final_512.h5";
+            // XXX this hack is here to work around issues with serialization of
+            // DiagCovGMM using GridGain
+//            String ubmFile = "Z:\\data\\hlda_ubm_final_512.h5";
+            String ubmFile = "Z:\\data\\orig_ubm_final_512.h5";
             UBM = IOUtils.readDiagCovGMM(ubmFile);
             checkGMM(UBM);
         }
@@ -159,8 +160,11 @@ public final class TrainGMM {
         // XXX change ubm file at the top
 //        String datah5 = "Z:\\data\\sre04_background_mfcc2_hlda.h5";
 //        String gmmFile = "Z:\\data\\sre04_background_hlda_gmm.h5";
-        String datah5 = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_hlda.h5";
-        String gmmFile = "Z:\\data\\sre05_1conv4w_1conv4w_hlda_gmm.h5";
+//        String datah5 = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_hlda.h5";
+//        String gmmFile = "Z:\\data\\sre05_1conv4w_1conv4w_hlda_gmm.h5";
+        String datah5 = "Z:\\data\\sre04_background_mfcc2.h5";
+        String gmmFile = "Z:\\data\\sre04_background_gmm.h5";
+
         List<String> names = getNames(datah5);
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
 
