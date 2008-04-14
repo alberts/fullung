@@ -4,6 +4,9 @@ import com.dvsoft.sv.toolbox.matrix.JMatrix;
 import com.dvsoft.sv.toolbox.matrix.JVector;
 import java.io.Serializable;
 
+/**
+ * Stats for estimating full covariance matrices.
+ */
 public final class JMapStats2 implements Serializable {
     private static final long serialVersionUID = 1L;
 

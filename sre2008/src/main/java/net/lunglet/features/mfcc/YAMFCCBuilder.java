@@ -25,6 +25,7 @@ import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.io.HDFWriter;
 import net.lunglet.util.AssertUtils;
@@ -36,6 +37,74 @@ import org.slf4j.LoggerFactory;
 // http://www.icsi.berkeley.edu/ftp/global/pub/speech/papers/qio/
 
 public final class YAMFCCBuilder {
+    private static class MFCCTask implements Callable<Void> {
+        private static final ThreadLocal<YAMFCCBuilder> MFCC_BUILDER = new ThreadLocal<YAMFCCBuilder>() {
+            @Override
+            protected YAMFCCBuilder initialValue() {
+                return new YAMFCCBuilder();
+            }
+        };
+
+        private final String filename;
+
+        private final H5File h5file;
+
+        private final boolean includeEval;
+
+        public MFCCTask(final String filename, final H5File h5file, final boolean includeEval) {
+            this.filename = filename;
+            this.h5file = h5file;
+            this.includeEval = includeEval;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            HDFWriter writer = new HDFWriter(h5file);
+            try {
+                YAMFCCBuilder mfccBuilder = MFCC_BUILDER.get();
+                String eval = filename.split("\\\\")[1];
+                FeatureSet[] features = convertFile(mfccBuilder, filename);
+                String hdfName = new File(filename).getName().split("\\.")[0];
+                synchronized (h5file) {
+                    Group root = h5file.getRootGroup();
+                    if (includeEval) {
+                        if (!root.existsGroup("/" + eval)) {
+                            LOGGER.info("Creating group /{}", eval);
+                            root.createGroup(eval);
+                        }
+                        hdfName = "/" + eval + "/" + hdfName;
+                    } else {
+                        hdfName = "/" + hdfName;
+                    }
+                    LOGGER.info("Creating group {}", hdfName);
+                    root.createGroup(hdfName);
+                }
+                for (int i = 0; i < features.length; i++) {
+                    if (features[i] == null) {
+                        LOGGER.info("Skipping invalid channel " + i + " in " + filename);
+                        continue;
+                    }
+                    float[][] values = features[i].getValues();
+                    if (true) {
+                        checkMFCC(values);
+                    }
+                    FloatDenseMatrix matrix = DenseFactory.floatMatrix(values, Order.ROW, Storage.DIRECT);
+                    String fullHdfName = hdfName + "/" + i;
+                    LOGGER.info("Writing to {} [{}, {}]", new Object[]{fullHdfName, matrix.rows(), matrix.columns()});
+                    synchronized (h5file) {
+                        writer.write(fullHdfName, matrix);
+                    }
+                }
+            } catch (Throwable t) {
+                LOGGER.error("MFCC extraction for " + filename + " failed", t);
+                throw new Exception(t);
+            }
+            return null;
+        }
+    }
+
+    private static final boolean DEBUG = false;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(YAMFCCBuilder.class);
 
     private static final int MIN_BLOCK_SIZE = 20;
@@ -43,7 +112,44 @@ public final class YAMFCCBuilder {
     // use a window size of 302 to work around a bug in GaussWarp
     private static final int WINDOW_SIZE = 302;
 
-    private static final boolean DEBUG = false;
+    private static void checkMFCC(final float[][] mfcc) {
+        AssertUtils.assertTrue(mfcc.length > 0);
+        for (int i = 0; i < mfcc.length; i++) {
+//            AssertUtils.assertEquals(38, mfcc[i].length);
+            AssertUtils.assertEquals(79, mfcc[i].length);
+            for (int j = 0; j < mfcc[i].length; j++) {
+                float v = mfcc[i][j];
+                AssertUtils.assertFalse(Float.isInfinite(v));
+                AssertUtils.assertFalse(Float.isNaN(v));
+                if (v < -3.0f) {
+                    throw new RuntimeException("value is too negative: " + v);
+                }
+                if (v > 3.0f) {
+                    throw new RuntimeException("value is too positive: " + v);
+                }
+            }
+        }
+    }
+
+    private static FeatureSet[] convertFile(final YAMFCCBuilder mfccBuilder, final String name) {
+        try {
+            File sphFile = new File(name);
+            AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
+            int channels = aff.getFormat().getChannels();
+            LOGGER.info("Read {} with {} channels", sphFile, channels);
+            ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
+            for (int i = 0; i < channels; i++) {
+                File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
+                LOGGER.info("Reading {}", mlfFile);
+                mlfs.add(new MasterLabelFile(mlfFile));
+            }
+            return mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private static void crossChannelSquelch(final List<FeatureBlock> blocks, final double maxEnergydB,
             final FeatureSet otherChannel) {
@@ -159,6 +265,33 @@ public final class YAMFCCBuilder {
             phonemeBlocks.add(phonemeBlock);
         }
         return phonemeBlocks;
+    }
+
+    public static void main(final String[] args) throws IOException, InterruptedException {
+        boolean includeEval = false;
+        if (new File("mfcc.h5").exists()) {
+            LOGGER.error("Output file mfcc.h5 already exists");
+            System.exit(1);
+        }
+        List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder.class);
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        H5File h5file = new H5File("mfcc.h5", H5File.H5F_ACC_TRUNC);
+        List<Future<Void>> futures = new ArrayList<Future<Void>>();
+        for (String filename : filenames) {
+            Future<Void> future = executorService.submit(new MFCCTask(filename, h5file, includeEval));
+            futures.add(future);
+        }
+        for (Future<Void> future : futures) {
+            try {
+                future.get();
+            } catch (ExecutionException e) {
+                LOGGER.error("Execution failed", e);
+                continue;
+            }
+        }
+        h5file.close();
+        executorService.shutdown();
+        executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }
 
     private static float[][] mergeBlockValues(final Collection<FeatureBlock> blocks) {
@@ -288,117 +421,5 @@ public final class YAMFCCBuilder {
     public FeatureSet[] apply(final InputStream stream, final MasterLabelFile[] mlfs)
             throws UnsupportedAudioFileException, IOException {
         return apply(htkmfcc.apply(stream), mlfs);
-    }
-
-    private static FeatureSet[] convertFile(final YAMFCCBuilder mfccBuilder, final String name) {
-        try {
-            File sphFile = new File(name);
-            AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
-            int channels = aff.getFormat().getChannels();
-            LOGGER.info("Read {} with {} channels", sphFile, channels);
-            ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
-            for (int i = 0; i < channels; i++) {
-                File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
-                LOGGER.info("Reading {}", mlfFile);
-                mlfs.add(new MasterLabelFile(mlfFile));
-            }
-            return mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedAudioFileException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void checkMFCC(final float[][] mfcc) {
-        AssertUtils.assertTrue(mfcc.length > 0);
-        for (int i = 0; i < mfcc.length; i++) {
-//            AssertUtils.assertEquals(38, mfcc[i].length);
-            AssertUtils.assertEquals(79, mfcc[i].length);
-            for (int j = 0; j < mfcc[i].length; j++) {
-                float v = mfcc[i][j];
-                AssertUtils.assertFalse(Float.isInfinite(v));
-                AssertUtils.assertFalse(Float.isNaN(v));
-                if (v < -3.0f) {
-                    throw new RuntimeException("value is too negative: " + v);
-                }
-                if (v > 3.0f) {
-                    throw new RuntimeException("value is too positive: " + v);
-                }
-            }
-        }
-    }
-
-    private static class MFCCTask implements Callable<Void> {
-        private final String filename;
-
-        private final H5File h5file;
-
-        private static final ThreadLocal<YAMFCCBuilder> MFCC_BUILDER = new ThreadLocal<YAMFCCBuilder>() {
-            @Override
-            protected YAMFCCBuilder initialValue() {
-                return new YAMFCCBuilder();
-            }
-        };
-
-        public MFCCTask(final String filename, final H5File h5file) {
-            this.filename = filename;
-            this.h5file = h5file;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            HDFWriter writer = new HDFWriter(h5file);
-            try {
-                YAMFCCBuilder mfccBuilder = MFCC_BUILDER.get();
-                FeatureSet[] features = convertFile(mfccBuilder, filename);
-                String hdfName = new File(filename).getName().split("\\.")[0];
-                synchronized (h5file) {
-                    h5file.getRootGroup().createGroup(hdfName);
-                }
-                for (int i = 0; i < features.length; i++) {
-                    if (features[i] == null) {
-                        LOGGER.info("Skipping invalid channel " + i + " in " + filename);
-                        continue;
-                    }
-                    float[][] values = features[i].getValues();
-                    if (true) {
-                        checkMFCC(values);
-                    }
-                    FloatDenseMatrix matrix = DenseFactory.floatMatrix(values, Order.ROW, Storage.DIRECT);
-                    String fullHdfName = "/" + hdfName + "/" + i;
-                    LOGGER.info("Writing to " + fullHdfName);
-                    synchronized (h5file) {
-                        writer.write(fullHdfName, matrix);
-                    }
-                }
-            } catch (Throwable t) {
-                LOGGER.error("MFCC extraction for " + filename + " failed", t);
-                throw new Exception(t);
-            }
-            return null;
-        }
-    }
-
-    public static void main(final String[] args) throws IOException, InterruptedException {
-        List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder.class);
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
-        H5File h5file = new H5File("mfcc.h5", H5File.H5F_ACC_TRUNC);
-        List<Future<Void>> futures = new ArrayList<Future<Void>>();
-        for (String filename : filenames) {
-            Future<Void> future = executorService.submit(new MFCCTask(filename, h5file));
-            futures.add(future);
-        }
-        for (Future<Void> future : futures) {
-            try {
-                future.get();
-            } catch (ExecutionException e) {
-                LOGGER.error("Execution failed", e);
-                continue;
-            }
-        }
-        h5file.close();
-        executorService.shutdown();
-        executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }
 }

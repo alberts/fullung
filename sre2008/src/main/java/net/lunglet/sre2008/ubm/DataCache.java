@@ -24,6 +24,13 @@ public final class DataCache implements Iterable<FloatDenseMatrix> {
     private static List<String> getNames(final H5File h5file) {
         List<String> names = new ArrayList<String>();
         for (Group group : h5file.getRootGroup().getGroups()) {
+            for (Group group2 : group.getGroups()) {
+                for (DataSet ds : group2.getDataSets()) {
+                    names.add(ds.getName());
+                    ds.close();
+                }
+                group2.close();
+            }
             for (DataSet ds : group.getDataSets()) {
                 names.add(ds.getName());
                 ds.close();

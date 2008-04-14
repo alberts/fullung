@@ -29,6 +29,7 @@ import net.lunglet.svm.Handle;
 import net.lunglet.svm.SvmClassifier;
 import net.lunglet.util.ArrayMath;
 import net.lunglet.util.AssertUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
@@ -228,8 +229,7 @@ public final class TrainSVM {
 
         static {
             // background data
-//            String svmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
-            String svmFile = "Z:\\data\\lptfc512.niko\\sre04_background_gmmfc.h5";
+            String svmFile = Constants.BACKGROUND_GMM;
             List<Handle> temp = new ArrayList<Handle>();
             List<String> names = getNames(svmFile);
             int index = 0;
@@ -240,9 +240,8 @@ public final class TrainSVM {
             BACKGROUND_DATA = Collections.unmodifiableList(temp);
 
             // kernel
-            String kernelFile = "C:/home/albert/SRE2008/data/kernel.h5";
-            HDFReader kernelReader = new HDFReader(kernelFile);
-            KERNEL = PackedFactory.floatSymmetricDirect(1790);
+            HDFReader kernelReader = new HDFReader(Constants.KERNEL_FILE);
+            KERNEL = PackedFactory.floatSymmetricDirect(0);
             kernelReader.read("/kernel", KERNEL);
         }
 
@@ -285,14 +284,19 @@ public final class TrainSVM {
     }
 
     public static void main(final String[] args) throws Exception {
-        // evaluation data
-//        String evalFile = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
-        String evalFile = "C:/home/albert/SRE2008/scripts/sre06-1conv4w_1conv4w.txt";
-        List<Model> models = Evaluation2.readModels(evalFile);
-        // XXX remember to update dataFile in Evaluation
-//        String gmmFile = "Z:/data/sre05_1conv4w_1conv4w_hlda_gmm2.h5";
-//        String gmmFile = "Z:\\data\\lptfc512.niko\\sre05_1s1s_gmmfc.h5";
-        String gmmFile = "Z:\\data\\lptfc512.niko\\sre06_1s1s_gmmfc.h5";
+        final List<Model> models;
+        final String gmmFile;
+        if (false) {
+            models = Evaluation2.readModels(Constants.EVAL_FILE);
+            gmmFile = Constants.EVAL_GMM;
+        } else if (false) {
+            // TODO scan tnorm h5 file for names
+            models = null;
+            gmmFile = Constants.TNORM_GMM;
+        } else {
+            throw new NotImplementedException();
+        }
+
         LOGGER.info("Checking data file");
         H5File trainh5 = new H5File(gmmFile);
         Evaluation2.checkData(trainh5, models);
@@ -307,7 +311,7 @@ public final class TrainSVM {
             tasks.add(new Task(job));
         }
 
-        String svmFile = "C:/home/albert/SRE2008/data/svm.h5";
+        String svmFile = Constants.EVAL_SVM;
         final H5File svmh5 = new H5File(svmFile, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(svmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {

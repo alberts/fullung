@@ -99,9 +99,9 @@ public final class HLDA {
                 new ArrayBlockingQueue<Runnable>(queueCapacity), new ThreadPoolExecutor.CallerRunsPolicy());
 
         LOGGER.info("Loading original UBM");
-        JMapGMM ubm = Converters.convert(IOUtils.readDiagCovGMM("Z:/data/ubm7_final_512.h5"));
+        JMapGMM ubm = Converters.convert(IOUtils.readDiagCovGMM("ubm8_final_79_512.h5"));
         LOGGER.info("Creating data cache");
-        DataCache dataCache = new DataCache("Z:/data/sre04_background_mfcc2.h5");
+        DataCache dataCache = new DataCache("Z:/data/background_mfcc2.h5");
         try {
             JMapStats2 stats = train(ubm, dataCache, executorService);
             double[] gamma = stats.n;
@@ -113,20 +113,6 @@ public final class HLDA {
             executorService.shutdown();
             executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
         }
-    }
-
-    public static void main2(final String[] args) {
-        LOGGER.info("Loading original UBM");
-        JMapGMM ubm = Converters.convert(IOUtils.readDiagCovGMM("ubm7_final_512.h5"));
-        LOGGER.info("Creating data cache");
-        DataCache dataCache = new DataCache("Z:/data/sre04_background_mfcc2.h5");
-        JVectorSequence data = new IterableJVectorSequence(dataCache.rowsIterator(), false);
-        FrameLvlBgr bgr = ubm.evalFrameLvlBgr(data);
-        HLDA hlda = new HLDA(ubm);
-        List<JMatrix> covs = hlda.calculateCovs(data, bgr);
-        JMatrix globalCov = covs.remove(0);
-        double[] gamma = hlda.ws.n;
-        dataCache.close();
     }
 
     private static JMapStats2 train(final JMapGMM ubm, final DataCache dataCache, final ExecutorService executorService) {
@@ -141,6 +127,9 @@ public final class HLDA {
                     JVectorSequence dataSeq = new IterableJVectorSequence(data2.rowsIterator(), false);
                     // prevent future from referring to this data
                     data2 = null;
+                    // this frame level background will cause only the top few
+                    // components to be used for each vector when estimating the
+                    // within-class covariance matrices
                     FrameLvlBgr bgr = ubm.evalFrameLvlBgr(dataSeq);
                     JMapStats2 stats = calculateStats(ubm, dataSeq, bgr);
                     // update global stats here because keep all the stats until

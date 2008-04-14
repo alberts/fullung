@@ -23,33 +23,34 @@ public final class TrainUBM8 {
 
     private static GMMMAPStats expectationStep(final DiagCovGMM gmm, final DataCache dataCache,
             final ExecutorService executorService) {
-        List<Future<GMMMAPStats>> futures = new ArrayList<Future<GMMMAPStats>>();
+        List<Future<Void>> futures = new ArrayList<Future<Void>>();
+        final GMMMAPStats globalStats = new GMMMAPStats(gmm);
         for (final FloatDenseMatrix data : dataCache) {
-            Future<GMMMAPStats> future = executorService.submit(new Callable<GMMMAPStats>() {
+            Future<Void> future = executorService.submit(new Callable<Void>() {
                 private FloatDenseMatrix data2 = data;
 
                 @Override
-                public GMMMAPStats call() throws Exception {
+                public Void call() throws Exception {
                     GMMMAPStats stats = new GMMMAPStats(gmm, 0.01);
                     stats.add(data2.rowsIterator());
                     // prevent future from referring to this data
                     data2 = null;
-                    return stats;
+                    synchronized (globalStats) {
+                        globalStats.add(stats);
+                    }
+                    return null;
                 }
             });
             futures.add(future);
         }
-        GMMMAPStats globalStats = new GMMMAPStats(gmm);
-        for (Future<GMMMAPStats> future : futures) {
-            final GMMMAPStats stats;
+        for (Future<Void> future : futures) {
             try {
-                stats = future.get();
+                future.get();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (ExecutionException e) {
                 throw new RuntimeException(e);
             }
-            globalStats.add(stats);
         }
         futures.clear();
         return globalStats;
@@ -80,19 +81,32 @@ public final class TrainUBM8 {
     }
 
     private static void train(final DataCache dataCache, final ExecutorService executorService) {
+        int maxMixtures = 512;
+        int dim = 39;
         DiagCovGMM gmm;
         if (new File("origubm.h5").exists()) {
             LOGGER.info("Loading GMM to continue training");
             gmm = IOUtils.readDiagCovGMM("origubm.h5");
         } else {
-            gmm = GMMUtils.createDiagCovGMM(1, 79);
+            gmm = GMMUtils.createDiagCovGMM(1, dim);
         }
-        while (gmm.getMixtureCount() < 512) {
-            int maxiter = gmm.getMixtureCount() > 1 ? 5 : 1;
+        while (true) {
+            final int maxiter;
+            if (gmm.getMixtureCount() == 1) {
+                maxiter = 1;
+            } else if (gmm.getMixtureCount() < 256) {
+                maxiter = 3;
+            } else if (gmm.getMixtureCount() < 512) {
+                maxiter = 5;
+            } else {
+                maxiter = 10;
+            }
             trainIterations(gmm, maxiter, dataCache, executorService);
+            if (gmm.getMixtureCount() == maxMixtures) {
+                break;
+            }
             gmm = GMMUtils.splitAll(gmm);
         }
-        trainIterations(gmm, 10, dataCache, executorService);
     }
 
     private static GMMMAPStats train(final DiagCovGMM gmm, final DataCache dataCache,
@@ -113,26 +127,19 @@ public final class TrainUBM8 {
                 LOGGER.info("Flooring weights to be equal on first iteration");
                 gmm.floorWeights(gmm.getMixtureCount());
             }
-            LOGGER.info("Weights before: " + gmm.getWeights());
+            LOGGER.info("Weights before training: " + gmm.getWeights());
             GMMMAPStats stats = train(gmm, dataCache, executorService);
             IOUtils.writeGMM("ubm_orig_" + gmm.getMixtureCount() + "_" + iter + ".h5", gmm);
-            final int weakCount;
-            // XXX give it a few iterations after split before we start nuking stuff
-            if (iter >= 3) {
-                // XXX 200 started rejecting at 256 components
-                
-                // TODO base criterion on total number of n / mixtures / 
-                
-                float nthresh = 200.0f * (2.0f * gmm.getDimension());
-                weakCount = GMMUtils.countWeak(gmm, stats, nthresh);
+            LOGGER.info("Weights after training: " + gmm.getWeights());
+
+            // require 100 feature vector per mixture parameter
+            float nthresh = 100.0f * (2.0f * gmm.getDimension() + 1);
+            final int weakCount = GMMUtils.countWeak(gmm, stats, nthresh);
+
+            if (iter >= 3 && weakCount > 0) {
                 LOGGER.info("Replacing {} weak components", weakCount);
                 GMMUtils.replaceWeak(gmm, stats, nthresh);
-                LOGGER.info("Weights after: " + gmm.getWeights());
                 IOUtils.writeGMM("ubm_fixed_" + gmm.getMixtureCount() + "_" + iter + ".h5", gmm);
-            } else {
-                weakCount = 0;
-            }
-            if (weakCount > 0) {
                 LOGGER.info("Found some weak components, restarting with equal weights");
                 iter = 1;
             } else {

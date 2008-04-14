@@ -29,6 +29,7 @@ import net.lunglet.io.HDFWriter;
 import net.lunglet.sre2008.TrainGMM.Result;
 import net.lunglet.sre2008.io.IOUtils;
 import net.lunglet.sre2008.util.Converters;
+import org.apache.commons.lang.NotImplementedException;
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
@@ -46,10 +47,7 @@ public final class TrainGMM2 {
         private static final JMapGMM UBM;
 
         static {
-//            String ubmFile = "Z:/data/ubm_floored_512_3.h5"
-//            String ubmFile = "Z:/data/hlda_ubm_final_512.h5";
-//            String ubmFile = "Z:\\data\\orig_ubm_final_512.h5";
-            String ubmFile = "Z:/data/lptfc512.niko/ubm_floored_512_3.h5";
+            String ubmFile = Constants.UBM_FILE;
             DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFile);
             TrainGMM.checkGMM(ubm);
             UBM = Converters.convert(ubm);
@@ -176,16 +174,21 @@ public final class TrainGMM2 {
     private static final int MAP_ITERATIONS = 10;
 
     public static void main(final String[] args) throws Exception {
-//        System.out.println(Job.CHANNEL_SPACE.getElement(1, 0));
-//        System.out.println(Job.CHANNEL_SPACE.getElement(0, 1));
-//        System.exit(1);
+        final String datah5;
+        final String gmmFile;
+        if (false) {
+            datah5 = Constants.BACKGROUND_DATA;
+            gmmFile = Constants.BACKGROUND_GMM;
+        } else if (false) {
+            datah5 = Constants.EVAL_DATA;
+            gmmFile = Constants.EVAL_GMM;
+        } else if (false) {
+            datah5 = Constants.TNORM_DATA;
+            gmmFile = Constants.TNORM_GMM;
+        } else {
+            throw new NotImplementedException();
+        }
 
-//        String datah5 = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_hlda.h5";
-//        String gmmFile = "Z:\\data\\sre05_1conv4w_1conv4w_hlda_gmm2.h5";
-//        String datah5 = "Z:\\data\\sre04_background_mfcc2_hlda.h5";
-//        String gmmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
-        String datah5 = "Z:\\data\\lptfc512\\sre06_1s1s_mfcc.h5";
-        String gmmFile = "Z:\\data\\lptfc512.niko\\sre06_1s1s_gmmfc.h5";
         List<String> names = TrainGMM.getNames(datah5);
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
 

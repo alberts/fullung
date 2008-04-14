@@ -24,6 +24,7 @@ import net.lunglet.hdf.H5File;
 import net.lunglet.io.HDFReader;
 import net.lunglet.io.HDFWriter;
 import net.lunglet.sre2008.io.IOUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridJob;
 import org.gridgain.grid.GridJobResult;
@@ -41,9 +42,7 @@ public final class TrainGMM {
         static {
             // XXX this hack is here to work around issues with serialization of
             // DiagCovGMM using GridGain
-//            String ubmFile = "Z:\\data\\hlda_ubm_final_512.h5";
-            String ubmFile = "Z:\\data\\orig_ubm_final_512.h5";
-            UBM = IOUtils.readDiagCovGMM(ubmFile);
+            UBM = IOUtils.readDiagCovGMM(Constants.UBM_FILE);
             checkGMM(UBM);
         }
 
@@ -157,17 +156,23 @@ public final class TrainGMM {
     }
 
     public static void main(final String[] args) throws Exception {
-        // XXX change ubm file at the top
-//        String datah5 = "Z:\\data\\sre04_background_mfcc2_hlda.h5";
-//        String gmmFile = "Z:\\data\\sre04_background_hlda_gmm.h5";
-//        String datah5 = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_hlda.h5";
-//        String gmmFile = "Z:\\data\\sre05_1conv4w_1conv4w_hlda_gmm.h5";
-        String datah5 = "Z:\\data\\sre04_background_mfcc2.h5";
-        String gmmFile = "Z:\\data\\sre04_background_gmm.h5";
+        final String datah5;
+        final String gmmFile;
+        if (false) {
+            datah5 = Constants.BACKGROUND_DATA;
+            gmmFile = Constants.BACKGROUND_GMM;
+        } else if (false) {
+            datah5 = Constants.EVAL_DATA;
+            gmmFile = Constants.EVAL_GMM;
+        } else if (false) {
+            datah5 = Constants.TNORM_DATA;
+            gmmFile = Constants.TNORM_GMM;
+        } else {
+            throw new NotImplementedException();
+        }
 
         List<String> names = getNames(datah5);
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
-
         List<Task> tasks = new ArrayList<Task>();
         for (String name : names) {
             if (gmmh5.getRootGroup().existsDataSet(name)) {

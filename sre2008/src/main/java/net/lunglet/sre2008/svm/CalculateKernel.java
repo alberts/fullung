@@ -19,6 +19,7 @@ import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.hdf.DataSetCreatePropListBuilder.FillTime;
 import net.lunglet.io.HDFReader;
+import net.lunglet.sre2008.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,14 +86,12 @@ public final class CalculateKernel {
     }
 
     public static void main(final String[] args) {
-        final int bufferColumns = 1790;
-        final int bufferRows = 512 * 38;
+        final int bufferColumns = 1500;
+        final int bufferRows = Constants.GMM_DIMENSION;
 
         LOGGER.info("starting kernel calculator with " + bufferColumns + " buffer columns");
-//        String svmFile = "Z:\\data\\sre04_background_hlda_gmm2.h5";
-        String svmFile = "Z:\\data\\lptfc512.niko\\sre04_background_gmmfc.h5";
-        H5File datah5 = new H5File(svmFile);
-        H5File kernelh5 = new H5File("kernel.h5", H5File.H5F_ACC_TRUNC);
+        H5File datah5 = new H5File(Constants.BACKGROUND_GMM);
+        H5File kernelh5 = new H5File(Constants.KERNEL_FILE, H5File.H5F_ACC_TRUNC);
 
         LOGGER.info("reading data");
         // TODO read names from a list instead of using all names so that we can

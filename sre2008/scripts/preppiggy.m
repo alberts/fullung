@@ -1,9 +1,9 @@
 function preppiggy
-piggyfile = 'piggyback.h5';
+piggyfile = 'piggy05.h5';
 labels = hdf5read(piggyfile,'/labels');
 
-% original scores, piggyback scores, rho
-scoredim = 1 + 512*38 + 1;
+% original scores, piggyback scores (including -rho)
+scoredim = 1 + (512*38 + 1);
 
 X = zeros(scoredim,length(labels),'single');
 for i=1:1:length(labels)
@@ -11,8 +11,8 @@ for i=1:1:length(labels)
     X(:,i) = scores(:);
 end
 
-scores = X(1,:);
+% exclude system scores before calculating Gram matrix
 Y = X(2:end,:);
 gram = Y'*Y;
 
-save piggy.mat labels scores gram -V6;
+save piggy.mat gram -V6;
