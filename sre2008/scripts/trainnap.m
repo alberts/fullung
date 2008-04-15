@@ -44,9 +44,11 @@ else
 end
 
 % number of eigenvectors
-k = 40;
+k = 200;
 
 [E, S] = nap(D, k);
+
+save S.mat S;
 
 U = zeros(size(E));
 for i=1:1:length(S)
@@ -59,4 +61,4 @@ save E.mat E;
 save U.mat U;
 
 % transpose matrix to write it in C order
-hdf5write('Z:\data\channel.h5', '/U', U');
+hdf5write('channel.h5', '/U', U');
