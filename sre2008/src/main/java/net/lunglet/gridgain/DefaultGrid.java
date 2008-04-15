@@ -15,7 +15,7 @@ import org.gridgain.grid.spi.topology.basic.GridBasicTopologySpi;
 
 public final class DefaultGrid<R> extends AbstractGrid<R> {
     // XXX use remote jrockit and local = false for 2048 component GMM-SVM
-    private static final boolean LOCAL = true;
+    private static final boolean LOCAL = false;
 
     public DefaultGrid(final Iterable<? extends GridTask<?, R>> tasks, final ResultListener<R> resultListener) {
         super(tasks, resultListener);

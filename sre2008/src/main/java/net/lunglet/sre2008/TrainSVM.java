@@ -229,7 +229,7 @@ public final class TrainSVM {
 
         static {
             // background data
-            String svmFile = Constants.BACKGROUND_GMM;
+            String svmFile = Constants.SVM_BACKGROUND_GMM;
             List<Handle> temp = new ArrayList<Handle>();
             List<String> names = getNames(svmFile);
             int index = 0;
@@ -241,7 +241,8 @@ public final class TrainSVM {
 
             // kernel
             HDFReader kernelReader = new HDFReader(Constants.KERNEL_FILE);
-            KERNEL = PackedFactory.floatSymmetricDirect(0);
+            // TODO figure out this dimension automatically
+            KERNEL = PackedFactory.floatSymmetricDirect(1790);
             kernelReader.read("/kernel", KERNEL);
         }
 
@@ -272,6 +273,13 @@ public final class TrainSVM {
         List<String> names = new ArrayList<String>();
         H5File h5file = new H5File(h5);
         for (Group group : h5file.getRootGroup().getGroups()) {
+            for (Group group2 : group.getGroups()) {
+                for (DataSet ds : group2.getDataSets()) {
+                    names.add(ds.getName());
+                    ds.close();
+                }
+                group2.close();
+            }
             for (DataSet ds : group.getDataSets()) {
                 names.add(ds.getName());
                 ds.close();
@@ -286,13 +294,19 @@ public final class TrainSVM {
     public static void main(final String[] args) throws Exception {
         final List<Model> models;
         final String gmmFile;
+        final String svmFile;
         if (false) {
             models = Evaluation2.readModels(Constants.EVAL_FILE);
             gmmFile = Constants.EVAL_GMM;
-        } else if (false) {
-            // TODO scan tnorm h5 file for names
-            models = null;
+            svmFile = Constants.EVAL_SVM;
+        } else if (true) {
             gmmFile = Constants.TNORM_GMM;
+            models = new ArrayList<Model>();
+            int i = 0;
+            for (String name : getNames(gmmFile)) {
+                models.add(new Model("tnorm" + i++, new Segment(name)));
+            }
+            svmFile = Constants.TNORM_SVM;
         } else {
             throw new NotImplementedException();
         }
@@ -311,7 +325,6 @@ public final class TrainSVM {
             tasks.add(new Task(job));
         }
 
-        String svmFile = Constants.EVAL_SVM;
         final H5File svmh5 = new H5File(svmFile, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(svmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {

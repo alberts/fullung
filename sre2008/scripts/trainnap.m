@@ -1,6 +1,6 @@
 function trainnap
-dim = 512 * 38;
-naph5 = 'Z:\data\sre04_nap_gmm.h5';
+dim = 512 * 79;
+naph5 = 'C:\home\albert\SRE2008\data\nap_gmm.h5';
 
 fid = fopen('2004_1s.txt');
 
@@ -59,4 +59,4 @@ save E.mat E;
 save U.mat U;
 
 % transpose matrix to write it in C order
-hdf5write('fcu.h5', '/U', U');
+hdf5write('Z:\data\channel.h5', '/U', U');

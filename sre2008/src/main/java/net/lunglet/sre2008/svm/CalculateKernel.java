@@ -64,6 +64,7 @@ public final class CalculateKernel {
         }
         for (int i = 0; i < block.size(); i++) {
             String name = block.get(i);
+            // if this throws, a dimension is wrong somewhere
             new HDFReader(dataFile).read(name, buf.column(i));
             if (!FloatMatrixUtils.isAllFinite(buf.column(i))) {
                 LOGGER.error("{} contains invalid values", name);
@@ -75,6 +76,13 @@ public final class CalculateKernel {
     private static List<String> getNames(final H5File h5file) {
         List<String> names = new ArrayList<String>();
         for (Group group : h5file.getRootGroup().getGroups()) {
+            for (Group group2 : group.getGroups()) {
+                for (DataSet ds : group2.getDataSets()) {
+                    names.add(ds.getName());
+                    ds.close();
+                }
+                group2.close();
+            }
             for (DataSet ds : group.getDataSets()) {
                 names.add(ds.getName());
                 ds.close();
@@ -90,14 +98,14 @@ public final class CalculateKernel {
         final int bufferRows = Constants.GMM_DIMENSION;
 
         LOGGER.info("starting kernel calculator with " + bufferColumns + " buffer columns");
-        H5File datah5 = new H5File(Constants.BACKGROUND_GMM);
-        H5File kernelh5 = new H5File(Constants.KERNEL_FILE, H5File.H5F_ACC_TRUNC);
+        H5File datah5 = new H5File(Constants.SVM_BACKGROUND_GMM);
 
         LOGGER.info("reading data");
         // TODO read names from a list instead of using all names so that we can
         // combine SRE04 UBM data and NAP data in a single file
         List<String> data = getNames(datah5);
 
+        H5File kernelh5 = new H5File(Constants.KERNEL_FILE, H5File.H5F_ACC_TRUNC);
         LOGGER.info("creating kernel dataset");
         DataSet kernelds = createKernelDataSet(kernelh5, data.size());
 

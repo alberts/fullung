@@ -23,10 +23,12 @@ public final class Evaluation2 {
                     DataSet dataset = h5file.getRootGroup().openDataSet(name);
                     dataset.close();
                 }
-                for (Segment segment : model.getTest()) {
-                    name = segment.getHDFName();
-                    DataSet dataset = h5file.getRootGroup().openDataSet(name);
-                    dataset.close();
+                if (model.getTest() != null) {
+                    for (Segment segment : model.getTest()) {
+                        name = segment.getHDFName();
+                        DataSet dataset = h5file.getRootGroup().openDataSet(name);
+                        dataset.close();
+                    }
                 }
             } catch (H5Exception e) {
                 LOGGER.error("Dataset for " + name + " doesn't exist", e);

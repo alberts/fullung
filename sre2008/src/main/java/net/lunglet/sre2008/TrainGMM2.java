@@ -13,14 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import net.lunglet.array4j.Direction;
-import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
-import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.gmm.DiagCovGMM;
-import net.lunglet.gridgain.DefaultGrid;
+import net.lunglet.gridgain.LocalGrid;
 import net.lunglet.gridgain.ResultListener;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.H5File;
@@ -44,6 +41,8 @@ public final class TrainGMM2 {
 
         private static final long serialVersionUID = 1L;
 
+        // XXX looks like a potential place for cache line ping pong
+        // XXX each thread should probably copy the UBM before doing work?
         private static final JMapGMM UBM;
 
         static {
@@ -52,9 +51,9 @@ public final class TrainGMM2 {
             TrainGMM.checkGMM(ubm);
             UBM = Converters.convert(ubm);
             if (true) {
-                String umatFile = "Z:/data/lptfc512.niko/fcu.h5";
+                String umatFile = "Z:/data/channel.h5";
                 HDFReader reader = new HDFReader(umatFile);
-                int dim = 512 * 38;
+                int dim = 512 * 79;
                 int k = 40;
                 FloatDenseMatrix channelSpace = DenseFactory.floatRowDirect(new int[]{dim, k});
                 reader.read("/U", channelSpace);
@@ -132,6 +131,8 @@ public final class TrainGMM2 {
         }
 
         private FloatDenseMatrix readData() {
+            // XXX had issues here with dataspace closes failing before HDF
+            // classes were changed to synchronize access to H5Library.INSTANCE
             H5File h5file = new H5File(datah5);
             HDFReader reader = new HDFReader(h5file);
             DataSet dataset = h5file.getRootGroup().openDataSet(name);
@@ -177,12 +178,15 @@ public final class TrainGMM2 {
         final String datah5;
         final String gmmFile;
         if (false) {
-            datah5 = Constants.BACKGROUND_DATA;
-            gmmFile = Constants.BACKGROUND_GMM;
+            datah5 = Constants.SVM_BACKGROUND_DATA;
+            gmmFile = Constants.SVM_BACKGROUND_GMM;
         } else if (false) {
             datah5 = Constants.EVAL_DATA;
             gmmFile = Constants.EVAL_GMM;
         } else if (false) {
+            datah5 = Constants.NAP_DATA;
+            gmmFile = Constants.NAP_GMM;
+        } else if (true) {
             datah5 = Constants.TNORM_DATA;
             gmmFile = Constants.TNORM_GMM;
         } else {
@@ -191,6 +195,7 @@ public final class TrainGMM2 {
 
         List<String> names = TrainGMM.getNames(datah5);
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
+//        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_RDWR);
 
         List<Task> tasks = new ArrayList<Task>();
         for (String name : names) {
@@ -201,26 +206,17 @@ public final class TrainGMM2 {
             tasks.add(task);
         }
 
+        LOGGER.info("{} GMM training tasks to do", tasks.size());
+
         final HDFWriter writer = new HDFWriter(gmmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {
             @Override
             public void onResult(final Result result) {
-                LOGGER.info("Received GMM for {}", result.getName());
-                // XXX synchronize here to avoid problems with multiple threads
-                // calling into resultListener at the same time
-                synchronized (H5File.class) {
-                    String name = result.getName();
-                    String groupName = name.split("/")[1];
-                    if (!gmmh5.getRootGroup().existsGroup(groupName)) {
-                        gmmh5.getRootGroup().createGroup(groupName);
-                    }
-                    float[] model = result.getModel();
-                    FloatDenseVector v = DenseFactory.floatVector(model, Direction.ROW, Storage.DIRECT);
-                    writer.write(result.getName(), v);
-                }
+                // TODO result are going missing
+                TrainGMM.writeResult(gmmh5, writer, result);
             }
         };
-        new DefaultGrid<Result>(tasks, resultListener).run();
+        new LocalGrid<Result>(tasks, resultListener).run();
         writer.close();
     }
 }

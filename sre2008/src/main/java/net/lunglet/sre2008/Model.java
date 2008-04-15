@@ -1,6 +1,7 @@
 package net.lunglet.sre2008;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,15 @@ public final class Model {
         this.trainCondition = trainCondition;
         this.train = Collections.unmodifiableList(new ArrayList<Segment>(train));
         this.testCondition = testCondition;
-        this.test = Collections.unmodifiableList(new ArrayList<Trial>(test));
+        if (test != null) {
+            this.test = Collections.unmodifiableList(new ArrayList<Trial>(test));
+        } else {
+            this.test = null;
+        }
+    }
+
+    public Model(final String id, final Segment trainSegment) {
+        this(id, null, null, Arrays.asList(trainSegment), null, null);
     }
 
     public Gender getGender() {

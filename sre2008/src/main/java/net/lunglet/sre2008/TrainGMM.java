@@ -16,7 +16,7 @@ import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.gmm.DiagCovGMM;
 import net.lunglet.gmm.GMMUtils;
-import net.lunglet.gridgain.DefaultGrid;
+import net.lunglet.gridgain.LocalGrid;
 import net.lunglet.gridgain.ResultListener;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.Group;
@@ -73,16 +73,20 @@ public final class TrainGMM {
         }
 
         private FloatDenseMatrix readData() {
-            H5File h5file = new H5File(datah5);
-            HDFReader reader = new HDFReader(h5file);
-            DataSet dataset = h5file.getRootGroup().openDataSet(name);
-            int[] dims = dataset.getIntDims();
-            dataset.close();
-            FloatDenseMatrix data = DenseFactory.floatRowDirect(dims);
-            LOGGER.info("Loaded data from {} {}", name, Arrays.toString(dims));
-            reader.read(name, data);
-            reader.close();
-            return data;
+            synchronized (H5File.class) {
+                H5File h5file = new H5File(datah5);
+                // TODO only open one reader per node
+                HDFReader reader = new HDFReader(h5file);
+                DataSet dataset = h5file.getRootGroup().openDataSet(name);
+                int[] dims = dataset.getIntDims();
+                dataset.close();
+                // TODO read into heap buffer to avoid direct buffer issues
+                FloatDenseMatrix data = DenseFactory.floatRowDirect(dims);
+                LOGGER.info("Loaded data from {} {}", name, Arrays.toString(dims));
+                reader.read(name, data);
+                reader.close();
+                return data;
+            }
         }
     }
 
@@ -144,6 +148,13 @@ public final class TrainGMM {
         List<String> names = new ArrayList<String>();
         H5File h5file = new H5File(h5);
         for (Group group : h5file.getRootGroup().getGroups()) {
+            for (Group group2 : group.getGroups()) {
+                for (DataSet ds : group2.getDataSets()) {
+                    names.add(ds.getName());
+                    ds.close();
+                }
+                group2.close();
+            }
             for (DataSet ds : group.getDataSets()) {
                 names.add(ds.getName());
                 ds.close();
@@ -155,16 +166,44 @@ public final class TrainGMM {
         return names;
     }
 
+    public static final void writeResult(final H5File gmmh5, final HDFWriter writer, final Result result) {
+        LOGGER.info("Received GMM for {}", result.getName());
+        String name = result.getName();
+        String[] parts = name.split("/");
+        // this still has to be synchronized to prevent multiple threads calling
+        // the result listeners from trying to create groups that already exist
+        synchronized (TrainGMM.class) {
+            for (int i = 1; i < parts.length - 1; i++) {
+                StringBuilder pathBuilder = new StringBuilder();
+                pathBuilder.append("/");
+                for (int j = 1; j <= i; j++) {
+                    pathBuilder.append(parts[j]);
+                    if (j < i) {
+                        pathBuilder.append("/");
+                    }
+                }
+                String path = pathBuilder.toString();
+                if (!gmmh5.getRootGroup().existsGroup(path)) {
+                    LOGGER.info("Creating group {}", path);
+                    gmmh5.getRootGroup().createGroup(path);
+                }
+            }
+        }
+        float[] model = result.getModel();
+        FloatDenseVector v = DenseFactory.floatVector(model, Direction.ROW, Storage.DIRECT);
+        writer.write(result.getName(), v);
+    }
+
     public static void main(final String[] args) throws Exception {
         final String datah5;
         final String gmmFile;
         if (false) {
-            datah5 = Constants.BACKGROUND_DATA;
-            gmmFile = Constants.BACKGROUND_GMM;
+            datah5 = Constants.SVM_BACKGROUND_DATA;
+            gmmFile = Constants.SVM_BACKGROUND_GMM;
         } else if (false) {
             datah5 = Constants.EVAL_DATA;
             gmmFile = Constants.EVAL_GMM;
-        } else if (false) {
+        } else if (true) {
             datah5 = Constants.TNORM_DATA;
             gmmFile = Constants.TNORM_GMM;
         } else {
@@ -172,6 +211,7 @@ public final class TrainGMM {
         }
 
         List<String> names = getNames(datah5);
+        LOGGER.info("Training {} GMM models", names.size());
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
         List<Task> tasks = new ArrayList<Task>();
         for (String name : names) {
@@ -186,22 +226,11 @@ public final class TrainGMM {
         ResultListener<Result> resultListener = new ResultListener<Result>() {
             @Override
             public void onResult(final Result result) {
-                LOGGER.info("Received GMM for {}", result.getName());
-                // XXX synchronize here to avoid problems with multiple threads
-                // calling into resultListener at the same time
-                synchronized (H5File.class) {
-                    String name = result.getName();
-                    String groupName = name.split("/")[1];
-                    if (!gmmh5.getRootGroup().existsGroup(groupName)) {
-                        gmmh5.getRootGroup().createGroup(groupName);
-                    }
-                    float[] model = result.getModel();
-                    FloatDenseVector v = DenseFactory.floatVector(model, Direction.ROW, Storage.DIRECT);
-                    writer.write(result.getName(), v);
-                }
+                writeResult(gmmh5, writer, result);
             }
         };
-        new DefaultGrid<Result>(tasks, resultListener).run();
+        new LocalGrid<Result>(tasks, resultListener).run();
+        // TODO close all output files before doing any kind of shutdown
         writer.close();
     }
 }

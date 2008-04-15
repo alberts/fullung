@@ -115,8 +115,11 @@ public final class YAMFCCBuilder {
     private static void checkMFCC(final float[][] mfcc) {
         AssertUtils.assertTrue(mfcc.length > 0);
         for (int i = 0; i < mfcc.length; i++) {
-//            AssertUtils.assertEquals(38, mfcc[i].length);
-            AssertUtils.assertEquals(79, mfcc[i].length);
+            if (false) {
+                AssertUtils.assertEquals(38, mfcc[i].length);
+            } else {
+                AssertUtils.assertEquals(79, mfcc[i].length);
+            }
             for (int j = 0; j < mfcc[i].length; j++) {
                 float v = mfcc[i][j];
                 AssertUtils.assertFalse(Float.isInfinite(v));

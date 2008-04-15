@@ -6,7 +6,27 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class Segment {
     private final int channel;
 
+    private final String hdfName;
+
     private final String name;
+
+    public Segment(final String hdfName) {
+        this.hdfName = hdfName;
+        String[] parts = hdfName.split("/");
+        StringBuilder nameBuilder = new StringBuilder();
+        nameBuilder.append("/");
+        for (int i = 1; i < parts.length - 1; i++) {
+            nameBuilder.append(parts[i]);
+            if (i < parts.length - 2) {
+                nameBuilder.append("/");
+            }
+        }
+        this.name = nameBuilder.toString();
+        this.channel = Integer.parseInt(parts[parts.length - 1]);
+        if (this.channel != 0 && this.channel != 1) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     public Segment(final String name, final int channel) {
         if (channel != 0 && channel != 1) {
@@ -14,6 +34,7 @@ public class Segment {
         }
         this.name = name;
         this.channel = channel;
+        this.hdfName = "/" + this.name + "/" + this.channel;
     }
 
     public Segment(final String name, final String channel) {
@@ -25,6 +46,7 @@ public class Segment {
         } else {
             throw new IllegalArgumentException("invalid channel");
         }
+        this.hdfName = "/" + this.name + "/" + this.channel;
     }
 
     @Override
@@ -44,7 +66,7 @@ public class Segment {
     }
 
     public final String getHDFName() {
-        return "/" + name + "/" + channel;
+        return hdfName;
     }
 
     public final String getName() {
@@ -58,6 +80,6 @@ public class Segment {
 
     @Override
     public String toString() {
-        return name + ":" + channel;
+        return name + ":" + channel + " -> " + hdfName;
     }
 }
