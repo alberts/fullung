@@ -51,7 +51,7 @@ public final class TrainGMM2 {
             TrainGMM.checkGMM(ubm);
             UBM = Converters.convert(ubm);
             if (true) {
-                String umatFile = "Z:/data/channel.h5";
+                String umatFile = "Z:/data/tnorm79/channel.h5";
                 HDFReader reader = new HDFReader(umatFile);
                 int dim = 512 * 79;
                 int k = 40;
@@ -134,7 +134,8 @@ public final class TrainGMM2 {
             // XXX had issues here with dataspace closes failing before HDF
             // classes were changed to synchronize access to H5Library.INSTANCE
             H5File h5file = new H5File(datah5);
-            HDFReader reader = new HDFReader(h5file);
+            // use a zero buffer because no heap reads are being done
+            HDFReader reader = new HDFReader(h5file, 0);
             DataSet dataset = h5file.getRootGroup().openDataSet(name);
             int[] dims = dataset.getIntDims();
             dataset.close();
@@ -178,15 +179,15 @@ public final class TrainGMM2 {
         final String datah5;
         final String gmmFile;
         if (false) {
-            datah5 = Constants.SVM_BACKGROUND_DATA;
-            gmmFile = Constants.SVM_BACKGROUND_GMM;
-        } else if (false) {
             datah5 = Constants.EVAL_DATA;
             gmmFile = Constants.EVAL_GMM;
         } else if (false) {
+            datah5 = Constants.SVM_BACKGROUND_DATA;
+            gmmFile = Constants.SVM_BACKGROUND_GMM;
+        } else if (false) {
             datah5 = Constants.NAP_DATA;
             gmmFile = Constants.NAP_GMM;
-        } else if (true) {
+        } else if (false) {
             datah5 = Constants.TNORM_DATA;
             gmmFile = Constants.TNORM_GMM;
         } else {
@@ -197,14 +198,20 @@ public final class TrainGMM2 {
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
 //        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_RDWR);
 
+        H5File mfcch5 = new H5File(datah5);
         List<Task> tasks = new ArrayList<Task>();
         for (String name : names) {
             if (gmmh5.getRootGroup().existsDataSet(name)) {
                 continue;
             }
+            if (!mfcch5.getRootGroup().existsDataSet(name)) {
+                LOGGER.error("{} is missing", name);
+                System.exit(1);
+            }
             Task task = new Task(name, datah5);
             tasks.add(task);
         }
+        mfcch5.close();
 
         LOGGER.info("{} GMM training tasks to do", tasks.size());
 

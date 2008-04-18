@@ -76,7 +76,8 @@ public final class TrainGMM {
             synchronized (H5File.class) {
                 H5File h5file = new H5File(datah5);
                 // TODO only open one reader per node
-                HDFReader reader = new HDFReader(h5file);
+                // use a zero buffer because no heap reads are being done
+                HDFReader reader = new HDFReader(h5file, 0);
                 DataSet dataset = h5file.getRootGroup().openDataSet(name);
                 int[] dims = dataset.getIntDims();
                 dataset.close();

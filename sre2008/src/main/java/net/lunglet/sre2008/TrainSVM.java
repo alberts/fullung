@@ -166,12 +166,15 @@ public final class TrainSVM {
 
             // Z-Norm using background data (might need other data)
             if (false) {
-                float meanScore = 0.0f;
-                for (int i = 0; i < scores.length - 1; i++) {
-                    meanScore += (scores[i] - meanScore) / (i + 1);
+                double[] params = Evaluation.getTNormParams(scores);
+                double mean = params[0];
+                double stddev = params[1];
+                double rho = model.get(model.length() - 1);
+                model.set(model.length() - 1, (float) (rho + mean));
+                // scale model by 1/stddev
+                for (int i = 0; i < model.length(); i++) {
+                    model.set(i, (float) (model.get(i) / stddev));
                 }
-                float rho = model.get(model.length() - 1);
-                model.set(model.length() - 1, rho + meanScore);
             }
 
             return new Result(modelId, model);
@@ -295,11 +298,11 @@ public final class TrainSVM {
         final List<Model> models;
         final String gmmFile;
         final String svmFile;
-        if (false) {
+        if (true) {
             models = Evaluation2.readModels(Constants.EVAL_FILE);
             gmmFile = Constants.EVAL_GMM;
             svmFile = Constants.EVAL_SVM;
-        } else if (true) {
+        } else if (false) {
             gmmFile = Constants.TNORM_GMM;
             models = new ArrayList<Model>();
             int i = 0;

@@ -43,7 +43,8 @@ def submit_job(filename, channel, channels):
         'soxeffect' : soxeffect,
         'jobname' : jobname,
         'filename' : filename,
-        'mlffilename' : mlffilename
+        'mlffilename' : mlffilename,
+	'channelp1' : channel + 1
         }
     jobscript = """#$ -N %(jobname)s
 #$ -j y
@@ -56,14 +57,18 @@ echo $TMPDIR
 cd "$TMPDIR"
 PHNRECHOME=/opt/phnrec
 PHNRECEXE=$PHNRECHOME/phnrec
+SPH2PIPE=$PHNRECHOME/sph2pipe
 PHNRECCFG=$PHNRECHOME/PHN_HU_SPDAT_LCRC_N1500
 cp -a "$PHNRECCFG" "$TMPDIR"
 RAW="$TMPDIR/temp.raw"
 MLF="$TMPDIR/temp.rec"
-/usr/bin/sox -V -t sph %(filename)s -t sw -c 1 $RAW %(soxeffect)s
+$SPH2PIPE -c %(channelp1)s -p -f raw %(filename)s $RAW
+#/usr/bin/sox -V -t sph %(filename)s -t sw -c 1 $RAW %(soxeffect)s
 $PHNRECEXE -v -c "$TMPDIR/PHN_HU_SPDAT_LCRC_N1500" -i $RAW -m $MLF -w lin16 -s wf -t str
 cp -v $MLF %(mlffilename)s
 """  % params
+    #print jobscript
+    #import sys; sys.exit(1)
     really_submit(jobscript)
 
 def main():
@@ -86,6 +91,10 @@ def main():
         channels = get_channels(filename)
         for i in xrange(channels):
             job = filename, i, channels
+            mlffilename = '%s.%d.mlf' % (filename, i)
+            if os.path.exists(mlffilename):
+                print 'skipping %s, channel %d' % (filename, i)
+		continue
             submit_job(*job)
 
 if __name__ == '__main__':

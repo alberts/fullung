@@ -3,7 +3,6 @@ package net.lunglet.sre2008;
 import com.dvsoft.sv.toolbox.gmm.EigenMapTrain;
 import com.dvsoft.sv.toolbox.gmm.FrameLvlBgr;
 import com.dvsoft.sv.toolbox.gmm.JMapGMM;
-import com.dvsoft.sv.toolbox.gmm.SuperVector;
 import com.dvsoft.sv.toolbox.matrix.JMatrix;
 import com.dvsoft.sv.toolbox.matrix.JVector;
 import com.dvsoft.sv.toolbox.matrix.JVectorSequence;
@@ -15,10 +14,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.gmm.DiagCovGMM;
+import net.lunglet.gmm.GMMUtils;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
@@ -29,10 +35,12 @@ import net.lunglet.sre2008.util.Converters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO make number of threads and other stuff configurable using Spring
+
 public class ExtractAitken {
     private static final String CHANNEL_FILE = "Z:/data/tnorm79/channel.h5";
 
-    private static final String EVAL_FILE = "C:/home/albert/SRE2008/scripts/sre05-1conv4w_1conv4w.txt";
+    private static final String EVAL_FILE = "Z:/scripts/sre05-1conv4w_1conv4w.txt";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractAitken.class);
 
@@ -56,7 +64,28 @@ public class ExtractAitken {
         }
     }
 
-    public static void main(final String[] args) throws IOException {
+    private static Future<?> submitWork(final ExecutorService executorService, final JMapGMM ubm, final JMatrix u,
+            final String inputName, final HDFReader reader, final String outputName, final HDFWriter writer) {
+        // TODO do a benchmark where each thread has its own copy of ubm and u
+        return executorService.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                final JVectorSequence data;
+                synchronized (reader) {
+                    data = readData(reader, inputName);
+                }
+                double[][] result = train(ubm, u, data);
+                FloatVector n = DenseFactory.floatVector(result[0]);
+                FloatVector ex = DenseFactory.floatVector(result[1]);
+                synchronized (writer) {
+                    write(writer, outputName, n, ex);
+                }
+                return null;
+            }
+        });
+    }
+
+    public static void main(final String[] args) throws IOException, InterruptedException {
         LOGGER.info("Reading evaluation from {}", EVAL_FILE);
         List<Model> models = new ArrayList<Model>();
         for (Model model : Evaluation2.readModels(EVAL_FILE)) {
@@ -104,34 +133,36 @@ public class ExtractAitken {
         evalWriter.close();
 
         HDFWriter writer = new HDFWriter("aitken.h5");
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        List<Future<?>> futures = new ArrayList<Future<?>>();
         for (Model model : models) {
             Segment segment = model.getTrain().get(0);
-            String hdfName = segment.getHDFName();
-            JVectorSequence data = readData(mfccReader, hdfName);
-            double[][] result = train(ubm, u, data);
-            FloatVector n = DenseFactory.floatVector(result[0]);
-            FloatVector ex = DenseFactory.floatVector(result[1]);
-            String name = "/" + model.getId();
-            write(writer, name, n, ex);
-            break;
+            String inputName = segment.getHDFName();
+            String outputName = "/" + model.getId();
+            futures.add(submitWork(executorService, ubm, u, inputName, mfccReader, outputName, writer));
         }
         for (Trial trial : trials) {
-            String hdfName = trial.getHDFName();
-            JVectorSequence data = readData(mfccReader, hdfName);
-            double[][] result = train(ubm, u, data);
-            FloatVector n = DenseFactory.floatVector(result[0]);
-            FloatVector ex = DenseFactory.floatVector(result[1]);
-            String name = "/" + trial.getName() + "/" + trial.getChannel();
-            write(writer, name, n, ex);
-            break;
+            String inputName = trial.getHDFName();
+            String outputName = "/" + trial.getName() + "/" + trial.getChannel();
+            futures.add(submitWork(executorService, ubm, u, inputName, mfccReader, outputName, writer));
+        }
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (ExecutionException e) {
+                LOGGER.error("Execution failed", e);
+            }
         }
         mfccReader.close();
         writer.close();
 
-        LOGGER.info("Extraction complete");
+        LOGGER.info("Extraction complete. Shutting down.");
+        executorService.shutdown();
+        executorService.awaitTermination(0L, TimeUnit.MILLISECONDS);
     }
 
     private static Model pruneTrials(final Model model) {
+        // XXX do everything for now and just filter the trial list
         return model;
     }
 
@@ -147,7 +178,10 @@ public class ExtractAitken {
 
     private static JMapGMM readUBM() {
         DiagCovGMM ubm = IOUtils.readDiagCovGMM(UBM_FILE);
-        TrainGMM.checkGMM(ubm);
+        if (!GMMUtils.isGMMParametersFinite(ubm)) {
+            LOGGER.error("GMM contains invalid parameters");
+            throw new RuntimeException();
+        }
         return Converters.convert(ubm);
     }
 
@@ -164,18 +198,12 @@ public class ExtractAitken {
     private static double[][] train(final JMapGMM ubm, final JMatrix u, final JVectorSequence data) {
         LOGGER.info("Evaluating frame level background on UBM");
         FrameLvlBgr bgr = ubm.evalFrameLvlBgr(data);
-        LOGGER.info("Training channel compensation");
-        EigenMapTrain channelTrain = new EigenMapTrain(u, ubm);
-        channelTrain.setData(data, bgr);
-        channelTrain.channelEMIteration();
-        SuperVector ux = channelTrain.getFeatureUx();
-        LOGGER.info("Collecting sufficient statistics");
-        EigenMapTrain speakerTrain = new EigenMapTrain(null, ubm);
-        speakerTrain.setData(data, bgr);
-        speakerTrain.calcPosteriors();
-        double[] n = speakerTrain.getN();
-        SuperVector origex = speakerTrain.dataExpectation();
-        JVector ex = origex.minus(ux);
+        LOGGER.info("Channel adapting sufficient statistics");
+        EigenMapTrain train = new EigenMapTrain(u, ubm);
+        train.setData(data, bgr);
+        JVector ex = train.sufficientStatsChannelAdapt();
+        // get n after doing channel adaptation
+        double[] n = train.getN();
         return new double[][]{n, ex.transpose().toDoubleArray()[0]};
     }
 

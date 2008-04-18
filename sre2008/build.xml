@@ -45,12 +45,6 @@
   </target>
 
   <target name="compile-sre2008" depends="compile-array4j">
-    <copy todir="${classes.dir}">
-      <fileset dir="${resources.dir}">
-        <include name="**/*" />
-        <exclude name="cz/vutbr/fit/speech/phnrec/**/*" />
-      </fileset>
-    </copy>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
       <classpath refid="build.classpath" />
       <patternset refid="java.src.pattern" />
@@ -76,6 +70,10 @@
       <fileset dir="${classes.dir}" />
       <fileset dir="${src.dir}" />
       <fileset dir="${array4j.src.dir}" />
+      <fileset dir="${resources.dir}">
+        <include name="**/*" />
+        <exclude name="cz/vutbr/fit/speech/phnrec/**/*" />
+      </fileset>
       <zipfileset src="${array4j.lib.dir}/blas.jar" />
       <zipfileset src="${array4j.lib.dir}/f2jutil.jar" />
       <zipfileset src="${array4j.lib.dir}/lapack.jar" />

@@ -24,7 +24,7 @@ public final class Evaluation {
 
     private static final int SVM_MODEL_DIM = Constants.GMM_DIMENSION + 1;
 
-    private static double[] getTNormParams(final float[] tnormScores) {
+    public static double[] getTNormParams(final float[] tnormScores) {
         double n = 0.0;
         double mean = 0.0;
         double s = 0.0;
@@ -41,7 +41,7 @@ public final class Evaluation {
     }
 
     public static void main(final String[] args) throws IOException {
-        FloatDenseMatrix tnormModels = readTNorm();
+        FloatDenseMatrix tnormModels = readTNorm(Constants.TNORM_SVM, SVM_MODEL_DIM);
 
         H5File datah5 = new H5File(Constants.EVAL_GMM);
         H5File svmh5 = new H5File(Constants.EVAL_SVM);
@@ -65,10 +65,10 @@ public final class Evaluation {
         outputWriter.close();
     }
 
-    private static FloatDenseMatrix readTNorm() {
-        H5File tnormh5 = new H5File(Constants.TNORM_SVM);
+    public static FloatDenseMatrix readTNorm(final String tnormSvmFile, final int dim) {
+        H5File tnormh5 = new H5File(tnormSvmFile);
         Set<String> tnormNames = tnormh5.getRootGroup().getDataSetNames();
-        int[] dims = {tnormNames.size(), SVM_MODEL_DIM};
+        int[] dims = {tnormNames.size(), dim};
         FloatDenseMatrix tnormModels = DenseFactory.floatRowDirect(dims);
         HDFReader reader = new HDFReader(tnormh5);
         int i = 0;
@@ -81,6 +81,7 @@ public final class Evaluation {
 
     public static List<String> score(final Model model, final FloatVector speakerModel, final H5File datah5,
             final FloatDenseMatrix tnormModels, final Map<String, double[]> tnormCache) {
+        // TODO don't construct a reader each time
         HDFReader reader = new HDFReader(datah5);
         FloatDenseVector x = DenseFactory.floatColumnDirect(speakerModel.length());
         FloatDenseVector buf = DenseFactory.floatColumnDirect(speakerModel.length() - 1);
