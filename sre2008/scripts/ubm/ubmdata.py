@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# TODO support stereo data like SRE05
+
 from StringIO import StringIO
 import os.path
 import sys
@@ -19,7 +21,7 @@ def map_files(eval):
     for filename in filenames:
         basename = os.path.splitext(os.path.basename(filename))[0]
         filemap[basename] = filename
-    return filemap    
+    return filemap
 
 def read_mlf(mlffile):
     lines = open(mlffile).readlines()
