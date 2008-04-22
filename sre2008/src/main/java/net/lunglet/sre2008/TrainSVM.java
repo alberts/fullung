@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class TrainSVM {
-    private static final class HDFHandle implements Handle, Serializable {
+    public static final class HDFHandle implements Handle, Serializable {
         private static final long serialVersionUID = 1L;
 
         private transient FloatDenseVector data;
@@ -51,6 +51,8 @@ public final class TrainSVM {
         private final int label;
 
         private final String name;
+
+        private static final HDFReader READER = new HDFReader(16 * 1024 * 1024);
 
         public HDFHandle(final String h5, final String name, final int index, final int label) {
             this.h5 = h5;
@@ -66,18 +68,17 @@ public final class TrainSVM {
                 return data;
             }
             H5File h5file = new H5File(h5);
-            HDFReader reader = new HDFReader(h5file);
             DataSet dataset = h5file.getRootGroup().openDataSet(name);
             int[] dims = dataset.getIntDims();
             dataset.close();
             if (dims.length > 2 || (dims.length == 2 && dims[0] > 1 && dims[1] > 1)) {
                 throw new RuntimeException();
             }
-            // XXX can't use direct buffers for all this stuff
-            data = DenseFactory.floatRowDirect(ArrayMath.max(dims));
-            LOGGER.info("Loading background data from {} {}", name, Arrays.toString(dims));
-            reader.read(name, data);
-            reader.close();
+            data = DenseFactory.floatRow(ArrayMath.max(dims));
+            LOGGER.debug("Loading background data from {} {}", name, Arrays.toString(dims));
+            // access to this reader is synchronized, as it should be
+            READER.read(h5file, name, data);
+            h5file.close();
             return data;
         }
 
@@ -165,16 +166,14 @@ public final class TrainSVM {
             }
 
             // Z-Norm using background data (might need other data)
-            if (false) {
-                double[] params = Evaluation.getTNormParams(scores);
-                double mean = params[0];
-                double stddev = params[1];
-                double rho = model.get(model.length() - 1);
-                model.set(model.length() - 1, (float) (rho + mean));
-                // scale model by 1/stddev
-                for (int i = 0; i < model.length(); i++) {
-                    model.set(i, (float) (model.get(i) / stddev));
-                }
+            double[] params = Evaluation.getParams(scores);
+            double mean = params[0];
+            double stddev = params[1];
+            double rho = model.get(model.length() - 1);
+            model.set(model.length() - 1, (float) (rho + mean));
+            // scale model by 1/stddev
+            for (int i = 0; i < model.length(); i++) {
+                model.set(i, (float) (model.get(i) / stddev));
             }
 
             return new Result(modelId, model);

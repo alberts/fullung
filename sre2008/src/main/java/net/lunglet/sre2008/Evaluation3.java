@@ -19,12 +19,12 @@ import net.lunglet.io.HDFReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Evaluation {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Evaluation.class);
+public final class Evaluation3 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Evaluation3.class);
 
     private static final int SVM_MODEL_DIM = Constants.GMM_DIMENSION + 1;
 
-    public static double[] getParams(final float[] tnormScores) {
+    public static double[] getTNormParams(final float[] tnormScores) {
         double n = 0.0;
         double mean = 0.0;
         double s = 0.0;
@@ -41,27 +41,28 @@ public final class Evaluation {
     }
 
     public static void main(final String[] args) throws IOException {
-        FloatDenseMatrix tnormModels = readTNorm(Constants.TNORM_SVM, SVM_MODEL_DIM);
-
-        H5File datah5 = new H5File(Constants.EVAL_GMM);
-        H5File svmh5 = new H5File(Constants.EVAL_SVM);
-        HDFReader svmReader = new HDFReader(svmh5);
+        FloatDenseMatrix tnormModels = readTNorm("tnorm.h5", SVM_MODEL_DIM);
+        H5File evalh5 = new H5File("eval05.h5");
+        HDFReader svmReader = new HDFReader(evalh5);
         String evalFile = Constants.EVAL_FILE;
         List<Model> models = Evaluation2.readModels(evalFile);
-
         Map<String, double[]> tnormCache = new HashMap<String, double[]>();
-
         BufferedWriter outputWriter = new BufferedWriter(new FileWriter("eval.txt"));
         for (Model model : models) {
             FloatDenseVector speakerModel = DenseFactory.floatRowDirect(SVM_MODEL_DIM);
-            svmReader.read("/" + model.getId(), speakerModel);
-            List<String> output = score(model, speakerModel, datah5, tnormModels, tnormCache);
+            if (false) {
+                svmReader.read("/" + model.getId() + "/svm", speakerModel);
+            } else {
+                String hdfName = model.getTrain().get(0).getHDFName();
+                svmReader.read(hdfName + "/svm", speakerModel);
+            }
+            List<String> output = score(model, speakerModel, evalh5, tnormModels, tnormCache);
             for (String line : output) {
                 outputWriter.write(line);
                 outputWriter.write("\n");
             }
         }
-        svmReader.close();
+        evalh5.close();
         outputWriter.close();
     }
 
@@ -79,17 +80,17 @@ public final class Evaluation {
         return tnormModels;
     }
 
-    public static List<String> score(final Model model, final FloatVector speakerModel, final H5File datah5,
+    public static List<String> score(final Model model, final FloatVector speakerModel, final H5File evalh5,
             final FloatDenseMatrix tnormModels, final Map<String, double[]> tnormCache) {
         // TODO don't construct a reader each time
-        HDFReader reader = new HDFReader(datah5);
+        HDFReader reader = new HDFReader(evalh5);
         FloatDenseVector x = DenseFactory.floatColumnDirect(speakerModel.length());
         FloatDenseVector buf = DenseFactory.floatColumnDirect(speakerModel.length() - 1);
         List<String> output = new ArrayList<String>();
         for (Trial trial : model.getTest()) {
             // read trial data into buffer and prepare vector for scoring using
             // a single dot product or gemv
-            reader.read(trial.getHDFName(), buf);
+            reader.read(trial.getHDFName() + "/gmm", buf);
             FloatBuffer xdata = x.data();
             xdata.put(buf.data());
             xdata.put(-1.0f);
@@ -106,7 +107,7 @@ public final class Evaluation {
                     tnormParams = tnormCache.get(trial.getHDFName());
                 } else {
                     float[] tnormScores = FloatMatrixMath.times(tnormModels, x).toArray();
-                    tnormParams = getParams(tnormScores);
+                    tnormParams = getTNormParams(tnormScores);
                     tnormCache.put(trial.getHDFName(), tnormParams);
                 }
                 double mean = tnormParams[0];

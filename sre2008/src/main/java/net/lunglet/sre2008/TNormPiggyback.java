@@ -45,7 +45,7 @@ public final class TNormPiggyback {
         private final double variance;
 
         public TNormStats(final float[] scores) {
-            double[] params = Evaluation.getTNormParams(scores);
+            double[] params = Evaluation.getParams(scores);
             this.mean = params[0];
             this.stddev = params[1];
             this.variance = stddev * stddev;

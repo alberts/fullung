@@ -49,6 +49,7 @@ public final class YAMFCCBuilder2 {
 
         @Override
         public Void call() throws Exception {
+            // TODO make suffix configurable
             String mfccFilename = filename + ".mfcc.h5";
             HDFWriter writer = null;
             try {

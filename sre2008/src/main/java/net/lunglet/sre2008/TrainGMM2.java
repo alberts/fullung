@@ -51,7 +51,7 @@ public final class TrainGMM2 {
             TrainGMM.checkGMM(ubm);
             UBM = Converters.convert(ubm);
             if (true) {
-                String umatFile = "Z:/data/tnorm79/channel.h5";
+                String umatFile = "Z:/data/nap512v2/channel.h5";
                 HDFReader reader = new HDFReader(umatFile);
                 int dim = 512 * 79;
                 int k = 40;
@@ -196,7 +196,6 @@ public final class TrainGMM2 {
 
         List<String> names = TrainGMM.getNames(datah5);
         final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
-//        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_RDWR);
 
         H5File mfcch5 = new H5File(datah5);
         List<Task> tasks = new ArrayList<Task>();

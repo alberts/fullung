@@ -33,23 +33,26 @@ public final class Constants {
         /*
          * SVM background and TNorm data should not overlap
          */
+        GMM_DIMENSION = 512 * 38;
         if (true) {
-//            EVAL_FILE = "C:\\home\\albert\\SRE2008\\scripts\\sre05-1conv4w_1conv4w.txt";
-//            EVAL_DATA = "Z:\\data\\sre05_1conv4w_1conv4w_mfcc2_79.h5";
+            EVAL_FILE = "C:\\home\\albert\\SRE2008\\scripts\\sre05-1conv4w_1conv4w.txt";
+            EVAL_DATA = "C:\\home\\albert\\SRE2008\\data\\sre05_mfcc.h5";
+            EVAL_GMM = "C:\\home\\albert\\SRE2008\\data\\sre05_gmm.h5";
+            EVAL_SVM = "C:\\home\\albert\\SRE2008\\data\\sre05_svm.h5";
+        } else {
             EVAL_FILE = "C:\\home\\albert\\SRE2008\\scripts\\sre06-1conv4w_1conv4w.txt";
-            EVAL_DATA = "Z:\\data\\tnorm79\\sre06_1conv4w_1conv4w_mfcc2_79.h5";
-            EVAL_GMM = "C:\\home\\albert\\SRE2008\\data\\eval_gmm.h5";
-            EVAL_SVM = "C:\\home\\albert\\SRE2008\\data\\eval_svm.h5";
-            GMM_DIMENSION = 512 * 79;
-            KERNEL_FILE = "Z:\\data\\tnorm79\\kernel.h5";
-            NAP_DATA = "Z:\\data\\tnorm79\\nap_mfcc2_79.h5";
-            NAP_GMM = "Z:\\data\\tnorm79\\nap_gmm.h5";
-            SVM_BACKGROUND_DATA = "Z:\\data\\tnorm79\\svm_background_mfcc2_79.h5";
-            SVM_BACKGROUND_GMM = "Z:\\data\\tnorm79\\svm_background_gmm.h5";
-            TNORM_DATA = "Z:\\data\\tnorm79\\tnorm_mfcc2_79.h5";
-            TNORM_GMM = "z:\\data\\tnorm79\\tnorm_gmm.h5";
-            TNORM_SVM = "z:\\data\\tnorm79\\tnorm_svm.h5";
-            UBM_FILE = "Z:\\data\\tnorm79\\ubm8_final_79_512.h5";
+            EVAL_DATA = "C:\\home\\albert\\SRE2008\\data\\sre06_mfcc.h5";
+            EVAL_GMM = "C:\\home\\albert\\SRE2008\\data\\sre06_gmm.h5";
+            EVAL_SVM = "C:\\home\\albert\\SRE2008\\data\\sre06_svm.h5";
         }
+        KERNEL_FILE = "C:\\home\\albert\\SRE2008\\data\\kernel.h5";
+        NAP_DATA = "C:\\home\\albert\\SRE2008\\data\\nap_mfcc.h5";
+        NAP_GMM = "C:\\home\\albert\\SRE2008\\data\\nap_gmm.h5";
+        SVM_BACKGROUND_DATA = "C:\\home\\albert\\SRE2008\\data\\svm_background_mfcc.h5";
+        SVM_BACKGROUND_GMM = "C:\\home\\albert\\SRE2008\\data\\svm_background_gmm.h5";
+        TNORM_DATA = "C:\\home\\albert\\SRE2008\\data\\tnorm_mfcc.h5";
+        TNORM_GMM = "C:\\home\\albert\\SRE2008\\data\\tnorm_gmm.h5";
+        TNORM_SVM = "C:\\home\\albert\\SRE2008\\data\\tnorm_svm.h5";
+        UBM_FILE = "C:\\home\\albert\\SRE2008\\data\\ubm_final_512.h5";
     }
 }

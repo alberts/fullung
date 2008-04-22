@@ -82,7 +82,7 @@ public final class TrainUBM9 {
     }
 
     private static void train(final DataCache2 dataCache, final ExecutorService executorService) {
-        int maxMixtures = 2048;
+        int maxMixtures = 512;
         int dim = 38;
         DiagCovGMM gmm;
         if (new File("origubm.h5").exists()) {

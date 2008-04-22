@@ -162,6 +162,10 @@ public final class TrainGMM {
             }
             group.close();
         }
+        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
+            names.add(ds.getName());
+            ds.close();
+        }
         h5file.close();
         Collections.sort(names);
         return names;
@@ -198,7 +202,7 @@ public final class TrainGMM {
     public static void main(final String[] args) throws Exception {
         final String datah5;
         final String gmmFile;
-        if (false) {
+        if (true) {
             datah5 = Constants.SVM_BACKGROUND_DATA;
             gmmFile = Constants.SVM_BACKGROUND_GMM;
         } else if (false) {
