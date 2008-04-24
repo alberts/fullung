@@ -26,6 +26,7 @@ import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.gmm.DiagCovGMM;
+import net.lunglet.gmm.GMMUtils;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
@@ -116,7 +117,10 @@ public final class TrainGMM3 {
     public static JMapGMM readUBM(final String ubmFilename) {
         LOGGER.info("Reading UBM from {}", ubmFilename);
         DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFilename);
-        TrainGMM.checkGMM(ubm);
+        if (!GMMUtils.isGMMParametersFinite(ubm)) {
+            LOGGER.error("GMM contains invalid parameters");
+            throw new RuntimeException();
+        }
         return Converters.convert(ubm);
     }
 

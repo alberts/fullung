@@ -20,7 +20,6 @@ import net.lunglet.array4j.matrix.packed.PackedFactory;
 import net.lunglet.gridgain.LocalGrid;
 import net.lunglet.gridgain.ResultListener;
 import net.lunglet.hdf.DataSet;
-import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.io.HDFReader;
 import net.lunglet.io.HDFWriter;
@@ -39,60 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class TrainSVM {
-    public static final class HDFHandle implements Handle, Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private transient FloatDenseVector data;
-
-        private final String h5;
-
-        private final int index;
-
-        private final int label;
-
-        private final String name;
-
-        private static final HDFReader READER = new HDFReader(16 * 1024 * 1024);
-
-        public HDFHandle(final String h5, final String name, final int index, final int label) {
-            this.h5 = h5;
-            this.name = name;
-            this.index = index;
-            this.label = label;
-            this.data = null;
-        }
-
-        @Override
-        public synchronized FloatVector getData() {
-            if (data != null) {
-                return data;
-            }
-            H5File h5file = new H5File(h5);
-            DataSet dataset = h5file.getRootGroup().openDataSet(name);
-            int[] dims = dataset.getIntDims();
-            dataset.close();
-            if (dims.length > 2 || (dims.length == 2 && dims[0] > 1 && dims[1] > 1)) {
-                throw new RuntimeException();
-            }
-            data = DenseFactory.floatRow(ArrayMath.max(dims));
-            LOGGER.debug("Loading background data from {} {}", name, Arrays.toString(dims));
-            // access to this reader is synchronized, as it should be
-            READER.read(h5file, name, data);
-            h5file.close();
-            return data;
-        }
-
-        @Override
-        public int getIndex() {
-            return index;
-        }
-
-        @Override
-        public int getLabel() {
-            return label;
-        }
-    }
-
     public static final class Job implements GridJob {
         private static final long serialVersionUID = 1L;
 
@@ -193,6 +138,7 @@ public final class TrainSVM {
             DataSet dataset = h5file.getRootGroup().openDataSet(name);
             int[] dims = dataset.getIntDims();
             dataset.close();
+            // TODO don't use a direct buffer here
             FloatDenseVector data = DenseFactory.floatRowDirect(ArrayMath.max(dims));
             LOGGER.info("Loading data from {} {}", name, Arrays.toString(dims));
             reader.read(name, data);
@@ -233,7 +179,7 @@ public final class TrainSVM {
             // background data
             String svmFile = Constants.SVM_BACKGROUND_GMM;
             List<Handle> temp = new ArrayList<Handle>();
-            List<String> names = getNames(svmFile);
+            List<String> names = TrainGMM.getNames(svmFile);
             int index = 0;
             for (String name : names) {
                 // use label 1 here to make signs come out right
@@ -269,46 +215,24 @@ public final class TrainSVM {
         }
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainSVM.class);
-
-    private static List<String> getNames(final String h5) {
-        List<String> names = new ArrayList<String>();
-        H5File h5file = new H5File(h5);
-        for (Group group : h5file.getRootGroup().getGroups()) {
-            for (Group group2 : group.getGroups()) {
-                for (DataSet ds : group2.getDataSets()) {
-                    names.add(ds.getName());
-                    ds.close();
-                }
-                group2.close();
-            }
-            for (DataSet ds : group.getDataSets()) {
-                names.add(ds.getName());
-                ds.close();
-            }
-            group.close();
-        }
-        h5file.close();
-        Collections.sort(names);
-        return names;
-    }
+    static final Logger LOGGER = LoggerFactory.getLogger(TrainSVM.class);
 
     public static void main(final String[] args) throws Exception {
         final List<Model> models;
         final String gmmFile;
         final String svmFile;
-        if (true) {
-            models = Evaluation2.readModels(Constants.EVAL_FILE);
-            gmmFile = Constants.EVAL_GMM;
-            svmFile = Constants.EVAL_SVM;
-        } else if (false) {
+        if (false) {
             gmmFile = Constants.TNORM_GMM;
             models = new ArrayList<Model>();
             int i = 0;
-            for (String name : getNames(gmmFile)) {
+            for (String name : TrainGMM.getNames(gmmFile)) {
                 models.add(new Model("tnorm" + i++, new Segment(name)));
             }
             svmFile = Constants.TNORM_SVM;
+        } else if (true) {
+            models = Evaluation2.readModels(Constants.EVAL_FILE);
+            gmmFile = Constants.EVAL_GMM;
+            svmFile = Constants.EVAL_SVM;
         } else {
             throw new NotImplementedException();
         }

@@ -1,6 +1,6 @@
 function trainnap
-dim = 512 * 79;
-naph5 = 'C:\home\albert\SRE2008\data\nap_gmm.h5';
+dim = 512 * 38;
+naph5 = 'Z:\data\nap512v2\nap_gmm.h5';
 
 fid = fopen('2004_1s.txt');
 
@@ -44,7 +44,7 @@ else
 end
 
 % number of eigenvectors
-k = 200;
+k = 40;
 
 [E, S] = nap(D, k);
 

@@ -22,10 +22,7 @@ public class Segment {
             }
         }
         this.name = nameBuilder.toString();
-        this.channel = Integer.parseInt(parts[parts.length - 1]);
-        if (this.channel != 0 && this.channel != 1) {
-            throw new IllegalArgumentException();
-        }
+        this.channel = 0;
     }
 
     public Segment(final String name, final int channel) {

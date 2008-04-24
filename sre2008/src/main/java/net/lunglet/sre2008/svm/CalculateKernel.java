@@ -1,7 +1,7 @@
 package net.lunglet.sre2008.svm;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import net.lunglet.array4j.blas.FloatDenseBLAS;
@@ -14,12 +14,12 @@ import net.lunglet.hdf.DataSetCreatePropListBuilder;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.DataType;
 import net.lunglet.hdf.FloatType;
+import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.hdf.DataSetCreatePropListBuilder.FillTime;
 import net.lunglet.io.HDFReader;
 import net.lunglet.sre2008.Constants;
-import net.lunglet.sre2008.TrainGMM3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,48 +58,46 @@ public final class CalculateKernel {
         }
     }
 
-    private static void readBlock(final HDFReader reader, final List<String> block, final FloatDenseMatrix buf) {
+    private static void readBlock(final H5File dataFile, final List<String> block, final FloatDenseMatrix buf) {
         if (block.size() > buf.columns()) {
             throw new IllegalArgumentException();
         }
         for (int i = 0; i < block.size(); i++) {
             String name = block.get(i);
-            // if this throws, a dimension is wrong somewhere
-            H5File h5file = new H5File(name);
-            reader.read(h5file, "/gmm", buf.column(i));
-            h5file.close();
+            new HDFReader(dataFile).read(name, buf.column(i));
             if (!FloatMatrixUtils.isAllFinite(buf.column(i))) {
-                LOGGER.error("/gmm in {} contains invalid values", name);
+                LOGGER.error("{} contains invalid values", name);
                 throw new RuntimeException();
             }
         }
     }
 
-    public static void main(final String[] args) throws IOException {
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                LOGGER.error("Uncaught exception", e);
-                System.exit(1);
+    private static List<String> getNames(final H5File h5file) {
+        List<String> names = new ArrayList<String>();
+        for (Group group : h5file.getRootGroup().getGroups()) {
+            for (DataSet ds : group.getDataSets()) {
+                names.add(ds.getName());
+                ds.close();
             }
-        });
-        if (args.length != 2) {
-            LOGGER.error("Usage: CalculateKernel MFCCLIST KERNEL");
-            System.exit(1);
+            group.close();
         }
-        String mfccListFilename = args[0];
-        String kernelFilename = args[1];
+        Collections.sort(names);
+        return names;
+    }
 
-        final int bufferColumns = 1500;
-        final int bufferRows = Constants.GMM_DIMENSION;
-        HDFReader reader = new HDFReader(16 * 1024 * 1024);
+    public static void main(final String[] args) {
+        final int bufferColumns = 1790;
+        final int bufferRows = 512 * 38;
 
         LOGGER.info("starting kernel calculator with " + bufferColumns + " buffer columns");
+        H5File datah5 = new H5File(Constants.SVM_BACKGROUND_GMM);
+        H5File kernelh5 = new H5File(Constants.KERNEL_FILE, H5File.H5F_ACC_TRUNC);
 
         LOGGER.info("reading data");
-        List<String> data = TrainGMM3.readFilelist(mfccListFilename);
+        // TODO read names from a list instead of using all names so that we can
+        // combine SRE04 UBM data and NAP data in a single file
+        List<String> data = getNames(datah5);
 
-        H5File kernelh5 = new H5File(kernelFilename, H5File.H5F_ACC_TRUNC);
         LOGGER.info("creating kernel dataset");
         DataSet kernelds = createKernelDataSet(kernelh5, data.size());
 
@@ -132,7 +130,7 @@ public final class CalculateKernel {
                     z = b;
                 } else {
                     LOGGER.info("read block " + i + " into buffer a");
-                    readBlock(reader, block, a);
+                    readBlock(datah5, block, a);
                     z = a;
                     blockInA = i;
                 }
@@ -143,22 +141,22 @@ public final class CalculateKernel {
                     List<String> block = blocks.get(j);
                     if (i == blockInA) {
                         LOGGER.info("read block " + j + " into buffer b");
-                        readBlock(reader, block, b);
+                        readBlock(datah5, block, b);
                         blockInB = j;
                     } else {
                         LOGGER.info("read block " + j + " into buffer a");
-                        readBlock(reader, block, a);
+                        readBlock(datah5, block, a);
                         blockInA = j;
                     }
                 } else {
                     List<String> block = blocks.get(i);
                     if (j == blockInA) {
                         LOGGER.info("read block " + i + " into buffer b");
-                        readBlock(reader, block, b);
+                        readBlock(datah5, block, b);
                         blockInB = i;
                     } else {
                         LOGGER.info("read block " + i + " into buffer a");
-                        readBlock(reader, block, a);
+                        readBlock(datah5, block, a);
                         blockInA = i;
                     }
                 }
@@ -182,6 +180,7 @@ public final class CalculateKernel {
         }
         kernelds.close();
         kernelh5.close();
+        datah5.close();
         LOGGER.info("kernel calculation done");
     }
 

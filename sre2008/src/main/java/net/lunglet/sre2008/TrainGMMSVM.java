@@ -27,7 +27,6 @@ import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.io.HDFReader;
 import net.lunglet.io.HDFWriter;
-import net.lunglet.sre2008.TrainSVM.HDFHandle;
 import net.lunglet.sre2008.svm.SpeakerKernelMatrix;
 import net.lunglet.svm.Handle;
 import net.lunglet.svm.SvmClassifier;

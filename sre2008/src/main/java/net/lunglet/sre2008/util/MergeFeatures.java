@@ -24,8 +24,8 @@ public final class MergeFeatures {
                 System.exit(1);
             }
         });
-        if (args.length != 2) {
-            LOGGER.error("Usage: MergeFeatures FILELIST OUTPUTH5");
+        if (args.length != 2 && args.length != 3) {
+            LOGGER.error("Usage: MergeFeatures FILELIST OUTPUTH5 [BASENAME]");
             System.exit(1);
         }
         List<String> names = TrainGMM3.readFilelist(args[0]);
@@ -34,10 +34,11 @@ public final class MergeFeatures {
             LOGGER.error("Output file {} already exists", outputFile);
             System.exit(2);
         }
+        String basename = args.length == 3 ? args[2] : null;
         HDFReader reader = new HDFReader(0);
         HDFWriter writer = new HDFWriter(outputFile);
+        int baseCount = 0;
         for (String name : names) {
-            System.out.println(name);
             H5File h5file = new H5File(name);
             String[] parts = new File(name).getName().split("\\.");
             for (int i = 0; i < 2; i++) {
@@ -49,10 +50,17 @@ public final class MergeFeatures {
                 int[] dims = dataset.getIntDims();
                 FloatDenseMatrix mfcc = DenseFactory.floatRowDirect(dims);
                 reader.read(h5file, inputName, mfcc);
-                String outputName = "/" + parts[0] + "/" + i;
-                if (!writer.getH5File().getRootGroup().existsGroup("/" + parts[0])) {
-                    writer.getH5File().getRootGroup().createGroup("/" + parts[0]);
+                final String outputName;
+                if (basename != null) {
+                    outputName = "/" + basename + baseCount;
+                    baseCount++;
+                } else {
+                    outputName = "/" + parts[0] + "/" + i;
+                    if (!writer.getH5File().getRootGroup().existsGroup("/" + parts[0])) {
+                        writer.getH5File().getRootGroup().createGroup("/" + parts[0]);
+                    }
                 }
+                LOGGER.info("{} -> {}", name, outputName);
                 writer.write(outputName, mfcc);
             }
             h5file.close();

@@ -1,6 +1,8 @@
 package net.lunglet.sre2008;
 
 public final class Constants {
+    public static final String CHANNEL_FILE;
+
     public static final String EVAL_DATA;
 
     public static final String EVAL_FILE;
@@ -34,25 +36,49 @@ public final class Constants {
          * SVM background and TNorm data should not overlap
          */
         GMM_DIMENSION = 512 * 38;
-        if (true) {
-            EVAL_FILE = "C:\\home\\albert\\SRE2008\\scripts\\sre05-1conv4w_1conv4w.txt";
-            EVAL_DATA = "C:\\home\\albert\\SRE2008\\data\\sre05_mfcc.h5";
-            EVAL_GMM = "C:\\home\\albert\\SRE2008\\data\\sre05_gmm.h5";
-            EVAL_SVM = "C:\\home\\albert\\SRE2008\\data\\sre05_svm.h5";
+        if (false) {
+            EVAL_FILE = "Z:\\data\\nap512v2\\sre05-1conv4w_1conv4w.txt";
+            EVAL_DATA = "Z:\\data\\nap512v2\\sre05_mfcc.h5";
+            EVAL_GMM = "Z:\\data\\nap512v2\\sre05_gmm.h5";
+            EVAL_SVM = "Z:\\data\\nap512v2\\sre05_svm.h5";
         } else {
-            EVAL_FILE = "C:\\home\\albert\\SRE2008\\scripts\\sre06-1conv4w_1conv4w.txt";
-            EVAL_DATA = "C:\\home\\albert\\SRE2008\\data\\sre06_mfcc.h5";
-            EVAL_GMM = "C:\\home\\albert\\SRE2008\\data\\sre06_gmm.h5";
-            EVAL_SVM = "C:\\home\\albert\\SRE2008\\data\\sre06_svm.h5";
+            EVAL_FILE = "Z:\\data\\nap512v2\\sre06-1conv4w_1conv4w.txt";
+            EVAL_DATA = "Z:\\data\\nap512v2\\sre06_mfcc.h5";
+            EVAL_GMM = "Z:\\data\\nap512v2\\sre06_gmm.h5";
+            EVAL_SVM = "Z:\\data\\nap512v2\\sre06_svm.h5";
         }
-        KERNEL_FILE = "C:\\home\\albert\\SRE2008\\data\\kernel.h5";
-        NAP_DATA = "C:\\home\\albert\\SRE2008\\data\\nap_mfcc.h5";
-        NAP_GMM = "C:\\home\\albert\\SRE2008\\data\\nap_gmm.h5";
-        SVM_BACKGROUND_DATA = "C:\\home\\albert\\SRE2008\\data\\svm_background_mfcc.h5";
-        SVM_BACKGROUND_GMM = "C:\\home\\albert\\SRE2008\\data\\svm_background_gmm.h5";
-        TNORM_DATA = "C:\\home\\albert\\SRE2008\\data\\tnorm_mfcc.h5";
-        TNORM_GMM = "C:\\home\\albert\\SRE2008\\data\\tnorm_gmm.h5";
-        TNORM_SVM = "C:\\home\\albert\\SRE2008\\data\\tnorm_svm.h5";
-        UBM_FILE = "C:\\home\\albert\\SRE2008\\data\\ubm_final_512.h5";
+//        Gender gender = null;
+//        Gender gender = Gender.MALE;
+        Gender gender = Gender.FEMALE;
+        if (gender == null) {
+            UBM_FILE = "Z:\\data\\nap512v2\\both\\ubm_final_512.h5";
+            CHANNEL_FILE = "Z:\\data\\nap512v2\\both\\channel.h5";
+            KERNEL_FILE = "Z:\\data\\nap512v2\\both\\kernel.h5";
+            NAP_GMM = "Z:\\data\\nap512v2\\both\\nap_gmm.h5";
+            SVM_BACKGROUND_GMM = "Z:\\data\\nap512v2\\both\\svm_background_gmm.h5";
+            TNORM_GMM = "Z:\\data\\nap512v2\\both\\tnorm_gmm.h5";
+            TNORM_SVM = "Z:\\data\\nap512v2\\both\\tnorm_svm.h5";
+        } else if (Gender.MALE.equals(gender)) {
+            UBM_FILE = "Z:\\data\\nap512v2\\male\\ubm_male_final_512.h5";
+            CHANNEL_FILE = "Z:\\data\\nap512v2\\male\\channel.h5";
+            KERNEL_FILE = "Z:\\data\\nap512v2\\male\\kernel.h5";
+            NAP_GMM = "Z:\\data\\nap512v2\\male\\nap_gmm.h5";
+            SVM_BACKGROUND_GMM = "Z:\\data\\nap512v2\\male\\svm_background_gmm.h5";
+            TNORM_GMM = "Z:\\data\\nap512v2\\male\\tnorm_gmm.h5";
+            TNORM_SVM = "Z:\\data\\nap512v2\\male\\tnorm_svm.h5";
+        } else if (Gender.FEMALE.equals(gender)) {
+            UBM_FILE = "Z:\\data\\nap512v2\\female\\ubm_female_final_512.h5";
+            CHANNEL_FILE = "Z:\\data\\nap512v2\\female\\channel.h5";
+            KERNEL_FILE = "Z:\\data\\nap512v2\\female\\kernel.h5";
+            NAP_GMM = "Z:\\data\\nap512v2\\female\\nap_gmm.h5";
+            SVM_BACKGROUND_GMM = "Z:\\data\\nap512v2\\female\\svm_background_gmm.h5";
+            TNORM_GMM = "Z:\\data\\nap512v2\\female\\tnorm_gmm.h5";
+            TNORM_SVM = "Z:\\data\\nap512v2\\female\\tnorm_svm.h5";
+        } else {
+            throw new AssertionError();
+        }
+        NAP_DATA = "Z:\\data\\nap512v2\\nap_mfcc.h5";
+        SVM_BACKGROUND_DATA = "Z:\\data\\nap512v2\\svm_background_mfcc.h5";
+        TNORM_DATA = "Z:\\data\\nap512v2\\tnorm_mfcc.h5";
     }
 }

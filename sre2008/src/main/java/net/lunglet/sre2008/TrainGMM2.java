@@ -7,17 +7,21 @@ import com.dvsoft.sv.toolbox.gmm.SuperVector;
 import com.dvsoft.sv.toolbox.matrix.JMatrix;
 import com.dvsoft.sv.toolbox.matrix.JVector;
 import com.dvsoft.sv.toolbox.matrix.JVectorSequence;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.gmm.DiagCovGMM;
-import net.lunglet.gridgain.LocalGrid;
+import net.lunglet.gridgain.DefaultGrid;
 import net.lunglet.gridgain.ResultListener;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.H5File;
@@ -37,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 public final class TrainGMM2 {
     private static final class Job implements GridJob {
+        private static final HDFReader READER = new HDFReader(16 * 1024 * 1024);
+
         private static final JMatrix CHANNEL_SPACE;
 
         private static final long serialVersionUID = 1L;
@@ -51,9 +57,9 @@ public final class TrainGMM2 {
             TrainGMM.checkGMM(ubm);
             UBM = Converters.convert(ubm);
             if (true) {
-                String umatFile = "Z:/data/nap512v2/channel.h5";
+                String umatFile = Constants.CHANNEL_FILE;
                 HDFReader reader = new HDFReader(umatFile);
-                int dim = 512 * 79;
+                int dim = 512 * 38;
                 int k = 40;
                 FloatDenseMatrix channelSpace = DenseFactory.floatRowDirect(new int[]{dim, k});
                 reader.read("/U", channelSpace);
@@ -131,18 +137,16 @@ public final class TrainGMM2 {
         }
 
         private FloatDenseMatrix readData() {
-            // XXX had issues here with dataspace closes failing before HDF
-            // classes were changed to synchronize access to H5Library.INSTANCE
             H5File h5file = new H5File(datah5);
-            // use a zero buffer because no heap reads are being done
-            HDFReader reader = new HDFReader(h5file, 0);
             DataSet dataset = h5file.getRootGroup().openDataSet(name);
             int[] dims = dataset.getIntDims();
             dataset.close();
-            FloatDenseMatrix data = DenseFactory.floatRowDirect(dims);
-            LOGGER.info("Reading data from {} {}", name, Arrays.toString(dims));
-            reader.read(name, data);
-            reader.close();
+            FloatDenseMatrix data = DenseFactory.floatRowHeap(dims[0], dims[1]);
+            LOGGER.info("Loaded data from {} {}", name, Arrays.toString(dims));
+            synchronized (READER) {
+                READER.read(h5file, name, data);
+            }
+            h5file.close();
             return data;
         }
     }
@@ -176,33 +180,56 @@ public final class TrainGMM2 {
     private static final int MAP_ITERATIONS = 10;
 
     public static void main(final String[] args) throws Exception {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                LOGGER.error("Uncaught exception", e);
+                System.exit(1);
+            }
+        });
         final String datah5;
         final String gmmFile;
+        final List<String> names;
         if (false) {
-            datah5 = Constants.EVAL_DATA;
-            gmmFile = Constants.EVAL_GMM;
-        } else if (false) {
-            datah5 = Constants.SVM_BACKGROUND_DATA;
-            gmmFile = Constants.SVM_BACKGROUND_GMM;
-        } else if (false) {
             datah5 = Constants.NAP_DATA;
+            names = TrainGMM.getNames(datah5);
             gmmFile = Constants.NAP_GMM;
         } else if (false) {
+            datah5 = Constants.SVM_BACKGROUND_DATA;
+            names = TrainGMM.getNames(datah5);
+            gmmFile = Constants.SVM_BACKGROUND_GMM;
+        } else if (false) {
             datah5 = Constants.TNORM_DATA;
+            names = TrainGMM.getNames(datah5);
             gmmFile = Constants.TNORM_GMM;
+        } else if (true) {
+            datah5 = Constants.EVAL_DATA;
+            Set<String> namesSet = new HashSet<String>();
+            for (Model model : Evaluation2.readModels(Constants.EVAL_FILE)) {
+                for (Segment segment : model.getTrain()) {
+                    namesSet.add(segment.getHDFName());
+                }
+                for (Segment segment : model.getTest()) {
+                    namesSet.add(segment.getHDFName());
+                }
+            }
+            names = new ArrayList<String>(namesSet);
+            Collections.sort(names);
+            gmmFile = Constants.EVAL_GMM;
         } else {
             throw new NotImplementedException();
         }
 
-        List<String> names = TrainGMM.getNames(datah5);
-        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
+        if (new File(gmmFile).exists()) {
+            throw new RuntimeException("Output file " + gmmFile + " already exists");
+        }
 
         H5File mfcch5 = new H5File(datah5);
         List<Task> tasks = new ArrayList<Task>();
         for (String name : names) {
-            if (gmmh5.getRootGroup().existsDataSet(name)) {
-                continue;
-            }
+//            if (gmmh5.getRootGroup().existsDataSet(name)) {
+//                continue;
+//            }
             if (!mfcch5.getRootGroup().existsDataSet(name)) {
                 LOGGER.error("{} is missing", name);
                 System.exit(1);
@@ -213,7 +240,7 @@ public final class TrainGMM2 {
         mfcch5.close();
 
         LOGGER.info("{} GMM training tasks to do", tasks.size());
-
+        final H5File gmmh5 = new H5File(gmmFile, H5File.H5F_ACC_TRUNC);
         final HDFWriter writer = new HDFWriter(gmmh5);
         ResultListener<Result> resultListener = new ResultListener<Result>() {
             @Override
@@ -222,7 +249,7 @@ public final class TrainGMM2 {
                 TrainGMM.writeResult(gmmh5, writer, result);
             }
         };
-        new LocalGrid<Result>(tasks, resultListener).run();
+        new DefaultGrid<Result>(tasks, resultListener).run();
         writer.close();
     }
 }

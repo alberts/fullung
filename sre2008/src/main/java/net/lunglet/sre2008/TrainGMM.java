@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 public final class TrainGMM {
     public static final class Job implements GridJob {
+        private static final HDFReader READER = new HDFReader(16 * 1024 * 1024);
+
         private static final long serialVersionUID = 1L;
 
         private static final DiagCovGMM UBM;
@@ -73,21 +75,17 @@ public final class TrainGMM {
         }
 
         private FloatDenseMatrix readData() {
-            synchronized (H5File.class) {
-                H5File h5file = new H5File(datah5);
-                // TODO only open one reader per node
-                // use a zero buffer because no heap reads are being done
-                HDFReader reader = new HDFReader(h5file, 0);
-                DataSet dataset = h5file.getRootGroup().openDataSet(name);
-                int[] dims = dataset.getIntDims();
-                dataset.close();
-                // TODO read into heap buffer to avoid direct buffer issues
-                FloatDenseMatrix data = DenseFactory.floatRowDirect(dims);
-                LOGGER.info("Loaded data from {} {}", name, Arrays.toString(dims));
-                reader.read(name, data);
-                reader.close();
-                return data;
+            H5File h5file = new H5File(datah5);
+            DataSet dataset = h5file.getRootGroup().openDataSet(name);
+            int[] dims = dataset.getIntDims();
+            dataset.close();
+            FloatDenseMatrix data = DenseFactory.floatRowHeap(dims[0], dims[1]);
+            LOGGER.info("Loaded data from {} {}", name, Arrays.toString(dims));
+            synchronized (READER) {
+                READER.read(name, data);
             }
+            h5file.close();
+            return data;
         }
     }
 
@@ -171,38 +169,10 @@ public final class TrainGMM {
         return names;
     }
 
-    public static final void writeResult(final H5File gmmh5, final HDFWriter writer, final Result result) {
-        LOGGER.info("Received GMM for {}", result.getName());
-        String name = result.getName();
-        String[] parts = name.split("/");
-        // this still has to be synchronized to prevent multiple threads calling
-        // the result listeners from trying to create groups that already exist
-        synchronized (TrainGMM.class) {
-            for (int i = 1; i < parts.length - 1; i++) {
-                StringBuilder pathBuilder = new StringBuilder();
-                pathBuilder.append("/");
-                for (int j = 1; j <= i; j++) {
-                    pathBuilder.append(parts[j]);
-                    if (j < i) {
-                        pathBuilder.append("/");
-                    }
-                }
-                String path = pathBuilder.toString();
-                if (!gmmh5.getRootGroup().existsGroup(path)) {
-                    LOGGER.info("Creating group {}", path);
-                    gmmh5.getRootGroup().createGroup(path);
-                }
-            }
-        }
-        float[] model = result.getModel();
-        FloatDenseVector v = DenseFactory.floatVector(model, Direction.ROW, Storage.DIRECT);
-        writer.write(result.getName(), v);
-    }
-
     public static void main(final String[] args) throws Exception {
         final String datah5;
         final String gmmFile;
-        if (true) {
+        if (false) {
             datah5 = Constants.SVM_BACKGROUND_DATA;
             gmmFile = Constants.SVM_BACKGROUND_GMM;
         } else if (false) {
@@ -237,5 +207,33 @@ public final class TrainGMM {
         new LocalGrid<Result>(tasks, resultListener).run();
         // TODO close all output files before doing any kind of shutdown
         writer.close();
+    }
+
+    public static final void writeResult(final H5File gmmh5, final HDFWriter writer, final Result result) {
+        LOGGER.info("Received GMM for {}", result.getName());
+        String name = result.getName();
+        String[] parts = name.split("/");
+        // this has to be synchronized to prevent multiple threads calling
+        // the result listeners from trying to create groups that already exist
+        synchronized (TrainGMM.class) {
+            for (int i = 1; i < parts.length - 1; i++) {
+                StringBuilder pathBuilder = new StringBuilder();
+                pathBuilder.append("/");
+                for (int j = 1; j <= i; j++) {
+                    pathBuilder.append(parts[j]);
+                    if (j < i) {
+                        pathBuilder.append("/");
+                    }
+                }
+                String path = pathBuilder.toString();
+                if (!gmmh5.getRootGroup().existsGroup(path)) {
+                    LOGGER.info("Creating group {}", path);
+                    gmmh5.getRootGroup().createGroup(path);
+                }
+            }
+        }
+        float[] model = result.getModel();
+        FloatDenseVector v = DenseFactory.floatVector(model, Direction.ROW, Storage.DIRECT);
+        writer.write(result.getName(), v);
     }
 }
