@@ -190,6 +190,11 @@ public final class TrainGMM2 {
         final String datah5;
         final String gmmFile;
         final List<String> names;
+
+        // TODO build abstraction layer that takes filenames and maps them to something sensible
+        // for evaluation data, check that filenames are unique
+        // for tnorm data, map files to tnorm0, tnorm1 etc
+
         if (false) {
             datah5 = Constants.NAP_DATA;
             names = TrainGMM.getNames(datah5);

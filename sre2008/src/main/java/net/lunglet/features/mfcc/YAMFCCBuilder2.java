@@ -122,12 +122,18 @@ public final class YAMFCCBuilder2 {
             AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
             int channels = aff.getFormat().getChannels();
             LOGGER.info("Read {} with {} channels", sphFile, channels);
+
+            // TODO check sphere header for interview speech_type
+            // ignore second channel for interview speech
+
             ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
             for (int i = 0; i < channels; i++) {
                 File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
                 LOGGER.info("Reading {}", mlfFile);
                 mlfs.add(new MasterLabelFile(mlfFile));
             }
+            // TODO write special apply method for interview data that takes a
+            // sphere file, master label file and vad file
             return mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -337,9 +343,15 @@ public final class YAMFCCBuilder2 {
         List<List<FeatureBlock>> validBlocksList = new ArrayList<List<FeatureBlock>>();
         for (int channelIndex = 0; channelIndex < channels.length; channelIndex++) {
             MasterLabelFile mlf = mlfs[channelIndex];
+            // get a block of features for each phoneme label
             List<FeatureBlock> phonemeBlocks = getPhonemeBlocks(channels[channelIndex], mlf);
+            // get the maximum energy in a single block
             double maxEnergydB = getMaximumBlockEnergydB(phonemeBlocks);
+            // remove silence blocks
             removeSilenceBlocks(phonemeBlocks, maxEnergydB);
+
+            // TODO interview data: remove blocks not completely included by VAD
+
             if (channels.length > 1) {
                 FeatureSet otherChannel = channels[channelIndex == 0 ? 1 : 0];
                 crossChannelSquelch(phonemeBlocks, maxEnergydB, otherChannel);

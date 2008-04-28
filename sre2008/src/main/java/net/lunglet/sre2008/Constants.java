@@ -36,6 +36,9 @@ public final class Constants {
          * SVM background and TNorm data should not overlap
          */
         GMM_DIMENSION = 512 * 38;
+        // TODO evaluation should have a trn and ndx file
+        // TODO should also have filelist for features so we can check that
+        // everything is available
         if (false) {
             EVAL_FILE = "Z:\\data\\nap512v2\\sre05-1conv4w_1conv4w.txt";
             EVAL_DATA = "Z:\\data\\nap512v2\\sre05_mfcc.h5";
@@ -47,9 +50,9 @@ public final class Constants {
             EVAL_GMM = "Z:\\data\\nap512v2\\sre06_gmm.h5";
             EVAL_SVM = "Z:\\data\\nap512v2\\sre06_svm.h5";
         }
-//        Gender gender = null;
+        Gender gender = null;
 //        Gender gender = Gender.MALE;
-        Gender gender = Gender.FEMALE;
+//        Gender gender = Gender.FEMALE;
         if (gender == null) {
             UBM_FILE = "Z:\\data\\nap512v2\\both\\ubm_final_512.h5";
             CHANNEL_FILE = "Z:\\data\\nap512v2\\both\\channel.h5";
@@ -77,6 +80,7 @@ public final class Constants {
         } else {
             throw new AssertionError();
         }
+        // TODO these should all point to file lists, maybe with a channel appended
         NAP_DATA = "Z:\\data\\nap512v2\\nap_mfcc.h5";
         SVM_BACKGROUND_DATA = "Z:\\data\\nap512v2\\svm_background_mfcc.h5";
         TNORM_DATA = "Z:\\data\\nap512v2\\tnorm_mfcc.h5";

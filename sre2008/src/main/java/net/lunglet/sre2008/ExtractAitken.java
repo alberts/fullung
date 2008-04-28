@@ -38,15 +38,16 @@ import org.slf4j.LoggerFactory;
 // TODO make number of threads and other stuff configurable using Spring
 
 public class ExtractAitken {
-    private static final String CHANNEL_FILE = "Z:/data/tnorm79/channel.h5";
+    private static final String CHANNEL_FILE = "z:\\data\\nap512v2\\both\\channel.h5";
 
-    private static final String EVAL_FILE = "Z:/scripts/sre05-1conv4w_1conv4w.txt";
+    private static final String EVAL_FILE = "z:\\data\\nap512v2\\sre05-1conv4w_1conv4w.txt";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractAitken.class);
 
-    private static final String MFCC_FILE = "Z:/data/tnorm79/sre05_1conv4w_1conv4w_mfcc2_79.h5";
+//    private static final String MFCC_FILE = "z:\\data\\nap512v2\\sre05_mfcc.h5";
+    private static final String MFCC_FILE = "z:\\data\\nap512v2\\tnorm_mfcc.h5";
 
-    private static final String UBM_FILE = "Z:/data/tnorm79/ubm8_final_79_512.h5";
+    private static final String UBM_FILE = "z:\\data\\nap512v2\\both\\ubm_final_512.h5";
 
     private static void checkMFCC(final H5File h5file, List<Model> models, final Set<Trial> trials) {
         Group root = h5file.getRootGroup();
@@ -86,28 +87,43 @@ public class ExtractAitken {
     }
 
     public static void main(final String[] args) throws IOException, InterruptedException {
-        LOGGER.info("Reading evaluation from {}", EVAL_FILE);
-        List<Model> models = new ArrayList<Model>();
-        for (Model model : Evaluation2.readModels(EVAL_FILE)) {
-            models.add(pruneTrials(model));
-        }
-        Set<Trial> trials = new HashSet<Trial>();
-        int targetCount = 0;
-        int nontargetCount = 0;
-        for (Model model : models) {
-            trials.addAll(model.getTest());
-            for (Trial trial : model.getTest()) {
-                if (trial.isTarget()) {
-                    targetCount++;
-                } else {
-                    nontargetCount++;
+        final List<Model> models;
+        final Set<Trial> trials;
+        if (false) {
+            LOGGER.info("Reading evaluation from {}", EVAL_FILE);
+            models = new ArrayList<Model>();
+            for (Model model : Evaluation2.readModels(EVAL_FILE)) {
+                models.add(pruneTrials(model));
+            }
+            trials = new HashSet<Trial>();
+            int targetCount = 0;
+            int nontargetCount = 0;
+            for (Model model : models) {
+                trials.addAll(model.getTest());
+                for (Trial trial : model.getTest()) {
+                    if (trial.isTarget()) {
+                        targetCount++;
+                    } else {
+                        nontargetCount++;
+                    }
                 }
             }
+            LOGGER.info("Extracted {} target trials and {} nontarget trials", targetCount, nontargetCount);
+        } else if (true) {
+            models = new ArrayList<Model>();
+            trials = new HashSet<Trial>();
+            List<String> names = TrainGMM.getNames(MFCC_FILE);
+            int count = 0;
+            for (String name : names) {
+                models.add(new Model("tnorm" + count, new Segment(name)));
+                count++;
+            }
+        } else {
+            throw new AssertionError();
         }
 
         LOGGER.info("{} model supervectors to extract", models.size());
         LOGGER.info("{} trial supervectors to extract", trials.size());
-        LOGGER.info("Extracted {} target trials and {} nontarget trials", targetCount, nontargetCount);
 
         LOGGER.info("Reading UBM");
         JMapGMM ubm = readUBM();
@@ -119,6 +135,9 @@ public class ExtractAitken {
 
         BufferedWriter evalWriter = new BufferedWriter(new FileWriter("aitken.txt"));
         for (Model model : models) {
+            if (model.getTest() == null) {
+                continue;
+            }
             for (Trial trial : model.getTest()) {
                 evalWriter.write(model.getId());
                 evalWriter.write(" ");
@@ -187,7 +206,7 @@ public class ExtractAitken {
 
     private static JMatrix readUMatrix() {
         HDFReader reader = new HDFReader(CHANNEL_FILE);
-        int dim = 512 * 79;
+        int dim = 512 * 38;
         int k = 40;
         FloatDenseMatrix channelSpace = DenseFactory.floatRowDirect(new int[]{dim, k});
         reader.read("/U", channelSpace);
