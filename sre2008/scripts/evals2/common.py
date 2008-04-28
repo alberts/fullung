@@ -36,6 +36,7 @@ def print_xml(models):
     print '</eval>'
 
 def print_models(models, fp):
+    lines = []
     for modelid, model in models.iteritems():
         modelparts = [
             modelid,
@@ -45,9 +46,12 @@ def print_models(models, fp):
             model['speech_type'],
             model['channel_type']
             ]
-        print >>fp, ' '.join(modelparts)
+        lines.append(' '.join(modelparts))
+    lines.sort()
+    print >>fp, '\n'.join(lines)
 
 def print_trials(models, fp):
+    lines = []
     for modelid, model in models.iteritems():
         trials = model['trials']
         for trialkey, trial in trials.iteritems():
@@ -61,8 +65,11 @@ def print_trials(models, fp):
                 ]
             if trial.has_key('answer'):
                 trialparts.append(trial['answer'])
-            print >>fp, ' '.join(trialparts)
+            lines.append(' '.join(trialparts))
+    lines.sort()
+    print >>fp, '\n'.join(lines)
 
 def check_language(lang):
-    assert True
+    if lang != 'eng':
+        return 'oth'
     return lang
