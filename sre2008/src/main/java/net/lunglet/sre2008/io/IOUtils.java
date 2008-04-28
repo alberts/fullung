@@ -1,6 +1,7 @@
 package net.lunglet.sre2008.io;
 
 import com.dvsoft.sv.toolbox.matrix.JMatrix;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import net.lunglet.array4j.Order;
@@ -20,6 +21,10 @@ import org.slf4j.LoggerFactory;
 
 public final class IOUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
+
+    public static DiagCovGMM readDiagCovGMM(final File file) {
+        return readDiagCovGMM(file.getPath());
+    }
 
     public static DiagCovGMM readDiagCovGMM(final String filename) {
         H5File h5file = new H5File(filename);

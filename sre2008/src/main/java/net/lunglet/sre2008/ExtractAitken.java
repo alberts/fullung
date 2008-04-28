@@ -112,7 +112,8 @@ public class ExtractAitken {
         } else if (true) {
             models = new ArrayList<Model>();
             trials = new HashSet<Trial>();
-            List<String> names = TrainGMM.getNames(MFCC_FILE);
+//            List<String> names = TrainGMM.getNames(MFCC_FILE);
+            List<String> names = null;
             int count = 0;
             for (String name : names) {
                 models.add(new Model("tnorm" + count, new Segment(name)));

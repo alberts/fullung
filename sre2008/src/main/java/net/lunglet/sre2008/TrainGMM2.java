@@ -250,7 +250,7 @@ public final class TrainGMM2 {
         ResultListener<Result> resultListener = new ResultListener<Result>() {
             @Override
             public void onResult(final Result result) {
-                // TODO result are going missing
+                // TODO result are going missing?
                 TrainGMM.writeResult(gmmh5, writer, result);
             }
         };

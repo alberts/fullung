@@ -88,8 +88,8 @@ def main():
     read_trials('short2-short3.ndx', 'short3', models)
     info = read_header_info('NIST_SRE08_header_info.all.csv')
     append_header_info(models, info)
-    print_models(models, open('sre2008_models.txt','w'))
-    print_trials(models, open('sre2008_trials.txt','w'))
+    print_models(models, open('sre2008.trn','w'))
+    print_trials(models, open('sre2008.ndx','w'))
 
 if __name__ == '__main__':
     main()

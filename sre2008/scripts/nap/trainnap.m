@@ -1,33 +1,38 @@
 function trainnap
 dim = 512 * 38;
 naph5 = 'Z:\data\nap512v2\nap_gmm.h5';
-
-fid = fopen('2004_1s.txt');
+% number of eigenvectors
+k = 100;
 
 models = {};
-modelcount = 1;
+modelcount = 0;
 Nses = 0;
+fid = fopen('nap0405_phn.txt');
 while 1
     tline = fgetl(fid);
     if ~ischar(tline), break, end
     parts = strsplit(' ', tline);
-    parts = parts(3:end);
-    models{modelcount} = parts;
+    parts = strsplit(',', parts{4});
     modelcount = modelcount + 1;
+    models{modelcount} = parts; %#ok<AGROW>
     Nses = Nses + length(parts);
 end
 fclose(fid);
 
-if 0
+if 1
     D = zeros(dim, Nses, 'single');
+    size(D)
     index = 1;
     for i=1:1:length(models)
         disp(i);
         parts = models{i};
         step = length(parts);
         for j = 1:1:step
-            name = sprintf('/%s/0', parts{j});
-            D(:,index+j-1) = hdf5read(naph5, name);
+            partsj = strsplit(':', parts{j});
+            name = partsj{1};
+            channel = partsj{2}-'a';
+            hdfname = sprintf('/%s/%d', name, channel);
+            D(:,index+j-1) = hdf5read(naph5, hdfname);
         end
         indices = index:index+step-1;
         Dpart = D(:,indices);
@@ -37,28 +42,20 @@ if 0
         D(:,indices) = Dpart - u;
         index = index + step;
     end
-    save D.mat D;
+    save D1.mat D;
     return;
 else
-    load D.mat D;
+    load D1.mat D;
 end
 
-% number of eigenvectors
-k = 40;
-
 [E, S] = nap(D, k);
-
-save S.mat S;
-
+save S1.mat S;
 U = zeros(size(E));
 for i=1:1:length(S)
     U(:,i) = sqrt(S(i)) * E(:,i);
 end
-
 % U*U' is almost equal to D*D'/n
-
-save E.mat E;
-save U.mat U;
-
+save E1.mat E;
+save U1.mat U;
 % transpose matrix to write it in C order
-hdf5write('channel.h5', '/U', U');
+hdf5write('channel1.h5', '/U', U');

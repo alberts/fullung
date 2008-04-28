@@ -3,7 +3,7 @@ import re
 lines = open('2004_1s.txt').readlines()
 output = []
 for line in lines:
-    parts = re.split('\\s+', line)
+    parts = re.split('\\s+', line.strip())
     gender = parts[0]
     pin = parts[1]
     parts = parts[2:]

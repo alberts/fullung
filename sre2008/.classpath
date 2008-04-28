@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry excluding="net/lunglet/gridgain/|net/lunglet/sre2008/TrainGMM2.java|net/lunglet/sre2008/TrainGMM.java|net/lunglet/sre2008/TrainSVM.java|cz/vutbr/fit/speech/phnrec/PhnRecGrid2.java|cz/vutbr/fit/speech/phnrec/PhnRecJob.java|cz/vutbr/fit/speech/phnrec/PhnRecTask.java" kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -12,6 +12,10 @@
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/google-collect-snapshot-20080321.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/gridgain"/>
+	<classpathentry kind="lib" path="lib/jewelcli-0.53.jar"/>
+	<classpathentry kind="lib" path="lib/spring-context.jar"/>
+	<classpathentry kind="lib" path="lib/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/jcl104-over-slf4j-1.5.0.jar"/>
 	<classpathentry kind="output" path="eclipse-classes"/>
 </classpath>

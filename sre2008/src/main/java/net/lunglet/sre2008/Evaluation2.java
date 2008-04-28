@@ -44,7 +44,7 @@ public final class Evaluation2 {
         while (line != null) {
             String[] parts = line.trim().split("\\s+");
             String id = parts[0].trim();
-            final Gender gender = Gender.easyValueOf(parts[1]);
+            final Gender gender = Gender.valueOf2(parts[1]);
             String[] train = parts[2].trim().split(",");
             List<Segment> trainList = new ArrayList<Segment>();
             for (String t : train) {

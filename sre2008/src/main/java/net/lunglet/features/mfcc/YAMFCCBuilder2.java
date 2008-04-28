@@ -51,6 +51,9 @@ public final class YAMFCCBuilder2 {
         public Void call() throws Exception {
             // TODO make suffix configurable
             String mfccFilename = filename + ".mfcc.h5";
+            if (new File(mfccFilename).exists()) {
+                return null;
+            }
             HDFWriter writer = null;
             try {
                 YAMFCCBuilder2 mfccBuilder = MFCC_BUILDER.get();
