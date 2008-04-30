@@ -54,7 +54,12 @@ public final class Evaluation {
         BufferedWriter outputWriter = new BufferedWriter(new FileWriter("eval.txt"));
         for (Model model : models) {
             FloatDenseVector speakerModel = DenseFactory.floatRowDirect(SVM_MODEL_DIM);
-            svmReader.read("/" + model.getId(), speakerModel);
+            if (true) {
+                svmReader.read("/" + model.getId(), speakerModel);
+            } else {
+                System.out.println(model.getTrain().get(0).getHDFName());
+                svmReader.read(model.getTrain().get(0).getHDFName(), speakerModel);
+            }
             List<String> output = score(model, speakerModel, datah5, tnormModels, tnormCache);
             for (String line : output) {
                 outputWriter.write(line);

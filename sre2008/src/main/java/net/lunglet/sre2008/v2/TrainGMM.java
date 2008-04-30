@@ -56,8 +56,8 @@ public final class TrainGMM {
             File outputFile = args.getOutput();
             checkFileNotExists("output", outputFile);
             JMapGMM ubm = Converters.convert(IOUtils.readDiagCovGMM(ubmFile));
-            ServiceFactory factory = new ServiceFactory(args);
-            ExecutorService executorService = factory.getExecutorService();
+            ServiceFactory serviceFactory = new ServiceFactory(args);
+            ExecutorService executorService = serviceFactory.getExecutorService();
             try {
             } finally {
                 logger.debug("Shutting down executor service");

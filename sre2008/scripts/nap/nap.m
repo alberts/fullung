@@ -18,7 +18,7 @@ S = diag(S)/n;
 E = D*E;
 
 % orthogonalize final vectors
-[E,ignore,ignore] = svd(E, 0);
+[E,ignore,ignore] = svd(E, 0); %#ok<NASGU>
 
 function y = mult(D, x)
 % calculate D'*D * v

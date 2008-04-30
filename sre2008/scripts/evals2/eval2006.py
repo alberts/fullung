@@ -122,12 +122,32 @@ def append_key_info(models, key):
         for trialkey in badtrials:
             del model['trials'][trialkey]
 
+def filter_models(models):
+    valid2006 = set([x.strip() for x in open('valid2006.txt').readlines()])
+    badmodels = set()
+    for modelid, model in models.iteritems():
+        train = list(model['train'])[0][0]
+        if train not in valid2006:
+            badmodels.add(modelid)
+            continue
+        badtrials = set()
+        for trialkey in model['trials']:
+            if trialkey[0] not in valid2006:
+                badtrials.add(trialkey)
+        for trialkey in badtrials:
+            del model['trials'][trialkey]
+        if len(model['trials']) == 0:
+            badmodels.add(modelid)
+    for modelid in badmodels:
+        del models[modelid]
+
 def atvs(key):
     models = {}
     read_atvs_models('dev_test_male_NIST08_vacios_eliminados.trn', 'm', models)
     read_atvs_models('dev_test_female_NIST08_vacios_eliminados.trn', 'f', models)
     read_atvs_trials('dev_test_NIST08_vacios_eliminados.ndx', models)
     append_key_info(models, key)
+    #filter_models(models)
     print_models(models, open('atvs.trn','w'))
     print_trials(models, open('atvs.ndx','w'))
 
@@ -144,6 +164,7 @@ def david(key):
     read_david_trials('1convmic-1conv4w-2006.ndx', models)
     read_david_trials('1convmic-1convmic-2006.ndx', models)
     append_key_info(models, key)
+    #filter_models(models)
     print_models(models, open('david.trn','w'))
     print_trials(models, open('david.ndx','w'))
 

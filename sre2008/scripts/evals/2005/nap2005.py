@@ -211,6 +211,26 @@ def main():
     remove_trial_errors('testseg-error-v1.txt', models)
     read_key('sre05-key-v7c.txt', models)
     check_models(models)
+
+    # additional pruning of bad data
+    valid2005 = set([x.strip() for x in open('valid2005.txt').readlines()])
+    badmodels = set()
+    for modelid, model in models.iteritems():
+        train = list(model['train'])[0][0]
+        if train not in valid2005:
+            badmodels.add(modelid)
+            continue
+        badtrials = set()
+        for trialkey in model['trials']:
+            if trialkey[0] not in valid2005:
+                badtrials.add(trialkey)
+        for trialkey in badtrials:
+            del model['trials'][trialkey]
+        if len(model['trials']) == 0:
+            badmodels.add(modelid)
+    for modelid in badmodels:
+        del models[modelid]
+
     speakers = get_speakers(models)
     print_speakers(speakers, open('nap2005.txt', 'w'))
 

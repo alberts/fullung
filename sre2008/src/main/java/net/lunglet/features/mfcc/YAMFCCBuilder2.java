@@ -59,11 +59,16 @@ public final class YAMFCCBuilder2 {
                 YAMFCCBuilder2 mfccBuilder = MFCC_BUILDER.get();
                 FeatureSet[] features = convertFile(mfccBuilder, filename);
                 writer = new HDFWriter(mfccFilename);
+                // TODO if all channels are invalid, don't create anything
                 LOGGER.info("Creating MFCC file {}", mfccFilename);
                 Group root = writer.getH5File().getRootGroup();
                 root.createGroup("/mfcc");
                 for (int i = 0; i < features.length; i++) {
                     if (features[i] == null) {
+                        // TODO if channel is invalid, we should probably try
+                        // feature extraction on other channel again without
+                        // doing cross channel squelch (especially for short
+                        // segments)
                         LOGGER.info("Skipping invalid channel " + i + " in " + filename);
                         continue;
                     }

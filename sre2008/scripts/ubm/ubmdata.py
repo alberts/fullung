@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# TODO support stereo data like SRE05
-
 from StringIO import StringIO
 import os.path
 import sys
@@ -40,7 +38,6 @@ def read_metadata(filemap, filelist, eval, gender):
     for line in lines:
         line = line.strip()
         filename = filemap[line]
-        valid, invalid = read_mlf('%s.0.mlf' % filename)
         header = StringIO(open(filename).read(4096)).readlines()
         sample_count = 0
         for line in header:
@@ -48,14 +45,30 @@ def read_metadata(filemap, filelist, eval, gender):
                 continue
             sample_count = int(line.split(' ')[2])
             break
+        channel_count = 0
+        for line in header:
+            if not line.startswith('channel_count'):
+                continue
+            channel_count = int(line.split(' ')[2])
+            break
+        assert channel_count in (1,2)
         assert sample_count > 0
-        # phoneme ratio
-        r = float(valid) / float(invalid)
-        print '%s,%s,%s,%d,%d,%d,%.8f' % \
-              (eval, filename, gender, sample_count, valid, invalid, r)
+
+        parts = [
+            eval,
+            filename,
+            gender,
+            str(sample_count)
+            ]
+        for channel in xrange(channel_count):
+            valid, invalid = read_mlf('%s.%d.mlf' % (filename, channel))
+            # phoneme ratio
+            r = float(valid) / float(invalid)
+            parts += [str(valid), str(invalid), '%.8f' % r]
+        print ','.join(parts)
 
 def main():
-    evals = ['SRE00', 'SRE02', 'SRE03', 'SRE04']
+    evals = ['SRE00', 'SRE02', 'SRE03', 'SRE04', 'SRE05', 'SRE06']
     genders = ['male', 'female']
     for eval in evals:
         filemap = map_files(eval)

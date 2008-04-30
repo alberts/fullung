@@ -10,19 +10,19 @@ w = train_llr_fusion(train_targets,train_non_targets,prior);
 
 w
 
-targets(1,:) = load('eval05_malesys_targ.txt');
-non_targets(1,:) = load('eval05_malesys_non.txt');
-targets(2,:) = load('eval05_femalesys_targ.txt');
-non_targets(2,:) = load('eval05_femalesys_non.txt');
-% targets(1,:) = load('eval06_malesys_targ.txt');
-% non_targets(1,:) = load('eval06_malesys_non.txt');
-% targets(2,:) = load('eval06_femalesys_targ.txt');
-% non_targets(2,:) = load('eval06_femalesys_non.txt');
+% targets(1,:) = load('eval05_malesys_targ.txt');
+% non_targets(1,:) = load('eval05_malesys_non.txt');
+% targets(2,:) = load('eval05_femalesys_targ.txt');
+% non_targets(2,:) = load('eval05_femalesys_non.txt');
+targets(1,:) = load('eval06_malesys_targ.txt');
+non_targets(1,:) = load('eval06_malesys_non.txt');
+targets(2,:) = load('eval06_femalesys_targ.txt');
+non_targets(2,:) = load('eval06_femalesys_non.txt');
 
-both_targets = load('eval05_both_targ.txt');
-both_non_targets = load('eval05_both_non.txt');
-% both_targets = load('eval06_both_targ.txt');
-% both_non_targets = load('eval06_both_non.txt');
+% both_targets = load('eval05_both_targ.txt');
+% both_non_targets = load('eval05_both_non.txt');
+both_targets = load('eval06_both_targ.txt');
+both_non_targets = load('eval06_both_non.txt');
 
 [fused_targets,fused_non_targets]=llr_fusion(w,targets,non_targets);
 

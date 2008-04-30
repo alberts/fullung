@@ -1,13 +1,13 @@
 function trainnap
 dim = 512 * 38;
-naph5 = 'Z:\data\nap512v2\nap_gmm.h5';
+naph5 = 'Z:\data\nap512v2\both\nap_gmm.h5';
 % number of eigenvectors
 k = 100;
 
 models = {};
 modelcount = 0;
 Nses = 0;
-fid = fopen('nap0405_phn.txt');
+fid = fopen('nap2004.txt');
 while 1
     tline = fgetl(fid);
     if ~ischar(tline), break, end
@@ -19,7 +19,7 @@ while 1
 end
 fclose(fid);
 
-if 1
+if 0
     D = zeros(dim, Nses, 'single');
     size(D)
     index = 1;

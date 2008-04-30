@@ -221,7 +221,7 @@ public final class TrainSVM {
         final List<Model> models;
         final String gmmFile;
         final String svmFile;
-        if (false) {
+        if (true) {
             gmmFile = Constants.TNORM_GMM;
             models = new ArrayList<Model>();
             int i = 0;
@@ -229,7 +229,7 @@ public final class TrainSVM {
                 models.add(new Model("tnorm" + i++, new Segment(name)));
             }
             svmFile = Constants.TNORM_SVM;
-        } else if (true) {
+        } else if (false) {
             models = Evaluation2.readModels(Constants.EVAL_FILE);
             gmmFile = Constants.EVAL_GMM;
             svmFile = Constants.EVAL_SVM;
