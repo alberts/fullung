@@ -40,12 +40,12 @@ import org.slf4j.LoggerFactory;
 public class ExtractAitken {
     private static final String CHANNEL_FILE = "z:\\data\\nap512v2\\both\\channel.h5";
 
-    private static final String EVAL_FILE = "z:\\data\\nap512v2\\sre05-1conv4w_1conv4w.txt";
+    private static final String EVAL_FILE = "z:\\data\\nap512v2\\sre06-1conv4w_1conv4w.txt";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractAitken.class);
 
-//    private static final String MFCC_FILE = "z:\\data\\nap512v2\\sre05_mfcc.h5";
-    private static final String MFCC_FILE = "z:\\data\\nap512v2\\tnorm_mfcc.h5";
+    private static final String MFCC_FILE = "z:\\data\\nap512v2\\sre06_mfcc.h5";
+//    private static final String MFCC_FILE = "z:\\data\\nap512v2\\tnorm_mfcc.h5";
 
     private static final String UBM_FILE = "z:\\data\\nap512v2\\both\\ubm_final_512.h5";
 
@@ -89,7 +89,7 @@ public class ExtractAitken {
     public static void main(final String[] args) throws IOException, InterruptedException {
         final List<Model> models;
         final Set<Trial> trials;
-        if (false) {
+        if (true) {
             LOGGER.info("Reading evaluation from {}", EVAL_FILE);
             models = new ArrayList<Model>();
             for (Model model : Evaluation2.readModels(EVAL_FILE)) {
@@ -109,7 +109,7 @@ public class ExtractAitken {
                 }
             }
             LOGGER.info("Extracted {} target trials and {} nontarget trials", targetCount, nontargetCount);
-        } else if (true) {
+        } else if (false) {
             models = new ArrayList<Model>();
             trials = new HashSet<Trial>();
 //            List<String> names = TrainGMM.getNames(MFCC_FILE);
@@ -224,6 +224,8 @@ public class ExtractAitken {
         JVector ex = train.sufficientStatsChannelAdapt();
         // get n after doing channel adaptation
         double[] n = train.getN();
+        // values of ex are grouped together by feature dimension, not by GMM
+        // mixture component.
         return new double[][]{n, ex.transpose().toDoubleArray()[0]};
     }
 

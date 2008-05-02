@@ -72,7 +72,6 @@ def main():
             assert status == 0
 
         status = os.system('nr -Shift 10 -Length 20 -fs 8000 -S 1 -Ssilfile input.sil -swapin 0 -swapout 0 -i input.raw -o wiener.raw')
-        #status = os.system('copy input.raw wiener.raw');
         assert status == 0
 
         output = '%s.wiener.sph' % os.path.splitext(filename)[0]

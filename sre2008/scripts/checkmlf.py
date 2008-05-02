@@ -11,7 +11,7 @@ def read_sphere_header(sph):
     if magic != 'NIST_1A':
         raise IOError, 'invalid SPHERE header'
     size = int(fp.read(8).strip())
-    if size <= 0 or size > 4096:
+    if size <= 0 or size > 8192:
         raise IOError, 'invalid size in SPHERE header'
     fp.seek(0)
     buf = fp.read(size)
@@ -51,6 +51,7 @@ def main():
             lines = open(mlfname).readlines()
             if len(lines) == 0:
                 print >>sys.stderr, 'ERROR: %s is empty' % mlfname
+                continue
             # performance improvement assumption: all lines are okay
             # if last line is
             lines = [lines[-1]]

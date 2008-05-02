@@ -33,12 +33,15 @@ import org.slf4j.LoggerFactory;
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
+// TODO get rid of nested main class
+
 public final class ExtractChannelStats {
     @CommandLineInterface(application = "ExtractChannelStats")
     private static interface Arguments {
         @Option(shortName = "b", description = "basename for output")
         String getBasename();
 
+        // TODO allow file list to specify channels
         @Option(shortName = "f", description = "feature file list")
         File getFileList();
 
@@ -107,13 +110,18 @@ public final class ExtractChannelStats {
         for (final File featureFile : featureFiles) {
             H5File h5file = new H5File(featureFile);
             Group mfccGroup = h5file.getRootGroup().openGroup("/mfcc");
-            int channelCount = 0;
-            for (DataSet dataset : mfccGroup.getDataSets()) {
-                final int localFileCount = fileCount++;
-                final int localChannelCount = channelCount++;
+            final int channelCount = mfccGroup.getDataSetNames().size();
+            if (channelCount != 1 && channelCount != 2) {
+                LOGGER.error("Invalid number of channels in {}", featureFile);
+                throw new RuntimeException();
+            }
+            for (int channel = 0; channel < channelCount; channel++) {
+                DataSet dataset = mfccGroup.openDataSet(Integer.toString(channel));
                 final String hdfName = dataset.getName();
                 final int[] dims = dataset.getIntDims();
                 dataset.close();
+                final int localFileCount = fileCount++;
+                final int localChannel = channel;
                 Future<Void> future = executorService.submit(new Callable<Void>() {
                     @Override
                     public Void call() throws Exception {
@@ -142,9 +150,11 @@ public final class ExtractChannelStats {
                                 if (!root.existsGroup("/" + name)) {
                                     root.createGroup("/" + name);
                                 }
-                                outputHdfName = "/" + name + "/" + localChannelCount;
+                                outputHdfName = "/" + name + "/" + localChannel;
                             }
                             root.createGroup(outputHdfName);
+                            // values in x are grouped together by feature
+                            // dimension, not by GMM mixture component.
                             writer.write(outputHdfName + "/x", DenseFactory.floatVector(x.data));
                             writer.write(outputHdfName + "/n", DenseFactory.floatVector(n));
                             writer.flush();

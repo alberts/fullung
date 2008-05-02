@@ -1,12 +1,46 @@
 #!/usr/bin/env python
 
+from StringIO import StringIO
 from subprocess import Popen, PIPE
 import re
 import os.path
 import subprocess
 import sys
 
+def read_sphere_header(sph):
+    fp = open(sph, 'rb')
+    magic = fp.read(8).strip()
+    if magic != 'NIST_1A':
+        raise IOError, 'invalid SPHERE header'
+    size = int(fp.read(8).strip())
+    if size <= 0 or size > 8192:
+        raise IOError, 'invalid size in SPHERE header'
+    fp.seek(0)
+    buf = fp.read(size)
+    fp.close()
+    buf = buf.strip()
+    lines = StringIO(buf).readlines()
+    if lines[-1] != 'end_head':
+        raise IOError, 'end_head is missing'
+    header = {}
+    for line in lines[2:-1]:
+        parts = re.split('\\s+', line.strip(), 2)
+        name, dtype, value = parts
+        if name == 'sample_count':
+            header['sample_count'] = int(value)
+            continue
+        if name == 'channel_count':
+            header['channel_count'] = int(value)
+            continue
+        if name == 'sample_rate':
+            header['sample_rate'] = int(value)
+            continue
+    return header
+
 def get_channels(filename):
+    return read_sphere_header(filename)['channel_count']
+
+def get_channels_sox(filename):
     command = ['sox', '-V', '-t', 'sph', filename, '-e', 'stat']
     output = Popen(command, stdout=PIPE, stderr=PIPE).communicate()
     output = '\n'.join(output)
@@ -44,7 +78,7 @@ def submit_job(filename, channel, channels):
         'jobname' : jobname,
         'filename' : filename,
         'mlffilename' : mlffilename,
-	'channelp1' : channel + 1
+        'channelp1' : channel + 1
         }
     jobscript = """#$ -N %(jobname)s
 #$ -j y
@@ -94,7 +128,7 @@ def main():
             mlffilename = '%s.%d.mlf' % (filename, i)
             if os.path.exists(mlffilename):
                 print 'skipping %s, channel %d' % (filename, i)
-		continue
+                continue
             submit_job(*job)
 
 if __name__ == '__main__':

@@ -40,8 +40,14 @@ public final class DataCache2 implements Iterable<FloatDenseMatrix> {
             String line = lineReader.readLine();
             while (line != null) {
                 line = line.trim();
-                if (!new File(line).isFile()) {
-                    throw new IllegalArgumentException(line + " is not a file");
+                final String filename;
+                if (line.endsWith(":a") || line.endsWith(":b")) {
+                    filename = line.substring(0, line.length() - 2);
+                } else {
+                    filename = line;
+                }
+                if (!new File(filename).isFile()) {
+                    throw new IllegalArgumentException(filename + " is not a file");
                 }
                 names.add(line);
                 line = lineReader.readLine();
@@ -69,8 +75,19 @@ public final class DataCache2 implements Iterable<FloatDenseMatrix> {
             }
             logger.debug("Reading {} again (was in the cache, but was gc'ed)", name);
         }
-        H5File h5file = new H5File(name);
-        final String datasetName = "/mfcc/0";
+
+        final String filename;
+        final int channel;
+        if (name.endsWith(":a") || name.endsWith(":b")) {
+            int len = name.length();
+            filename = name.substring(0, len - 2);
+            channel = name.substring(len - 1, len).equals("a") ? 0 : 1;
+        } else {
+            filename = name;
+            channel = 0;
+        }
+        H5File h5file = new H5File(filename);
+        final String datasetName = "/mfcc/" + channel;
         DataSet dataset = h5file.getRootGroup().openDataSet(datasetName);
         int[] dims = dataset.getIntDims();
         dataset.close();
@@ -81,7 +98,7 @@ public final class DataCache2 implements Iterable<FloatDenseMatrix> {
             cache.put(name, new SoftReference<FloatDenseMatrix>(data));
         }
         h5file.close();
-        logger.info("Read {} {}", name, Arrays.toString(dims));
+        logger.info("Read {}:{} {}", new Object[]{filename, channel, Arrays.toString(dims)});
         return data;
     }
 

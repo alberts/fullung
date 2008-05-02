@@ -82,7 +82,7 @@ public final class TrainUBM9 {
     }
 
     private static void train(final DataCache2 dataCache, final ExecutorService executorService) {
-        int maxMixtures = 512;
+        int maxMixtures = 2048;
         int dim = 38;
         DiagCovGMM gmm;
         if (new File("origubm.h5").exists()) {
@@ -96,11 +96,11 @@ public final class TrainUBM9 {
             if (gmm.getMixtureCount() == 1) {
                 maxiter = 1;
             } else if (gmm.getMixtureCount() < 256) {
-                maxiter = 3;
-            } else if (gmm.getMixtureCount() < 512) {
                 maxiter = 5;
-            } else {
+            } else if (gmm.getMixtureCount() < 512) {
                 maxiter = 10;
+            } else {
+                maxiter = 15;
             }
             trainIterations(gmm, maxiter, dataCache, executorService);
             if (gmm.getMixtureCount() == maxMixtures) {

@@ -15,6 +15,7 @@ public final class Evaluation2 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Evaluation2.class);
 
     public static void checkData(final H5File h5file, final List<Model> models) {
+        LOGGER.info("Checking data file {}", h5file.getFileName());
         for (Model model : models) {
             String name = null;
             try {

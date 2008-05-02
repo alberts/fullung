@@ -56,7 +56,7 @@ public final class TrainGMM2 {
             DiagCovGMM ubm = IOUtils.readDiagCovGMM(ubmFile);
             TrainGMM.checkGMM(ubm);
             UBM = Converters.convert(ubm);
-            if (true) {
+            if (false) {
                 String umatFile = Constants.CHANNEL_FILE;
                 HDFReader reader = new HDFReader(umatFile);
                 int dim = 512 * 38;
@@ -124,7 +124,9 @@ public final class TrainGMM2 {
                 LOGGER.info("MAP iteration {}, log likelihood = {}", iter, ll);
             }
 
-            // return supervector minus UBM, divided by standard deviation
+            // return supervector minus UBM, divided by standard deviation.
+            // values are grouped together by feature dimension, not by GMM
+            // mixture component.
             return new Result(name, speakerTrain.getSModel().data);
         }
 
@@ -177,7 +179,7 @@ public final class TrainGMM2 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainGMM2.class);
 
-    private static final int MAP_ITERATIONS = 10;
+    private static final int MAP_ITERATIONS = 1;
 
     public static void main(final String[] args) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -189,7 +191,7 @@ public final class TrainGMM2 {
         });
         final String datah5;
         final String gmmFile;
-        final List<String> names;
+        List<String> names;
 
         // TODO build abstraction layer that takes filenames and maps them to something sensible
         // for evaluation data, check that filenames are unique

@@ -93,12 +93,12 @@ public final class CalculateKernel {
         H5File datah5 = new H5File(Constants.SVM_BACKGROUND_GMM);
         H5File kernelh5 = new H5File(Constants.KERNEL_FILE, H5File.H5F_ACC_TRUNC);
 
-        LOGGER.info("reading data");
+        LOGGER.info("Reading data from {}", datah5.getFileName());
         // TODO read names from a list instead of using all names so that we can
         // combine SRE04 UBM data and NAP data in a single file
         List<String> data = getNames(datah5);
 
-        LOGGER.info("creating kernel dataset");
+        LOGGER.info("Writing kernel to {}", kernelh5.getFileName());
         DataSet kernelds = createKernelDataSet(kernelh5, data.size());
 
         List<List<String>> blocks = new ArrayList<List<String>>();
