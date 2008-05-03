@@ -27,7 +27,7 @@ public final class LocalGrid<R> extends AbstractGrid<R> {
         topologySpi.setLocalNode(true);
         topologySpi.setRemoteNodes(false);
         GridFifoQueueCollisionSpi collisionSpi = new GridFifoQueueCollisionSpi();
-        collisionSpi.setParallelJobsNumber(2);
+        collisionSpi.setParallelJobsNumber(4);
         cfg.setCollisionSpi(collisionSpi);
         cfg.setTopologySpi(topologySpi);
         cfg.setPeerClassLoadingEnabled(true);

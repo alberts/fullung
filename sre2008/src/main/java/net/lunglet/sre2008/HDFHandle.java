@@ -1,5 +1,6 @@
 package net.lunglet.sre2008;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
 import net.lunglet.array4j.matrix.FloatVector;
@@ -22,7 +23,7 @@ public final class HDFHandle implements Handle, Serializable {
 
     private transient FloatDenseVector data;
 
-    private final String h5;
+    private final File h5;
 
     private final int index;
 
@@ -30,7 +31,7 @@ public final class HDFHandle implements Handle, Serializable {
 
     private final String name;
 
-    public HDFHandle(final String h5, final String name, final int index, final int label) {
+    public HDFHandle(final File h5, final String name, final int index, final int label) {
         this.h5 = h5;
         this.name = name;
         this.index = index;

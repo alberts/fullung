@@ -1,30 +1,44 @@
 package net.lunglet.sre2008;
 
-public final class Trial extends Segment {
-    private final boolean target;
+import net.lunglet.sre2008.v2.Answer;
 
-    public Trial(final String name, final int channel, final boolean target) {
+public final class Trial extends Segment {
+    private final Answer answer;
+
+    public Trial(final String name, final int channel, final Answer answer) {
         super(name, channel);
-        this.target = target;
+        this.answer = answer;
     }
 
-    public Trial(final String name, final String channel, final String target) {
+    public Trial(final String name, final String channel, final String answer) {
         super(name, channel);
-        if (target.toLowerCase().startsWith("targ")) {
-            this.target = true;
-        } else if (target.toLowerCase().startsWith("non")) {
-            this.target = false;
+        if (answer != null && answer.toLowerCase().startsWith("targ")) {
+            this.answer = Answer.TARGET;
+        } else if (answer != null && answer.toLowerCase().startsWith("non")) {
+            this.answer = Answer.NONTARGET;
+        } else if (answer != null || answer.toLowerCase().startsWith("bad")) {
+            this.answer = Answer.BAD;
+        } else if (answer == null || answer.toLowerCase().startsWith("unk")) {
+            this.answer = Answer.UNKNOWN;
         } else {
-            throw new IllegalArgumentException("invalid target");
+            throw new IllegalArgumentException("invalid answer");
         }
     }
 
+    public Answer getAnswer() {
+        return answer;
+    }
+
+    public String getAnswerString() {
+        return answer.toString().toLowerCase();
+    }
+    
     public boolean isTarget() {
-        return target;
+        return Answer.TARGET.equals(answer);
     }
 
     @Override
     public String toString() {
-        return super.toString() + ":" + target;
+        return super.toString() + " (" + getAnswerString() + ")";
     }
 }

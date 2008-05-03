@@ -85,6 +85,10 @@
       <zipfileset src="${lib.dir}/slf4j-log4j12-1.5.0.jar" />
       <zipfileset src="${lib.dir}/google-collect-snapshot-20080321.jar" />
       <zipfileset src="${lib.dir}/jewelcli-0.53.jar" />
+      <zipfileset src="${lib.dir}/spring-core.jar" />
+      <zipfileset src="${lib.dir}/spring-context.jar" />
+      <zipfileset src="${lib.dir}/spring-beans.jar" />
+      <zipfileset src="${lib.dir}/jcl104-over-slf4j-1.5.0.jar" />
     </jarjar>
   </target>
 

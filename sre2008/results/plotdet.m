@@ -3,13 +3,14 @@ function plotdet(evalfile,plot_code)
 disp(evalfile);
 
 fid = fopen(evalfile);
-C = textscan(fid,'%s%s%s%s%s%s%s%s%f%s');
+C = textscan(fid,'%s%s%s%s%s%s%s%s%f%s%s%s');
+C
 fclose(fid);
 
 scores = C{9};
 
-true_speaker_scores = scores(strcmp(C{10},'targ')==1);
-impostor_scores = scores(strcmp(C{10},'non')==1);
+true_speaker_scores = scores(strcmp(C{10},'targ')==1|strcmp(C{10},'target')==1);
+impostor_scores = scores(strcmp(C{10},'non')==1|strcmp(C{10},'nontarget')==1);
 
 size(true_speaker_scores)
 size(impostor_scores)

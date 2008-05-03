@@ -90,6 +90,7 @@ def main():
     append_header_info(models, info)
     print_models(models, open('sre2008.trn','w'))
     print_trials(models, open('sre2008.ndx','w'))
+    # TODO mark bad trials with a bad answer
 
 if __name__ == '__main__':
     main()

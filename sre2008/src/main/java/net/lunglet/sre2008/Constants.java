@@ -33,14 +33,14 @@ public final class Constants {
 
     static {
         GMM_DIMENSION = 512 * 38;
-        UBM_FILE = "Z:\\data\\nikov0\\ubm_final_512.h5";
-        SVM_BACKGROUND_GMM = "Z:\\data\\nikov0\\sv_Winitpca20_2iters_svm.h5";
+        UBM_FILE = "C:\\home\\albert\\SRE2008\\data\\ubm_final_512.h5";
+        SVM_BACKGROUND_GMM = "C:\\home\\albert\\SRE2008\\data\\sv_Winitpca20_5iters_svm.h5";
         KERNEL_FILE = "C:\\home\\albert\\SRE2008\\data\\kernel.h5";
-        TNORM_GMM = "Z:\\data\\nikov0\\sv_Winitpca20_2iters_tnorm.h5";
+        TNORM_GMM = "C:\\home\\albert\\SRE2008\\data\\sv_Winitpca20_5iters_tnorm.h5";
         TNORM_SVM = "C:\\home\\albert\\SRE2008\\data\\tnorm_svm.h5";
-        EVAL_GMM = "Z:\\data\\nikov0\\sv_Winitpca20_2iters_sre06.h5";
+        EVAL_GMM = "C:\\home\\albert\\SRE2008\\data\\sv_Winitpca20_5iters_sre06.h5";
         EVAL_SVM = "C:\\home\\albert\\SRE2008\\data\\eval_svm.h5";
-        EVAL_FILE = "Z:\\data\\nap512v2\\sre06-1conv4w_1conv4w.txt";
+        EVAL_FILE = "C:\\home\\albert\\SRE2008\\data\\sre06-1conv4w_1conv4w.txt";
         NAP_DATA = null;
         NAP_GMM = null;
         CHANNEL_FILE = null;

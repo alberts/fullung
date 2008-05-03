@@ -60,7 +60,7 @@ public final class Evaluation2 {
                 Trial trial = new Trial(tparts[0], tparts[1], tparts[2]);
                 testList.add(trial);
             }
-            Model model = new Model(id, gender, "1conv4w", trainList, "1conv4w", testList);
+            Model model = new Model(id, gender, trainList, testList);
             models.add(model);
             line = reader.readLine();
         }

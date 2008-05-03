@@ -1,5 +1,6 @@
 package net.lunglet.sre2008;
 
+import java.util.Properties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -9,6 +10,8 @@ public class Segment {
     private final String hdfName;
 
     private final String name;
+
+    private final Properties properties = new Properties();
 
     public Segment(final String hdfName) {
         this.hdfName = hdfName;
@@ -70,9 +73,17 @@ public class Segment {
         return name;
     }
 
+    public String getProperty(final String key) {
+        return (String) properties.get(key);
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(name).append(channel).toHashCode();
+    }
+
+    public void setProperty(final String key, final String value) {
+        properties.put(key, value);
     }
 
     @Override

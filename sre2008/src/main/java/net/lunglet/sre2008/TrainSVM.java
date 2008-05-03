@@ -215,7 +215,7 @@ public final class TrainSVM {
         }
     }
 
-    static final Logger LOGGER = LoggerFactory.getLogger(TrainSVM.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainSVM.class);
 
     public static void main(final String[] args) throws Exception {
         final List<Model> models;

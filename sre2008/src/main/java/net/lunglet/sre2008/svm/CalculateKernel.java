@@ -19,91 +19,80 @@ import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.hdf.DataSetCreatePropListBuilder.FillTime;
 import net.lunglet.io.HDFReader;
-import net.lunglet.sre2008.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class CalculateKernel {
+    private static class BlockPairs implements Iterable<int[]> {
+        private final int blocks;
+
+        private final int maxiter;
+
+        public BlockPairs(final int blocks) {
+            this.blocks = blocks;
+            this.maxiter = blocks * (blocks + 1) / 2 - 1;
+        }
+
+        @Override
+        public Iterator<int[]> iterator() {
+            return new Iterator<int[]>() {
+                private int i = 0;
+
+                private int inci = 1;
+
+                private int incj = 1;
+
+                private int iter = 0;
+
+                private int j = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return iter <= maxiter;
+                }
+
+                @Override
+                public int[] next() {
+                    if (!hasNext()) {
+                        return null;
+                    }
+                    int[] ij = new int[]{i, j};
+                    if ((iter & 1) == 0) {
+                        j += incj;
+                        if (j == blocks) {
+                            j -= 1;
+                            i -= 2;
+                            incj = -incj;
+                            inci = -inci;
+                        }
+                    } else {
+                        i += inci;
+                        if (i == -1) {
+                            i += 1;
+                            j += 2;
+                            incj = -incj;
+                            inci = -inci;
+                        }
+                    }
+                    iter++;
+                    return ij;
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CalculateKernel.class);
 
-    private static DataSet createKernelDataSet(final H5File kernelh5, final long size) {
-        DataType dtype = FloatType.IEEE_F32LE;
-        long dim = size * (size + 1L) / 2L;
-        DataSpace space = new DataSpace(dim);
-        DataSetCreatePropListBuilder builder = new DataSetCreatePropListBuilder();
-        builder.setFillTime(FillTime.NEVER);
-        DataSet kernelds = kernelh5.getRootGroup().createDataSet("kernel", dtype, space, builder.build());
-        space.close();
-        return kernelds;
-    }
-
-    private static void writeKernelBlock(final DataSet kernelds, final FloatDenseMatrix kernelBlock,
-            final int firstBlockRow, final int firstBlockColumn) {
-        DataType dtype = FloatType.IEEE_F32LE;
-        for (int m = 0; m < kernelBlock.columns(); m++) {
-            FloatDenseVector col = kernelBlock.column(m);
-            if (col.stride() != 1) {
-                throw new AssertionError();
-            }
-            int blockColumn = firstBlockColumn + m;
-            DataSpace memSpace = new DataSpace(Math.min(blockColumn - firstBlockRow + 1, kernelBlock.rows()));
-            DataSpace fileSpace = kernelds.getSpace();
-            long[] start = new long[]{elementOffset(firstBlockRow, blockColumn)};
-            long[] count = new long[]{1L};
-            long[] block = new long[]{memSpace.getDim(0)};
-            fileSpace.selectHyperslab(SelectionOperator.SET, start, null, count, block);
-            kernelds.write(col.data(), dtype, memSpace, fileSpace);
-            fileSpace.close();
-            memSpace.close();
-        }
-    }
-
-    private static void readBlock(final H5File dataFile, final List<String> block, final FloatDenseMatrix buf) {
-        if (block.size() > buf.columns()) {
-            throw new IllegalArgumentException();
-        }
-        for (int i = 0; i < block.size(); i++) {
-            String name = block.get(i);
-            new HDFReader(dataFile).read(name, buf.column(i));
-            if (!FloatMatrixUtils.isAllFinite(buf.column(i))) {
-                LOGGER.error("{} contains invalid values", name);
-                throw new RuntimeException();
-            }
-        }
-    }
-
-    private static List<String> getNames(final H5File h5file) {
-        List<String> names = new ArrayList<String>();
-        for (Group group : h5file.getRootGroup().getGroups()) {
-            for (DataSet ds : group.getDataSets()) {
-                names.add(ds.getName());
-                ds.close();
-            }
-            group.close();
-        }
-        Collections.sort(names);
-        return names;
-    }
-
-    public static void main(final String[] args) {
-        final int bufferColumns = 1790;
-        final int bufferRows = 512 * 38;
-
-        LOGGER.info("starting kernel calculator with " + bufferColumns + " buffer columns");
-        H5File datah5 = new H5File(Constants.SVM_BACKGROUND_GMM);
-        H5File kernelh5 = new H5File(Constants.KERNEL_FILE, H5File.H5F_ACC_TRUNC);
-
-        LOGGER.info("Reading data from {}", datah5.getFileName());
-        // TODO read names from a list instead of using all names so that we can
-        // combine SRE04 UBM data and NAP data in a single file
-        List<String> data = getNames(datah5);
-
-        LOGGER.info("Writing kernel to {}", kernelh5.getFileName());
-        DataSet kernelds = createKernelDataSet(kernelh5, data.size());
-
+    public static void calculateKernel(final H5File datah5, final List<String> data, final H5File kernelh5,
+            final int maxBufferColumns) {
         List<List<String>> blocks = new ArrayList<List<String>>();
-        for (int i = 0; i < data.size(); i += bufferColumns) {
-            List<String> block = data.subList(i, Math.min(data.size(), i + bufferColumns));
+        for (int i = 0; i < data.size(); i += maxBufferColumns) {
+            List<String> block = data.subList(i, Math.min(data.size(), i + maxBufferColumns));
             blocks.add(block);
         }
         LOGGER.info(data.size() + " data elements split into " + blocks.size() + " blocks");
@@ -111,8 +100,17 @@ public final class CalculateKernel {
         for (int i = 1; i < blockColumns.length; i++) {
             blockColumns[i] = blockColumns[i - 1] + blocks.get(i - 1).size();
         }
+        DataSet kernelds = createKernelDataSet(kernelh5, data.size());
+
+        // read value for buffer rows from first vector
+        DataSet blockDs = datah5.getRootGroup().openDataSet(blocks.get(0).get(0));
+        final int bufferRows = blockDs.getIntDims()[0];
+        blockDs.close();
+        int bufferColumns = Math.min(data.size(), maxBufferColumns);
+        LOGGER.info("Allocating two buffers with dimensions [{}, {}]", bufferRows, bufferColumns);
         FloatDenseMatrix a = DenseFactory.floatColumnDirect(bufferRows, bufferColumns);
         FloatDenseMatrix b = DenseFactory.floatColumnDirect(bufferRows, bufferColumns);
+
         int blockInA = -1;
         int blockInB = -1;
         for (int[] ij : new BlockPairs(blocks.size())) {
@@ -179,9 +177,17 @@ public final class CalculateKernel {
             writeKernelBlock(kernelds, kernelBlock, blockColumns[i], blockColumns[j]);
         }
         kernelds.close();
-        kernelh5.close();
-        datah5.close();
-        LOGGER.info("kernel calculation done");
+    }
+
+    private static DataSet createKernelDataSet(final H5File kernelh5, final long size) {
+        DataType dtype = FloatType.IEEE_F32LE;
+        long dim = size * (size + 1L) / 2L;
+        DataSpace space = new DataSpace(dim);
+        DataSetCreatePropListBuilder builder = new DataSetCreatePropListBuilder();
+        builder.setFillTime(FillTime.NEVER);
+        DataSet kernelds = kernelh5.getRootGroup().createDataSet("kernel", dtype, space, builder.build());
+        space.close();
+        return kernelds;
     }
 
     private static long elementOffset(final long m, final long n) {
@@ -192,66 +198,51 @@ public final class CalculateKernel {
         return m + (n + 1L) * n / 2L;
     }
 
-    private static class BlockPairs implements Iterable<int[]> {
-        private final int blocks;
-
-        private final int maxiter;
-
-        public BlockPairs(final int blocks) {
-            this.blocks = blocks;
-            this.maxiter = blocks * (blocks + 1) / 2 - 1;
+    public static List<String> getNames(final H5File h5file) {
+        List<String> names = new ArrayList<String>();
+        for (Group group : h5file.getRootGroup().getGroups()) {
+            for (DataSet ds : group.getDataSets()) {
+                names.add(ds.getName());
+                ds.close();
+            }
+            group.close();
         }
+        Collections.sort(names);
+        return names;
+    }
 
-        @Override
-        public Iterator<int[]> iterator() {
-            return new Iterator<int[]>() {
-                private int iter = 0;
+    private static void readBlock(final H5File dataFile, final List<String> block, final FloatDenseMatrix buf) {
+        if (block.size() > buf.columns()) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < block.size(); i++) {
+            String name = block.get(i);
+            new HDFReader(dataFile).read(name, buf.column(i));
+            if (!FloatMatrixUtils.isAllFinite(buf.column(i))) {
+                LOGGER.error("{} contains invalid values", name);
+                throw new RuntimeException();
+            }
+        }
+    }
 
-                private int i = 0;
-
-                private int j = 0;
-
-                private int inci = 1;
-
-                private int incj = 1;
-
-                @Override
-                public boolean hasNext() {
-                    return iter <= maxiter;
-                }
-
-                @Override
-                public int[] next() {
-                    if (!hasNext()) {
-                        return null;
-                    }
-                    int[] ij = new int[]{i, j};
-                    if ((iter & 1) == 0) {
-                        j += incj;
-                        if (j == blocks) {
-                            j -= 1;
-                            i -= 2;
-                            incj = -incj;
-                            inci = -inci;
-                        }
-                    } else {
-                        i += inci;
-                        if (i == -1) {
-                            i += 1;
-                            j += 2;
-                            incj = -incj;
-                            inci = -inci;
-                        }
-                    }
-                    iter++;
-                    return ij;
-                }
-
-                @Override
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
-            };
+    private static void writeKernelBlock(final DataSet kernelds, final FloatDenseMatrix kernelBlock,
+            final int firstBlockRow, final int firstBlockColumn) {
+        DataType dtype = FloatType.IEEE_F32LE;
+        for (int m = 0; m < kernelBlock.columns(); m++) {
+            FloatDenseVector col = kernelBlock.column(m);
+            if (col.stride() != 1) {
+                throw new AssertionError();
+            }
+            int blockColumn = firstBlockColumn + m;
+            DataSpace memSpace = new DataSpace(Math.min(blockColumn - firstBlockRow + 1, kernelBlock.rows()));
+            DataSpace fileSpace = kernelds.getSpace();
+            long[] start = new long[]{elementOffset(firstBlockRow, blockColumn)};
+            long[] count = new long[]{1L};
+            long[] block = new long[]{memSpace.getDim(0)};
+            fileSpace.selectHyperslab(SelectionOperator.SET, start, null, count, block);
+            kernelds.write(col.data(), dtype, memSpace, fileSpace);
+            fileSpace.close();
+            memSpace.close();
         }
     }
 }

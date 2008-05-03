@@ -104,8 +104,8 @@ public final class ExtractChannelStats {
     private static void run(final List<File> featureFiles, final JMapGMM ubm, final ExecutorService executorService,
             final File outputFile, final String outputBasename) {
         final HDFWriter writer = new HDFWriter(outputFile);
-        List<Future<Void>> futures = new ArrayList<Future<Void>>();
         final HDFReader reader = new HDFReader(16 * 1024 * 1024);
+        List<Future<Void>> futures = new ArrayList<Future<Void>>();
         int fileCount = 0;
         for (final File featureFile : featureFiles) {
             H5File h5file = new H5File(featureFile);
