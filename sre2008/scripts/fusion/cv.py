@@ -40,6 +40,21 @@ def read_model_key(filename):
         models[id] = pin
     return models
 
+def read_model_seg(filename):
+    lines = open(filename).readlines()
+    modelseg = {}
+    for line in lines:
+        parts = re.split('\\s+', line.strip())
+        pin = parts[2]
+        segs = parts[5].split(',')
+        for seg in segs:
+            segment, channel = seg.split(':')
+            segment = segment.split('.')[0]
+            trial = segment, channel
+            assert channel in CHANNELS
+            modelseg[trial] = pin
+    return modelseg
+
 def read_test_seg_key(filename):
     lines = open(filename).readlines()
     testseg = {}
@@ -54,15 +69,25 @@ def read_test_seg_key(filename):
 
 def main():
     models = read_model_key('sre06_model_key_v2.txt')
+    modelseg = read_model_seg('sre06_model_key_v2.txt')
     testseg = read_test_seg_key('sre06_test_seg_key_v11a_short.txt')
+    # merge model segments with test segments
+    for trial, pin in modelseg.iteritems():
+        assert trial not in testseg
+        testseg[trial] = pin
 
-    speakers = {}
+    speakers, scores = {}, []
     lines = open('scores.txt').readlines()
     for line in lines:
-        key, gender, langtype, chntype, answer, scores = re.split('\\s+', line.strip(), 5)
+        key, gender, langtype, chntype, answer, trialscores = re.split('\\s+', line.strip(), 5)
 
         id, segchn = key.split('_')
-        pin = models[id]
+        if id in models:
+            pin = models[id]
+        else:
+            # handle short-short models
+            pin = testseg[(id[:-2], id[-1])]
+
         segment, channel = segchn.split(':')
         assert channel in CHANNELS
 
@@ -71,10 +96,14 @@ def main():
         chntype = CHNTYPES[chntype.lower()]
         assert answer in ANSWERS
 
-        scores = map(lambda x: float(x), re.split('\\s+', scores))
-        scores.extend(langtype)
-        scores.extend(chntype)
-        scores.extend(gender)
+        trialscores = map(lambda x: float(x), re.split('\\s+', trialscores))
+        trialscores.extend(langtype)
+        trialscores.extend(chntype)
+        trialscores.extend(gender)
+        scores.append(trialscores)
+        # calculate index afterwards so that they are 1-based, which
+        # is what MATLAB expects
+        scoreindex = len(scores)
 
         if not speakers.has_key(pin):
             speaker = {}
@@ -84,7 +113,7 @@ def main():
             speakers[pin] = speaker
         trial = segment, channel
         speaker = speakers[pin]
-        speaker[answer].append(trial + (scores,))
+        speaker[answer].append(trial + (scoreindex,))
         speaker['trials'].add(trial)
 
     h5file = tables.openFile('cvscores.h5', mode='w')
@@ -106,33 +135,33 @@ def main():
             if pin == pin2: continue
             for answer in ANSWERS:
                 answer_scores = train_scores[answer]
-                for segment, channel, scores in speaker2[answer]:
+                for segment, channel, scoreindex in speaker2[answer]:
                     trial = segment, channel
                     trial_pin = testseg[trial]
                     if trial_pin in ignore_pins: continue
-                    answer_scores.append(scores)
+                    answer_scores.append(scoreindex)
 
         for answer in ANSWERS:
-            for segment, channel, scores in speaker[answer]:
-                test_scores[answer].append(scores)
-                all_scores[answer].append(scores)
+            for segment, channel, scoreindex in speaker[answer]:
+                test_scores[answer].append(scoreindex)
+                # subtract 1 from scoreindex for Python
+                all_scores[answer].append(scores[scoreindex - 1])
 
         print 'writing scores for speaker %s' % pin
         group = h5file.createGroup('/', 'spk%s' % pin)
         traingroup = h5file.createGroup(group, 'train')
         testgroup = h5file.createGroup(group, 'test')
         for answer in ANSWERS:
-            scoresarr = np.array(train_scores[answer], dtype=np.float32)
-            h5file.createArray(traingroup, answer, scoresarr)
+            indices = np.array(train_scores[answer], dtype=np.int32)
+            h5file.createArray(traingroup, answer, indices)
             if len(test_scores[answer]) > 0:
-                scoresarr = np.array(test_scores[answer], dtype=np.float32)
-                h5file.createArray(testgroup, answer, scoresarr)
+                indices = np.array(test_scores[answer], dtype=np.int32)
+                h5file.createArray(testgroup, answer, indices)
 
-    print 'writing all scores'
     for answer in ANSWERS:
-        scoresarr = np.array(all_scores[answer],dtype=np.float32)
+        scoresarr = np.array(all_scores[answer], dtype=np.float32)
         h5file.createArray('/', answer, scoresarr)
-
+    h5file.createArray('/', 'scores', np.array(scores, dtype=np.float32))
     h5file.close()
 
 if __name__ == '__main__':

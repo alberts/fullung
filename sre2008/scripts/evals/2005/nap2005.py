@@ -147,6 +147,8 @@ def check_models(models):
             assert info['type'] in ('targ', 'non')
 
 def get_speakers(models):
+    valid2005 = set([x.strip() for x in open('valid2005.txt').readlines()])
+
     speakers = {}
     for modelid, model in models.iteritems():
         def initpin(pin, gender):
@@ -162,16 +164,24 @@ def get_speakers(models):
         pin = model['pin']
         initpin(pin, model['gender'])
         for segment in model['train']:
+            if segment[0] not in valid2005: continue
             speakers[pin]['1conv4w'].add(segment)
         for segment, trial in model['trials'].iteritems():
+            if segment[0] not in valid2005: continue
             pin = trial['pin']
             initpin(pin, model['gender'])
             speakers[pin][trial['condition']].add(segment)
+
     return speakers
 
 def print_speakers(speakers, fp):
     lines = []
     for pin, info in speakers.iteritems():
+        phnlen = len(info['1conv4w'])
+        miclen = len(info['1convmic'])
+        # ignore speakers without useful data
+        if phnlen == 0 or (miclen==0 and phnlen<5) or (miclen>0 and miclen<5):
+            continue
         parts = [info['gender'], str(pin)]
         klass = ''
         def join_segments(segments):
@@ -211,25 +221,6 @@ def main():
     remove_trial_errors('testseg-error-v1.txt', models)
     read_key('sre05-key-v7c.txt', models)
     check_models(models)
-
-    # additional pruning of bad data
-    valid2005 = set([x.strip() for x in open('valid2005.txt').readlines()])
-    badmodels = set()
-    for modelid, model in models.iteritems():
-        train = list(model['train'])[0][0]
-        if train not in valid2005:
-            badmodels.add(modelid)
-            continue
-        badtrials = set()
-        for trialkey in model['trials']:
-            if trialkey[0] not in valid2005:
-                badtrials.add(trialkey)
-        for trialkey in badtrials:
-            del model['trials'][trialkey]
-        if len(model['trials']) == 0:
-            badmodels.add(modelid)
-    for modelid in badmodels:
-        del models[modelid]
 
     speakers = get_speakers(models)
 

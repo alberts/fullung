@@ -10,7 +10,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -66,21 +69,39 @@ public final class ExtractChannelStats {
         @Override
         protected int mainImpl(final Arguments args) throws Throwable {
             File outputFile = args.getOutput();
-            checkFileNotExists("output", outputFile);
+            if (false) {
+                checkFileNotExists("output", outputFile);
+            }
             File filelist = args.getFilelist();
+
+            final String outputBasename;
+            if (args.isBasename()) {
+                outputBasename = args.getBasename();
+            } else {
+                outputBasename = null;
+            }
+
             checkFileExists("feature file list", filelist);
             List<StatsJob> statsJobs = readChannelFilelist(filelist);
+
+            // check for duplicate groups in HDF output
+            if (outputBasename == null) {
+                Set<String> outputNames = new HashSet<String>();
+                for (StatsJob job : statsJobs) {
+                    final String outputName;
+                    outputName = job.getHDFName();
+                    if (outputNames.contains(outputName)) {
+                        throw new RuntimeException("Duplicate output name: " + outputName);
+                    }
+                    outputNames.add(outputName);
+                }
+            }
+
             File ubmFile = args.getUbm();
             checkFileExists("UBM", ubmFile);
             JMapGMM ubm = Converters.convert(IOUtils.readDiagCovGMM(ubmFile));
             ExecutorService executorService = createExecutorService();
             try {
-                final String outputBasename;
-                if (args.isBasename()) {
-                    outputBasename = args.getBasename();
-                } else {
-                    outputBasename = null;
-                }
                 LOGGER.info("Extracting stats using top N={}={} scoring", JMapGMM.c, EigenMapTrain.c5);
                 run(statsJobs, ubm, executorService, outputFile, outputBasename);
             } finally {
@@ -100,6 +121,10 @@ public final class ExtractChannelStats {
         public StatsJob(final File featureFile, final int channel) {
             this.featureFile = featureFile;
             this.channel = channel;
+        }
+
+        public String getHDFName() {
+            return "/" + featureFile.getName().split("\\.")[0] + "/" + channel;
         }
     }
 
@@ -133,6 +158,13 @@ public final class ExtractChannelStats {
                 if (channel != 0 && channel != 1) {
                     throw new IOException();
                 }
+                String hdfName = "/mfcc/" + channel;
+                LOGGER.info("Checking {} in {}", hdfName, featureFile);
+                H5File h5file = new H5File(featureFile);
+                if (!h5file.getRootGroup().existsDataSet(hdfName)) {
+                    throw new RuntimeException(hdfName + " doesn't exist in " + featureFile);
+                }
+                h5file.close();
                 statsJobs.add(new StatsJob(featureFile, channel));
                 line = lineReader.readLine();
             }
@@ -144,7 +176,14 @@ public final class ExtractChannelStats {
 
     private static void run(final List<StatsJob> statsJobs, final JMapGMM ubm, final ExecutorService executorService,
             final File outputFile, final String outputBasename) {
-        final HDFWriter writer = new HDFWriter(outputFile);
+        final H5File outputh5;
+        if (outputFile.exists()) {
+            outputh5 = new H5File(outputFile, H5File.H5F_ACC_RDWR);
+        } else {
+            outputh5 = new H5File(outputFile, H5File.H5F_ACC_TRUNC);
+        }
+
+        final HDFWriter writer = new HDFWriter(outputh5);
         final HDFReader reader = new HDFReader(16 * 1024 * 1024);
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
         int jobCount = 0;
@@ -161,12 +200,28 @@ public final class ExtractChannelStats {
             Callable<Void> callable = new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
+                    final String outputName;
+                    if (outputBasename != null) {
+                        outputName = "/" + outputBasename + localJobCount;
+                    } else {
+                        outputName = statsJob.getHDFName();
+                    }
+                    synchronized (writer) {
+                        if (writer.getH5File().getRootGroup().existsGroup(outputName)) {
+                            LOGGER.info("Skipping {}", outputName);
+                            return null;
+                        }
+                    }
+
+                    LOGGER.info("Reading {}:{}", featureFile, channel);
                     H5File h5file2 = new H5File(featureFile);
                     FloatDenseMatrix data = DenseFactory.floatRowHeap(dims[0], dims[1]);
                     synchronized (reader) {
                         reader.read(h5file2, hdfName, data);
                     }
                     h5file2.close();
+
+                    LOGGER.info("Starting calculation for {} {}", outputName, Arrays.toString(dims));
                     EigenMapTrain train = new EigenMapTrain(null, ubm);
                     JVectorSequence data2 = new IterableJVectorSequence(data.rowsIterator(), true);
                     LOGGER.debug("Evaluating frame level background");
@@ -175,12 +230,8 @@ public final class ExtractChannelStats {
                     train.calcPosteriors();
                     SuperVector x = train.dataExpectation2();
                     double[] n = train.getN();
-                    final String outputName;
-                    if (outputBasename != null) {
-                        outputName = "/" + outputBasename + localJobCount;
-                    } else {
-                        outputName = "/" + featureFile.getName().split("\\.")[0] + "/" + channel;
-                    }
+
+                    LOGGER.info("Writing to {}/[x,n]", outputName);
                     synchronized (writer) {
                         HDFUtils.createGroup(writer.getH5File(), outputName).close();
                         // values in x are grouped together by feature
@@ -189,7 +240,7 @@ public final class ExtractChannelStats {
                         writer.write(outputName + "/n", DenseFactory.floatVector(n));
                         writer.flush();
                     }
-                    LOGGER.info("Wrote to {}/[x,n]", outputName);
+
                     return null;
                 }
             };

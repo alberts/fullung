@@ -207,6 +207,10 @@ public final class CalculateKernel {
             }
             group.close();
         }
+        for (DataSet ds : h5file.getRootGroup().getDataSets()) {
+            names.add(ds.getName());
+            ds.close();
+        }
         Collections.sort(names);
         return names;
     }
