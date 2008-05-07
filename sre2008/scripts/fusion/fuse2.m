@@ -1,25 +1,28 @@
 %% Setup
 systems = [1 2 3 4];
-%sidestages = {5:7,8:10,11:12};
-sidestages = {5:7,11:12};
+
+% sidestages = {5:7,8:10,11:12};
+% sidestages = {5:7,11:12};
+sidestages = {5:7};
+
 h5file = 'cvscores.h5';
 info = hdf5info(h5file);
 prior = effective_prior(0.01,10,1);
 groups = info.GroupHierarchy.Groups;
 
-groups = groups(1:2);
+groups = groups(1:10);
 
 maxcount = length(groups);
 
 %% Training
 weights = {};
-tic;
 for i=1:length(sidestages)
     fprintf('=== Stage %d of %d: begin ===\n', i, length(sidestages));
     
     sidestage = sidestages{i};
     count = 0;
     w = {};
+    tic;
     for group = groups
         count = count + 1;
         name = group.Name;
@@ -50,13 +53,12 @@ for i=1:length(sidestages)
             name, i, count, maxcount, size(tar,2), size(non,2));
         ww = train_sideinfo_fusion(train_scores_tar,train_side_tar,train_scores_non,train_side_non);
         w = {w{:} ww};
-        fprintf('Model training time: %.8f seconds\n\n', toc/(count*i));
+        fprintf('Model training time: %.8f seconds\n\n', toc/count);
     end
     weights = {weights{:} w};
 
-    fprintf('=== Stage %d of %d: end ===\n\n', i, length(sidestages));
+    fprintf('=== Stage %d of %d done. Training time: %.8f seconds ===\n\n', i, length(sidestages), toc);
 end
-fprintf('Total training time: %.8f seconds\n', toc);
 
 %% Testing
 fused_tar = [];
@@ -115,7 +117,7 @@ for group = groups
     fused_non = [fused_non test_scores_non]; %#ok<AGROW>
 end
 
-%% Average weights to get final stage weights
+%% Average to get final stage weights
 finalW = {};
 for i=1:1:length(weights)
     stageW = [];
@@ -140,10 +142,10 @@ sanity_non = apply_bilinear_fusions(finalW,non,systems,sidestages);
 %% DET Plot
 figure;
 hold on;
-colors = 'rgby';
-for i=systems
-    plotdet(tar(i,:), non(i,:), colors(i));
-end
+% colors = 'rgby';
+% for i=systems
+%     plotdet(tar(i,:), non(i,:), colors(i));
+% end
 plotdet(fused_tar, fused_non, 'k');
 plotdet(sanity_tar, sanity_non, 'k-.');
 hold off;
