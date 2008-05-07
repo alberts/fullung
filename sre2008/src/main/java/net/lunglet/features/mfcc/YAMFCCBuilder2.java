@@ -268,6 +268,7 @@ public final class YAMFCCBuilder2 {
 
     public static void main(final String[] args) throws IOException, InterruptedException {
         List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder2.class);
+        // TODO check if filenames exist
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
         for (String filename : filenames) {

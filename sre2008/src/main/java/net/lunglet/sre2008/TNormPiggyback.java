@@ -17,6 +17,7 @@ import net.lunglet.array4j.matrix.math.FloatMatrixMath;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.io.HDFReader;
 import net.lunglet.io.HDFWriter;
+import net.lunglet.sre2008.v2.ScoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public final class TNormPiggyback {
         private final double variance;
 
         public TNormStats(final float[] scores) {
-            double[] params = Evaluation.getParams(scores);
+            double[] params = ScoreUtils.getParams(scores);
             this.mean = params[0];
             this.stddev = params[1];
             this.variance = stddev * stddev;
@@ -139,7 +140,7 @@ public final class TNormPiggyback {
         }
 
         LOGGER.info("Reading TNorm models from {}", TNORM_SVM_FILE);
-        FloatDenseMatrix tnormModels = Evaluation.readTNorm(TNORM_SVM_FILE, DIMENSION);
+        FloatDenseMatrix tnormModels = null;
 
         LOGGER.info("Reading TNorm parameters from {}", TNORM_PARAMS_FILE);
         HDFReader tnormParamsReader = new HDFReader(TNORM_PARAMS_FILE);

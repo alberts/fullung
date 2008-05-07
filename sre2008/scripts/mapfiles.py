@@ -1,37 +1,46 @@
 #!/usr/bin/env python
 
-from StringIO import StringIO
 import os.path
+import re
 import sys
 
-def map_files(eval):
+def map_files(inputpath):
     def visit(arg, dirname, names):
         for name in names:
             path = os.path.join(dirname, name)
             name = name.lower()
             if name.endswith('.sph'):
-                #assert os.path.exists('%s.0.mlf' % path)
-                #assert os.path.exists('%s.1.mlf' % path)
                 arg.append(path)
     filenames = []
-    inputpath = 'Z:\\%s' % eval
     os.path.walk(inputpath, visit, filenames)
     filemap = {}
     for filename in filenames:
-        basename = os.path.splitext(os.path.basename(filename))[0]
-        filemap[basename] = filename
+        if filename.find('.wiener.') >= 0:
+            channel_type = 'mic'
+        else:
+            channel_type = 'phn'
+        basename = os.path.basename(filename).split('.')[0]
+        key = basename, channel_type
+        assert key not in filemap
+        filemap[key] = filename
     return filemap
 
-def read_metadata(filemap, filelist):
-    lines = open(filelist).readlines()
+def map_segments(filemap, lines):
     for line in lines:
-        line = line.strip()
-        filename = filemap[line]
-        print filename
+        segchn, channel_type = re.split(' ', line.strip())
+        segment, channel = segchn.split(':')
+        key = segment, channel_type
+        if key not in filemap:
+            print '%s is missing' % str(key)
+        continue
+        filename = filemap[key]
+        mfccfilename = '%s.mfcc.h5' % filename
+        assert os.path.isfile(mfccfilename)
+        print '%s:%s' % (mfccfilename, channel)
 
 def main():
-    filemap = map_files('SRE06')
-    read_metadata(filemap, 'sre06_names.txt')
+    filemap = map_files(sys.argv[1])
+    map_segments(filemap, open(sys.argv[2]).readlines())
 
 if __name__ == '__main__':
     main()

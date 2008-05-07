@@ -269,23 +269,16 @@ public final class Evaluation {
             }
 
             List<String> parts = new ArrayList<String>();
-            parts.add("1conv4w");
-            parts.add("n");
-            parts.add("1conv4w");
+            parts.add(model.getId().toLowerCase() + "_" + trial.getName() + ":" + trial.getChannel());
             parts.add(model.getGender().name().substring(0, 1).toLowerCase());
-            parts.add(model.getId().toLowerCase());
-            parts.add(trial.getName());
-            parts.add(trial.getChannel());
-            parts.add("f");
-            parts.add(String.format("%.15E", score));
-            parts.add(trial.getAnswerString());
-
             // append sideinfo
             for (String key : new String[]{"language", "channelType"}) {
                 String modelValue = model.getProperty(key);
                 String trialValue = trial.getProperty(key);
                 parts.add(modelValue + ":" + trialValue);
             }
+            parts.add(trial.getAnswerString());
+            parts.add(String.format("%.15E", score));
 
             StringBuilder strBuilder = new StringBuilder();
             for (int i = 0; i < parts.size(); i++) {

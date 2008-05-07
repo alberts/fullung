@@ -100,6 +100,7 @@ public final class TrainSVM {
                 inputh5.close();
             }
             Collections.sort(models);
+            checkData(models, inputFile);
 
             List<Handle> backgroundData = readBackgroundData(backgroundFile);
             FloatMatrix kernel = readKernel(kernelFile);
@@ -120,6 +121,20 @@ public final class TrainSVM {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainSVM.class);
+
+    private static void checkData(final List<Model> models, final File dataFile) {
+        H5File datah5 = new H5File(dataFile);
+        for (Model model : models) {
+            for (Segment train : model.getTrain()) {
+                String hdfName = train.getHDFName();
+                if (!datah5.getRootGroup().existsDataSet(hdfName)) {
+                    throw new RuntimeException(hdfName + " for model " + model.getId() + " is missing from "
+                            + datah5.getFileName());
+                }
+            }
+        }
+        datah5.close();
+    }
 
     private static ExecutorService createExecutorService() {
         final int threads = 4;

@@ -5,6 +5,8 @@ import re
 import os
 import sys
 
+SAMPLE_RATE = 8000.0
+
 def read_sphere_header(sph):
     fp = open(sph, 'rb')
     magic = fp.read(8).strip()
@@ -72,8 +74,12 @@ def wiener(filename, channel, keep_other):
     fp.close()
 
     channel_p1 = channel + 1
+    # -p forces conversion to 16-bit linear pcm
     status = os.system('sph2pipe -c %d -p -f raw %s input.raw' % (channel_p1, filename))
     assert status == 0
+    
+    # maximizing volume of input to wiener doesn't seem to
+    # make much difference
 
     if keep_other:
         other_channel = abs(channel - 1)
@@ -88,7 +94,16 @@ def wiener(filename, channel, keep_other):
     if keep_other:
         # maximize volume
         status = os.system("sox -r 8000 -s -2 wiener.raw -e stat -v 2>vc")
-        status = os.system("sox -V -v `cat vc` -r 8000 -s -2 wiener.raw wiener2.raw")
+        assert status == 0
+
+        # prevent clipping
+	vc = float(open('vc').read().strip())
+        assert vc > 0
+        vc = 0.98 * vc
+
+        status = os.system("sox -V -v %.8f -r 8000 -s -2 wiener.raw wiener2.raw" % vc)
+        assert status == 0
+
         if channel == 0:
             soxargs = ('wiener2.raw', 'other.raw')
         else:
@@ -96,7 +111,68 @@ def wiener(filename, channel, keep_other):
         status = os.system('sox -V --combine merge -r 8000 -s -2 %s -r 8000 -s -2 %s -U %s' % (soxargs + (output,)))
         assert status == 0
     else:
-        status = os.system('sox -r 8000 -s -2 wiener.raw -U %s' % (output,))
+        # maximize volume
+        status = os.system("sox -r 8000 -s -2 wiener.raw -e stat -v 2>vc")
+        assert status == 0
+
+        # prevent clipping
+	vc = float(open('vc').read().strip())
+        assert vc > 0
+        vc = 0.98 * vc
+
+        status = os.system("sox -V -v %.8f -r 8000 -s -2 wiener.raw wiener2.raw" % vc)
+        assert status == 0
+
+        # convert to ulaw
+        status = os.system('sox -r 8000 -s -2 wiener2.raw -U vadinput.raw')
+        assert status == 0
+
+        fp = open('vadinput.raw','rb')
+        buf = fp.read()
+        fp.close()
+
+        totaltime = len(buf)/SAMPLE_RATE
+        vadintervals = []
+        vadtime = 0.0
+        vadfilename = '%s.vad' % os.path.splitext(filename)[0]
+        lines = open(vadfilename).readlines()
+        for line in lines:
+            parts = re.split('\\s+', line.strip())
+            starttime = float(parts[2])
+            # deal with strange vad files
+            if starttime < 0: starttime = 0
+            endtime = float(parts[4])
+            assert starttime >= 0
+            assert endtime > starttime
+            startsample = int(starttime * SAMPLE_RATE)
+            endsample = int(endtime * SAMPLE_RATE)
+            assert startsample >= 0
+            # check here before fixing endsample...
+            assert startsample < endsample
+            # deal with strange vad files
+            if endsample > len(buf): endsample = len(buf)
+            assert endsample <= len(buf)
+            vadintervals.append((startsample,endsample))
+            delta = endtime - starttime
+            vadtime += delta
+
+        keptperc = 100.0 * vadtime / totaltime
+        if vadtime > 0.4 * totaltime or vadtime > 30.0:
+            print 'VAD ok: %.8f seconds (%.8f percent)' % (vadtime, keptperc)
+            vadbuf = []
+            for startsample, endsample in vadintervals:
+                print '{%f, %f] -> %f' % (startsample/SAMPLE_RATE, endsample/SAMPLE_RATE, len(vadbuf)/SAMPLE_RATE)
+                vadbuf += buf[startsample:endsample]
+            vadbuf = ''.join(vadbuf)
+        else:
+            print 'VAD bad: %.8f seconds (%.8f percent)' % (vadtime, keptperc)
+            vadbuf = buf
+
+        assert len(vadbuf) <= len(buf)
+        fp = open('vadoutput.raw', 'wb')
+        fp.write(vadbuf)
+        fp.close()
+        status = os.system('sox -r 8000 -U vadoutput.raw -U %s' % (output,))
         assert status == 0
 
 def main():
@@ -113,6 +189,10 @@ def main():
     assert os.path.isfile(filename)
     assert channel in ('a', 'b')
     channel = ord(channel) - ord('a')
+    outputfilename = '%s.wiener.sph' % os.path.splitext(filename)[0]
+    if False and os.path.exists(outputfilename):
+        print >>sys.stderr, 'output file %s already exists' % outputfilename
+        return
     wiener(filename, channel, keep_other)
 
 if __name__ == '__main__':

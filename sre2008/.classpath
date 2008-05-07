@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="cz/vutbr/fit/speech/phnrec/PhnRecGrid2.java|cz/vutbr/fit/speech/phnrec/PhnRecJob.java|cz/vutbr/fit/speech/phnrec/PhnRecTask.java|net/lunglet/sre2008/TrainGMM.java|net/lunglet/sre2008/TrainGMM2.java|net/lunglet/sre2008/TrainSVM.java|net/lunglet/sre2008/Constants.java|net/lunglet/sre2008/Constants2.java|net/lunglet/sre2008/Evaluation3.java|net/lunglet/gridgain/|net/lunglet/sre2008/Evaluation.java|net/lunglet/sre2008/TNormPiggyback.java|net/lunglet/sre2008/TrainGMMSVM.java" kind="src" path="src/main/java"/>
+	<classpathentry excluding="cz/vutbr/fit/speech/phnrec/PhnRecGrid2.java|cz/vutbr/fit/speech/phnrec/PhnRecJob.java|cz/vutbr/fit/speech/phnrec/PhnRecTask.java|net/lunglet/sre2008/TrainGMM.java|net/lunglet/sre2008/TrainGMM2.java|net/lunglet/sre2008/TrainSVM.java|net/lunglet/sre2008/Constants.java|net/lunglet/sre2008/Constants2.java|net/lunglet/sre2008/Evaluation3.java|net/lunglet/gridgain/|net/lunglet/sre2008/Evaluation.java|net/lunglet/sre2008/TrainGMMSVM.java" kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

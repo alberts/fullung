@@ -3,17 +3,20 @@ function plotdet(evalfile,plot_code)
 disp(evalfile);
 
 fid = fopen(evalfile);
-C = textscan(fid,'%s%s%s%s%s%s%s%s%f%s%s%s');
-C
+% C = textscan(fid,'%s%s%s%s%s%s%s%s%f%s%s%s');
+C = textscan(fid,'%s%s%s%s%s%s%s%s%s%s%f%s');
 fclose(fid);
 
-scores = C{9};
+% scores = C{9};
+scores = C{11};
 
-true_speaker_scores = scores(strcmp(C{10},'targ')==1|strcmp(C{10},'target')==1);
-impostor_scores = scores(strcmp(C{10},'non')==1|strcmp(C{10},'nontarget')==1);
+% true_speaker_scores = scores(strcmp(C{10},'targ')==1|strcmp(C{10},'target')==1);
+% impostor_scores = scores(strcmp(C{10},'non')==1|strcmp(C{10},'nontarget')==1);
+true_speaker_scores = scores(strcmp(C{12},'target')==1);
+impostor_scores = scores(strcmp(C{12},'nontarget')==1);
 
-size(true_speaker_scores)
-size(impostor_scores)
+% size(true_speaker_scores)
+% size(impostor_scores)
 
 Cmiss = 10;
 Cfa = 1;

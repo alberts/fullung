@@ -232,6 +232,14 @@ def main():
         del models[modelid]
 
     speakers = get_speakers(models)
+
+    # prune speakers that are also in [138]conv4w/1convmic 2006
+    for line in open('sre06_pins.txt').readlines():
+        pin = int(line.strip())
+        if pin in speakers:
+            print 'removing speaker %d that is also in 2006' % pin
+            del speakers[pin]
+
     print_speakers(speakers, open('nap2005.txt', 'w'))
 
 if __name__ == '__main__':
