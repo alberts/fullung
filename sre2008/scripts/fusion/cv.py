@@ -7,24 +7,27 @@ import numpy as np
 import re
 import tables
 
-GENDERS = {'m' : 0, 'f' : 1}
+GENDERS = {
+    'm' : (0, 1),
+    'f' : (1, 0)
+    }
 
 CHANNELS = ('a', 'b')
 
 ANSWERS = ('target', 'nontarget')
 
 LANGTYPES = {
-    'eng:eng' : (1, 0, 0),
+    'eng:eng' : (0, 0, 1),
     'oth:eng' : (0, 1, 0),
     'eng:oth' : (0, 1, 0),
-    'oth:oth' : (0, 0, 1)
+    'oth:oth' : (1, 0, 0)
     }
 
 CHNTYPES = {
-    'phn:phn' : (1, 0, 0),
+    'phn:phn' : (0, 0, 1),
     'mic:phn' : (0, 1, 0),
     'phn:mic' : (0, 1, 0),
-    'mic:mic' : (0, 0, 1)
+    'mic:mic' : (1, 0, 0)
     }
 
 def read_model_key(filename):
@@ -69,9 +72,9 @@ def main():
         assert answer in ANSWERS
 
         scores = map(lambda x: float(x), re.split('\\s+', scores))
-        #scores.append(gender)
         scores.extend(langtype)
-        #scores.extend(chntype)
+        scores.extend(chntype)
+        scores.extend(gender)
 
         if not speakers.has_key(pin):
             speaker = {}
