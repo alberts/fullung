@@ -82,7 +82,7 @@ public final class TrainUBM9 {
     }
 
     private static void train(final DataCache2 dataCache, final ExecutorService executorService) {
-        int maxMixtures = 2048;
+        int maxMixtures = 512;
         int dim = 38;
         DiagCovGMM gmm;
         if (new File("origubm.h5").exists()) {
@@ -100,7 +100,7 @@ public final class TrainUBM9 {
             } else if (gmm.getMixtureCount() < 512) {
                 maxiter = 10;
             } else {
-                maxiter = 15;
+                maxiter = 3;
             }
             trainIterations(gmm, maxiter, dataCache, executorService);
             if (gmm.getMixtureCount() == maxMixtures) {
@@ -137,13 +137,19 @@ public final class TrainUBM9 {
             float nthresh = 100.0f * (2.0f * gmm.getDimension() + 1);
             final int weakCount = GMMUtils.countWeak(gmm, stats, nthresh);
 
-            if (iter >= 3 && weakCount > 0) {
-                LOGGER.info("Replacing {} weak components", weakCount);
-                GMMUtils.replaceWeak(gmm, stats, nthresh);
-                IOUtils.writeGMM("ubm_fixed_" + gmm.getMixtureCount() + "_" + iter + ".h5", gmm);
-                LOGGER.info("Found some weak components, restarting with equal weights");
-                iter = 1;
+            if (false) {
+                if (iter >= 3 && weakCount > 0) {
+                    LOGGER.info("Replacing {} weak components", weakCount);
+                    GMMUtils.replaceWeak(gmm, stats, nthresh);
+                    IOUtils.writeGMM("ubm_fixed_" + gmm.getMixtureCount() + "_" + iter + ".h5", gmm);
+                    LOGGER.info("Found some weak components, restarting with equal weights");
+                    iter = 1;
+                } else {
+                    iter++;
+                }
             } else {
+                // ignore weak count for microphone ubm
+                LOGGER.info("Weak count = {}", weakCount);
                 iter++;
             }
         }

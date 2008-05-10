@@ -263,6 +263,8 @@ public final class TrainSVM {
 
         // check scores
         float targetScore = compactSvm.score(modelSv.transpose()).get(0, 0);
+        // TODO throw FailureToEnrollException if these checks fail. log useful
+        // info like which train segment and which test segment didn't work
         AssertUtils.assertTrue(targetScore > 0);
         float[] scores = compactSvm.score(backgroundData).toArray();
         for (int i = 0; i < scores.length - 1; i++) {

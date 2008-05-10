@@ -51,6 +51,8 @@ public final class Evaluation {
 
         @Option(shortName = "t", description = "evaluation trn index")
         File getTrn();
+
+        boolean isTnorm();
     }
 
     private static class Main extends MainTemplate<Arguments> {
@@ -64,8 +66,8 @@ public final class Evaluation {
             checkFileExists("SVM data", dataFile);
             File modelsFile = args.getModels();
             checkFileExists("GMM data", modelsFile);
-            File tnormFile = args.getTnorm();
-            checkFileExists("tnorm data", tnormFile);
+
+
             File trnFile = args.getTrn();
             checkFileExists("evaluation trn index", trnFile);
             File ndxFile = args.getNdx();
@@ -74,6 +76,7 @@ public final class Evaluation {
             if (false) {
                 checkFileNotExists("output", outputFile);
             }
+
             LOGGER.info("Reading models from {}", trnFile);
             Map<String, Model> modelsMap = readModels(trnFile);
             LOGGER.info("Reading trials from {}", ndxFile);
@@ -82,16 +85,29 @@ public final class Evaluation {
             LOGGER.info("Checking data file {}", dataFile);
             checkData(modelsMap, modelsFile, dataFile);
 
-            LOGGER.info("Reading tnorm models from {}", tnormFile);
-            FloatDenseMatrix tnormModels = readTNormModels(tnormFile);
-            Map<String, double[]> tnormCache = new HashMap<String, double[]>();
+            final FloatDenseMatrix tnormModels;
+            final Map<String, double[]> tnormCache;
+            if (args.isTnorm()) {
+                File tnormFile = args.getTnorm();
+                checkFileExists("tnorm data", tnormFile);
+                LOGGER.info("Reading tnorm models from {}", tnormFile);
+                tnormModels = readTNormModels(tnormFile);
+                tnormCache = new HashMap<String, double[]>();
+            } else {
+                LOGGER.info("Not doing test normalization");
+                tnormModels = null;
+                tnormCache = null;
+            }
 
             List<String> output = new ArrayList<String>();
             HDFReader modelReader = new HDFReader(modelsFile, 0);
-            int modelDim = tnormModels.columns();
             for (Model model : modelsMap.values()) {
                 LOGGER.info("Evaluating {} trials for model {}", model.getTest().size(), model.getId());
-                FloatDenseVector speakerModel = DenseFactory.floatRowDirect(modelDim);
+                DataSet dataset = modelReader.getH5File().getRootGroup().openDataSet(model.getId());
+                int[] dims = dataset.getIntDims();
+                dataset.close();
+                int dim = dims.length == 1 ? dims[0] : Math.max(dims[0], dims[1]);
+                FloatDenseVector speakerModel = DenseFactory.floatRowDirect(dim);
                 modelReader.read(model.getId(), speakerModel);
                 output.addAll(score(model, speakerModel, dataFile, tnormModels, tnormCache));
             }
