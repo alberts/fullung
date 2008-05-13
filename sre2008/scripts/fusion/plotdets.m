@@ -5,8 +5,8 @@ C = textscan(fid,'%s%s%s%s%s%f');
 fclose(fid);
 
 scorecount = length(C{1});
-tars = {zeros(1,scorecount), zeros(1,scorecount), zeros(1,scorecount), zeros(1,scorecount)};
-nons = {zeros(1,scorecount), zeros(1,scorecount), zeros(1,scorecount), zeros(1,scorecount)};
+tars = {false(1,scorecount), false(1,scorecount), false(1,scorecount), false(1,scorecount)};
+nons = {false(1,scorecount), false(1,scorecount), false(1,scorecount), false(1,scorecount)};
 for i=1:1:scorecount
     channel = C{4}{i};
     if strcmp(channel, 'phn:phn')
@@ -35,13 +35,13 @@ end
 
 scores = C{6};
 for i=1:1:length(tars)
-    tars{i} = scores(logical(tars{i}));
-    nons{i} = scores(logical(nons{i}));
+    tars{i} = scores(tars{i});
+    nons{i} = scores(nons{i});
 end
 tar = [tars{1}; tars{2}; tars{3}; tars{4}];
 non = [nons{1}; nons{2}; nons{3}; nons{4}];
 
-colors = 'rgbyk';
+colors = 'rgbmk';
 descriptions = {'phn-phn', 'phn-mic', 'mic-phn', 'mic-mic'};
 hold on;
 for i=1:1:length(tars)

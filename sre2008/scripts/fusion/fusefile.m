@@ -1,17 +1,17 @@
-function fusefile(inputfile,outputfile)
+function [scores]=fusefile(inputfile,outputfile)
 if strcmp(inputfile,outputfile)
     error('Input and output files are the same');
 end
 
-load fusion.mat finalW systems sidestages;
+% load fusion.mat finalW systems sidestages;
 
 fid = fopen(inputfile);
-C = textscan(fid,'%s%s%s%s%s%f','CollectOutput',0);
+C = textscan(fid,'%s%s%s%s%s%f%f%f%f%f%f%f','CollectOutput',0);
 fclose(fid);
+scores = [C{6:length(C)}]';
 
-fid = fopen(outputfile,'w');
-scores = [C{6}]';
 trialcount = size(scores, 2);
+fid = fopen(outputfile,'w');
 for i=1:trialcount
     key = C{1}{i};
     answer = C{5}{i};
@@ -38,7 +38,7 @@ for i=1:trialcount
     else
         error('Invalid channel: %s', channel);
     end
-    
+
     gender = C{2}{i};
     if strcmp(gender,'m')
         sideinfos{3} = [0 1]';
@@ -48,10 +48,11 @@ for i=1:trialcount
         error('Invalid gender: %s', gender);
     end
 
-    trial_scores = [scores(:,i); sideinfos{1}; sideinfos{2}; sideinfos{3}];
-    score = apply_bilinear_fusions(finalW, trial_scores, systems, sidestages);
-    output = sprintf('%s %s %s %s %s %.15E\n',key,gender,lang,channel,answer,score);
-    fprintf(output);
-    fprintf(fid,output);
+%     trial_scores = [scores(:,i); sideinfos{1}; sideinfos{2}; sideinfos{3}];
+%     score = apply_bilinear_fusions(finalW, trial_scores, systems, sidestages);
+%     % TODO include decision and clip llrs
+%     output = sprintf('%s %s %s %s %s %.15E\n',key,gender,lang,channel,answer,score);
+%     fprintf(output);
+%     fprintf(fid,output);
 end
 fclose(fid);

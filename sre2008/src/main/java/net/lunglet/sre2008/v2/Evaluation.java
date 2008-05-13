@@ -229,7 +229,7 @@ public final class Evaluation {
                 if (parts.length >= 7) {
                     answer = parts[6].toLowerCase();
                 } else {
-                    answer = "unknown";
+                    answer = null;
                 }
                 Trial trial = new Trial(name, channel, answer);
                 trial.setProperty("language", parts[3]);

@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# TODO instead of repeating train scores the whole time, just write
-# indexes into a big score matrix
-
 import numpy as np
 import re
 import tables
@@ -97,8 +94,8 @@ def main():
         assert answer in ANSWERS
 
         trialscores = map(lambda x: float(x), re.split('\\s+', trialscores))
-        trialscores.extend(langtype)
         trialscores.extend(chntype)
+        trialscores.extend(langtype)
         trialscores.extend(gender)
         scores.append(trialscores)
         # calculate index afterwards so that they are 1-based, which

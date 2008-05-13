@@ -16,7 +16,7 @@ public final class Trial extends Segment {
             this.answer = Answer.TARGET;
         } else if (answer != null && answer.toLowerCase().startsWith("non")) {
             this.answer = Answer.NONTARGET;
-        } else if (answer != null || answer.toLowerCase().startsWith("bad")) {
+        } else if (answer != null && answer.toLowerCase().startsWith("bad")) {
             this.answer = Answer.BAD;
         } else if (answer == null || answer.toLowerCase().startsWith("unk")) {
             this.answer = Answer.UNKNOWN;

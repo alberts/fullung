@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 import net.lunglet.util.AssertUtils;
 
+// TODO do more consistency checks on the mlf file. will need some
+// info from the original audio file.
+
 public final class MasterLabelFile implements Iterable<MasterLabel> {
     private static List<MasterLabel> readLabels(final Reader reader) throws IOException {
         List<MasterLabel> labels = new ArrayList<MasterLabel>();

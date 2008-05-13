@@ -1,22 +1,15 @@
 %% Setup
-lambda = 0;
-% lambda = 100000;
-systems = [1];
-% systems = [1 2 3 4];
-% sidestages = {[],5:7,8:10,11:12};
-% sidestages = {5:7,8:10,11:12};
-% sidestages = {5:7,11:12};
-% sidestages = {5:7};
-% sidestages = {};
-% sidestages = {11:12};
-% sidestages = {[],5:7,11:12};
-sidestages = {[],2:4,5:7,8:9};
+lambda = 400;
+prior = effective_prior(0.01,10,1);
+
+systems = [1 2 3 4 5 6 7];
+sidestages = {8:10,11:13,14:15};
 
 h5file = 'cvscores.h5';
 info = hdf5info(h5file);
-prior = effective_prior(0.01,10,1);
 speakers = info.GroupHierarchy.Groups;
-maxspkcount = length(speakers);
+speakers = speakers(randperm(length(speakers)));
+speakers = speakers(1:10);
 
 %% Training
 scores = hdf5read(h5file, '/scores');
@@ -24,19 +17,14 @@ if isempty(sidestages); sidestages = {[]}; end
 weights = {};
 for i=1:length(sidestages)
     fprintf('=== Stage %d of %d: begin ===\n', i, length(sidestages));
-
     sidestage = sidestages{i};
-    spkcount = 0;
     w = {};
     tic;
+    spkcount = 0;
     for speaker = speakers
         spkcount = spkcount + 1;
-        name = speaker.Name;
-        if strfind(name, '/spk') ~= 1
-            continue
-        end
-
         % read train trials
+        name = speaker.Name;
         tar_indices = hdf5read(h5file, sprintf('%s/train/target', name));
         tar = scores(:,tar_indices);
         train_scores_tar = tar(systems,:);
@@ -59,8 +47,8 @@ for i=1:length(sidestages)
 
         % train stage weights for this speaker
         fprintf('Training %s [speaker %d/%d, stage %d/%d]: #tar=%d, #non=%d\n', ...
-            name, spkcount, maxspkcount, i, length(sidestages), size(tar,2), size(non,2));
-        ww = train_sideinfo_fusion(train_scores_tar,train_side_tar,train_scores_non,train_side_non,lambda);
+            name, spkcount, length(speakers), i, length(sidestages), size(tar,2), size(non,2));
+        ww = train_sideinfo_fusion(train_scores_tar,train_side_tar,train_scores_non,train_side_non,lambda,prior);
         w = {w{:} ww};
         fprintf('Training time: %.8f seconds\n\n', toc/spkcount);
         fprintf('Weights for this speaker:\n'); disp(ww); fprintf('\n');
@@ -73,15 +61,11 @@ end
 %% Testing
 fused_tar = [];
 fused_non = [];
+spkcount = 0;
 for speaker = speakers
-    spkcount = 0;
     spkcount = spkcount + 1;
-    name = speaker.Name;
-    if strfind(name, '/spk') ~= 1
-        continue
-    end
-
     % read original test scores
+    name = speaker.Name;
     try
         tar_indices = hdf5read(h5file, sprintf('%s/test/target', name));
         tar = scores(:,tar_indices);
@@ -157,11 +141,11 @@ sanity_non = apply_bilinear_fusions(finalW,non,systems,sidestages);
 %% DET Plot
 figure;
 hold on;
-% colors = 'rgby';
+% colors = 'rgbcmyk';
 % for i=systems
 %     plotdet(tar(i,:), non(i,:), colors(i));
 % end
-% plotdet(fused_tar, fused_non, 'k');
+plotdet(fused_tar, fused_non, 'k');
 plotdet(sanity_tar, sanity_non, 'k-.');
 hold off;
 

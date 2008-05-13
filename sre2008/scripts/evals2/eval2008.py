@@ -49,6 +49,7 @@ def read_trials(filename, trialcond, models):
         trial = {
             'condition' : trialcond,
             'gender' : gender,
+            'answer' : 'unknown'
             }
         model = models[modelid]
         assert model['gender'] == gender
