@@ -3,8 +3,10 @@ package net.lunglet.features.mfcc;
 import com.dvsoft.sv.toolbox.matrix.GaussWarp;
 import com.dvsoft.sv.toolbox.matrix.JMatrix;
 import com.dvsoft.sv.toolbox.matrix.JVector;
+import com.sun.media.sound.JDK13Services;
 import cz.vutbr.fit.speech.phnrec.MasterLabel;
 import cz.vutbr.fit.speech.phnrec.MasterLabelFile;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.spi.AudioFileReader;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
@@ -51,7 +54,7 @@ public final class YAMFCCBuilder2 {
         public Void call() throws Exception {
             // TODO make suffix configurable
             String mfccFilename = filename + ".mfcc.h5";
-            if (new File(mfccFilename).exists()) {
+            if (false && new File(mfccFilename).exists()) {
                 return null;
             }
             HDFWriter writer = null;
@@ -78,7 +81,8 @@ public final class YAMFCCBuilder2 {
                     }
                     FloatDenseMatrix matrix = DenseFactory.floatMatrix(values, Order.ROW, Storage.DIRECT);
                     String hdfName = "/mfcc/" + i;
-                    LOGGER.info("Writing to {} [{}, {}]", new Object[]{hdfName, matrix.rows(), matrix.columns()});
+                    LOGGER.info("Writing to {}:{} [{}, {}]", new Object[]{filename, hdfName, matrix.rows(),
+                            matrix.columns()});
                     writer.write(hdfName, matrix);
                 }
             } catch (Throwable t) {
@@ -130,18 +134,12 @@ public final class YAMFCCBuilder2 {
             AudioFileFormat aff = AudioSystem.getAudioFileFormat(sphFile);
             int channels = aff.getFormat().getChannels();
             LOGGER.info("Read {} with {} channels", sphFile, channels);
-
-            // TODO check sphere header for interview speech_type
-            // ignore second channel for interview speech
-
             ArrayList<MasterLabelFile> mlfs = new ArrayList<MasterLabelFile>();
             for (int i = 0; i < channels; i++) {
                 File mlfFile = new File(sphFile.getAbsolutePath() + "." + i + ".mlf");
                 LOGGER.info("Reading {}", mlfFile);
                 mlfs.add(new MasterLabelFile(mlfFile));
             }
-            // TODO write special apply method for interview data that takes a
-            // sphere file, master label file and vad file
             return mfccBuilder.apply(sphFile, mlfs.toArray(new MasterLabelFile[0]));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -268,7 +266,11 @@ public final class YAMFCCBuilder2 {
 
     public static void main(final String[] args) throws IOException, InterruptedException {
         List<String> filenames = CommandUtils.getInput(args, System.in, YAMFCCBuilder2.class);
-        // TODO check if filenames exist
+        List<?> providers = JDK13Services.getProviders(AudioFileReader.class);
+        for (Object provider : providers) {
+            LOGGER.info("AudioFileReader provider: " + provider.getClass().getName());
+        }
+        // TODO maybe check if filenames exist, and abort if they do
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
         for (String filename : filenames) {
@@ -358,9 +360,6 @@ public final class YAMFCCBuilder2 {
             double maxEnergydB = getMaximumBlockEnergydB(phonemeBlocks);
             // remove silence blocks
             removeSilenceBlocks(phonemeBlocks, maxEnergydB);
-
-            // TODO interview data: remove blocks not completely included by VAD
-
             if (channels.length > 1) {
                 FeatureSet otherChannel = channels[channelIndex == 0 ? 1 : 0];
                 crossChannelSquelch(phonemeBlocks, maxEnergydB, otherChannel);
@@ -409,7 +408,7 @@ public final class YAMFCCBuilder2 {
 
     public FeatureSet[] apply(final File file, final MasterLabelFile[] mlfs) throws UnsupportedAudioFileException,
             IOException {
-        return apply(new FileInputStream(file), mlfs);
+        return apply(new BufferedInputStream(new FileInputStream(file)), mlfs);
     }
 
     public FeatureSet[] apply(final InputStream stream, final MasterLabelFile[] mlfs)

@@ -41,7 +41,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 
 // TODO support parameter that does initial runtime checks and then exits
 
-// TODO investigate jopt simple
+// TODO investigate jopt simple or args4j
 
 public final class ExtractChannelStats {
     @CommandLineInterface(application = "ExtractChannelStats")
