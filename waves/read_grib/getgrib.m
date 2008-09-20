@@ -67,14 +67,14 @@ if ~exist(file,'file')
   return
 end
 
-if ~exist('varid')
+if ~exist('varid','var')
   disp('usage: getgrib(filename,varid)')
   return
 end
 
 % check corner and end_point dimensions against header data
 
-if ~exist('corner') | isempty(corner)
+if ~exist('corner','var') || isempty(corner)
   corner = [-1 -1 -1];
 elseif length(corner) ~= 3
   disp('corner length incorrect, must be 3')
@@ -82,7 +82,7 @@ elseif length(corner) ~= 3
 end
 
 
-if ~exist('end_point') | isempty(end_point)
+if ~exist('end_point','var') || isempty(end_point)
   end_point = [-1 -1 -1];
 elseif length(end_point) ~= 3
   disp('end_point length incorrect, must be 3')
@@ -91,14 +91,14 @@ end
 
 % check stride
 
-if ~exist('stride') 
+if ~exist('stride','var') 
   stride = [1 1 1];
 elseif isempty(stride)
   stride = [1 1 1];  
 else
   if length(stride) == 1
     stride = [abs(stride) abs(stride) abs(stride)];
-  elseif length(stride < 3)
+  elseif length(stride) < 3
     disp('end_point length incorrect, must be 3')
     return
   end
@@ -113,10 +113,10 @@ end
 
 try
   gribrec = read_grib(file,{varid},'HeaderFlag',1,'DataFlag',0,'ScreenDiag',0,'ParamTable',ParamTable);
-catch
+catch me
   disp(['ERROR: Variable ',varid,' not found.'])
   disp(['Use read_grib(''',file,''',''inv'') to check the grib inventory.'])
-  return
+  rethrow(me);
 end
 
 if isempty(gribrec)
@@ -138,10 +138,10 @@ end
 
 %now go for the data
 try
-  grib = read_grib(file,[gribrec([corner(1):stride(1):end_point(1)]).record],'ScreenDiag',0,'ParamTable',ParamTable);
-catch
+  grib = read_grib(file,[gribrec(corner(1):stride(1):end_point(1)).record],'ScreenDiag',0,'ParamTable',ParamTable);
+catch me
   disp('ERROR: reading data block from grib file.  Check endpoint dimensions.')
-  return
+  rethrow(me);
 end
 
 nrecs = size(grib,2);
@@ -182,12 +182,10 @@ for i = 1:nrecs
   grib(i).fltarray = [];
 end
 
-if exist('order') & ~isempty(order)
+if exist('order','var') && ~isempty(order)
   values.data = permute(values.data,order);
 end
 
-if exist('squeeze_it') & ~isempty(squeeze_it)
+if exist('squeeze_it','var') && ~isempty(squeeze_it)
   values.data = squeeze(values.data);
 end
-
-return
