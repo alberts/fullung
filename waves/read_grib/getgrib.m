@@ -174,8 +174,11 @@ if corner(3) == -1
   end_point(3) = grib(1).gds.Ni;
 end
 
+m = corner(2):stride(2):end_point(2);
+n = corner(3):stride(3):end_point(3);
+values.data = zeros(length(m),length(n),nrecs);
 for i = 1:nrecs
-  values.data(:,:,i) = grib(i).fltarray(corner(2):stride(2):end_point(2),corner(3):stride(3):end_point(3));
+  values.data(:,:,i) = grib(i).fltarray(m,n);
   grib(i).fltarray = [];
 end
 
