@@ -1,5 +1,9 @@
 function [values, stime] = read_grib_param(filename, param)
-% Read values for one parameter from a GRIB file.
+%
+% READ_GRIB_PARAM read values and timestamps for one parameter from a GRIB
+% file.
+%
+
 [values, gribrec] = getgrib(filename, param);
 stime = {gribrec.stime};
 stime = stime(strcmp({gribrec.parameter},param));

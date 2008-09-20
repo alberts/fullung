@@ -1,5 +1,7 @@
 function [lon, lat] = nww3_lon_lat
-% Get NWW3 longitude and latitude grid.
+%
+% NWW3_LON_LAT returns the NWW3 longitude and latitude grid.
+%
 
 % number of grid points NX, NY
 nx = 288;
