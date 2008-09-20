@@ -63,7 +63,7 @@ function grib_struct=read_grib(gribname,irec,varargin)
 %                               (Table versions 128 and 129)
 % 
 
-global rgversion rgversiondate ParamTable Parameter_Table
+global rgversion rgversiondate ParamTable
 rgversion='1.4.1';
 rgversiondate=datenum(2007,4,5);
 
@@ -77,7 +77,7 @@ if isempty(gribname)
    if fname==0,return,end
    gribname=[fpath fname];
 else
-   [fpath,fname,fext,fver]=fileparts(gribname);
+   [fpath,fname,fext]=fileparts(gribname);
    fname=[fname fext];
 end
 
@@ -89,8 +89,8 @@ elseif iscell(irec)
    select_by_param=1;
    params_to_get=irec;
    irec=-1;
-elseif isstr(irec)
-   if strncmp(lower(irec),'inv',3)
+elseif ischar(irec)
+   if strncmpi(irec,'inv',3)
       inventory_flag=1;
       ScreenDiag=0;
       dataskip=1;
@@ -102,7 +102,7 @@ elseif irec==-1
    % This means get entire GRiB file
 else
   [m,n]=size(irec);
-  if m~=1&n~=1
+  if m~=1&&n~=1
      error('Size of irec must be 1xn or nx1')
   end
    irect=irec(:);
@@ -122,19 +122,19 @@ while k<length(varargin),
   switch lower(varargin{k}),
     case 'headerflag',
       HeaderFlag=varargin{k+1};
-      if ~(HeaderFlag==1 | HeaderFlag==0)
+      if ~(HeaderFlag==1 || HeaderFlag==0)
          error('Invalid HeaderFlag to READ_GRIB.')
       end
       varargin([k k+1])=[];
     case 'dataflag',
       DataFlag=varargin{k+1};
-      if ~(DataFlag==1 | DataFlag==0)
+      if ~(DataFlag==1 || DataFlag==0)
          error('Invalid DataFlag to READ_GRIB.')
       end
       varargin([k k+1])=[];
     case 'screendiag',
       ScreenDiag=varargin{k+1};
-      if ~(ScreenDiag==1 | ScreenDiag==0)
+      if ~(ScreenDiag==1 || ScreenDiag==0)
          error('Invalid ScreenDiag to READ_GRIB.')
       end
       varargin([k k+1])=[];
@@ -159,7 +159,7 @@ if ~is_grib_file(fid,ScreenDiag)
    % No first GRiB marker found. Abort.
    disp('ERROR: READ_GRIB:')
    disp([gribname ' is not a GRiB file.'])
-   disp(['No GRiB marker "GRIB" found in file.'])
+   disp('No GRiB marker "GRIB" found in file.')
    grib_struct=-1;
    return
 else
@@ -173,7 +173,7 @@ else
    end
    % Report pre-firstmarker header if length <= 90
    if(mark1<91)
-      if ScreenDiag,disp(['GRiB header = ' char(gribfileheader')]);,end
+      if ScreenDiag,disp(['GRiB header = ' char(gribfileheader')]); end
    else
       % Reposition fid to point just before "G" char
       fseek(fid,-4,0);
@@ -181,8 +181,7 @@ else
 end
 
 first4octets=fread(fid,4);
-if ScreenDiag,
-disp(char(first4octets'));,end
+if ScreenDiag, disp(char(first4octets')); end
 
 if inventory_flag
    inventory_str=sprintf('###################################################\n');
@@ -220,11 +219,11 @@ while ~isempty(first4octets)
    
       % scanning for next grib marker
       iret=find_grib_marker(fid,ScreenDiag);
-      if iret<1 & feof(fid)
+      if iret<1 && feof(fid)
          if ScreenDiag
-	    str=sprintf('\n%s\n',['End of file reached.']);
-            disp(str)
-	 end
+             str=sprintf('\n%s\n','End of file reached.');
+             disp(str)
+         end
          return
       end
    end      
@@ -280,11 +279,11 @@ while ~isempty(first4octets)
           headerskip=0;
           if DataFlag,dataskip=0;end
           crec=crec+1;
-          irect(find(irect==sirect(crec)))=[];
+          irect(irect==sirect(crec))=[];
       end
   end
   
-  if headerskip & dataskip
+  if headerskip && dataskip
       % Skip GRiB record, except for '7777' delimiter at end;
       % We've already read in 8 octets!!
       fseek(fid,lengrib-12,0);
@@ -318,13 +317,13 @@ while ~isempty(first4octets)
          clear grib_struct;
          crec=0;  % Reset structure logging
 	 minute=['0' int2str(pds_struct.min)];
-	 if pds_struct.min>9,minute=int2str(pds_struct.minute);,end
+	 if pds_struct.min>9,minute=int2str(pds_struct.minute);end
 	 hour=['0' int2str(pds_struct.hour)];
-	 if pds_struct.hour>9,hour=int2str(pds_struct.hour);,end
+	 if pds_struct.hour>9,hour=int2str(pds_struct.hour);end
 	 day=['0' int2str(pds_struct.day)];
-	 if pds_struct.day>9,day=int2str(pds_struct.day);,end
+	 if pds_struct.day>9,day=int2str(pds_struct.day);end
 	 month=['0' int2str(pds_struct.month)];
-	 if pds_struct.month>9,month=int2str(pds_struct.month);,end
+	 if pds_struct.month>9,month=int2str(pds_struct.month);end
          level=levels(pds_struct.pdsvals(10),pds_struct.pdsvals(11),pds_struct.pdsvals(12));
 	 l=length(level);lm=floor(l/2);ll=1:lm;lr=lm+1:l;
 	 level_left=level(ll);level_right=level(lr);
@@ -361,8 +360,8 @@ while ~isempty(first4octets)
    if ~strcmp(end_grib_delim,'7777')
       disp(['Alignment problem reading GRiB message ' gribname])
       disp(['at GRiB record number ' int2str(grec)])
-      disp(['Should be at the end of GRiB record, and we''re  not.'])
-      disp(['Returning from READ_GRIB with GRiB up to this point.'])
+      disp('Should be at the end of GRiB record, and we''re not.')
+      disp('Returning from READ_GRIB with GRiB up to this point.')
       return
 %BOB      error('read_grid alignment problem a')   
    end
@@ -371,7 +370,7 @@ while ~isempty(first4octets)
    first4octets=fread(fid,4);
 end
 
-if exist('irecsort'),grib_struct=grib_struct(irecsort);,end
+if exist('irecsort','var'),grib_struct=grib_struct(irecsort);end
 if inventory_flag
       helpwin(inventory_str,'Inventory',['Inventory for ' gribname]);
       grib_struct=[];
@@ -379,9 +378,3 @@ end
 
 % close grib stream
 fclose(fid);
-
-return
-
-
-
-
