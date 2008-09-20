@@ -3,8 +3,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [pds_struct,gds_struct,bms_struct,bds_struct,dataarray]=...
          extract_grib(fid,nrec,fpos,headerskip,dataskip)
-global ParamTable Parameter_Table
-
 
 % read section 1, the PDS (Product Definition Section)
 oct1to3=fread(fid,3);
