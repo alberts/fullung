@@ -1,4 +1,4 @@
-function values = getgrib(file, varid, corner, end_point, stride, order, squeeze_it)
+function [values,gribrec] = getgrib(file, varid, corner, end_point, stride, order, squeeze_it)
 %
 %GETGRIB retrieves data from a GRIB file.
 %
