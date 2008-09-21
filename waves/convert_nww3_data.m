@@ -1,35 +1,48 @@
-function convert_nww3_data(filename, lon, lat, filelists, method)
+function convert_nww3_data(filenames, lon, lat, grbfiles, method)
+%
+% CONVERT_NWW3_DATA
+%
+
+if ~iscell(filenames)
+    filenames = {filenames};
+end
+if length(lon(:)) ~= length(filenames)
+    error('Must specify equal number of filenames and longitudes');
+end
+if length(lat(:)) ~= length(filenames)
+    error('Must specify equal number of filenames and latitudes');
+end
+
+params = fieldnames(grbfiles);
+filecount = unique(cellfun(@length,struct2cell(grbfiles)));
+if length(filecount(:)) ~= 1
+    error('grbfiles are inconsistent');
+end
+
 if ~exist('method','var') || isempty(method)
     method = 'linear';
 end
 
 [nww3_lon, nww3_lat] = nww3_lon_lat;
 
-params = fieldnames(filelists);
-for i=1:length(params)
-    param = params{i};
-    filelist = filelists.(param);
-    filenames.(param) = textread(filelist,'%s');
+fids = cell(1,length(filenames));
+for k=1:length(fids)
+    fid = fopen(filenames{k}    ,'w');
+    fprintf(fid,'Timestamp');
+    for j=1:length(params)
+        fprintf(fid,',%s',params{j});
+    end
+    fprintf(fid,'\n');
+    fids{k} = fid;
 end
-filecount = unique(cellfun(@length,struct2cell(filenames)));
-if length(filecount(:)) ~= 1
-    error('Filelists are inconsistent');
-end
-
-fid = fopen(filename,'w');
-fprintf(fid,'Timestamp');
-for j=1:length(params)
-    fprintf(fid,',%s',params{j});
-end
-fprintf(fid,'\n');
 
 for i=1:filecount
     data = cell(1,length(params));
     stimes = cell(1,length(params));
     for j=1:length(params)
         param = params{j};
-        param_files = filenames.(param);
-        fprintf('reading %s...', param_files{i});
+        param_files = grbfiles.(param);
+        fprintf('reading %s... ', param_files{i});
         tic;
         [data{j}, stimes{j}] = read_grib_param(param_files{i}, param);
         fprintf('%g seconds\n', toc);
@@ -39,14 +52,22 @@ for i=1:filecount
     end
     stime = stimes{1};
     for forecast = 1:length(stime)
-        fprintf(fid, stime{forecast});
+        for k = 1:length(fids)
+            fprintf(fids{k}, stime{forecast});
+        end
         for j=1:length(data)
             z = data{j}(:,:,forecast);
             zi = interp2(nww3_lon, nww3_lat, z, lon, lat, method);
-            fprintf(fid,',%.15E',zi);
+            for k = 1:length(fids)
+                fprintf(fids{k},',%.15E',zi(k));
+            end
         end
-        fprintf(fid,'\n');
+        for k = 1:length(fids)
+            fprintf(fids{k}, '\n');
+        end
     end
 end
 
-fclose(fid);
+for k=1:length(fids)
+    fclose(fids{k});
+end
