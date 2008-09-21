@@ -11,17 +11,8 @@ for i=1:length(params)
     d = dir([datadir,filesep,'nww3.',codes{i},'.*.grb']);
     f = @(x)[datadir,filesep,x];
     basenames = unique({d.name});
+    basenames = basenames(1:2);
     grbfiles.(params{i}) = cellfun(f,basenames,'UniformOutput',0);
 end
 
 convert_nww3_data(filenames, lon, lat, grbfiles);
-
-% z = read_grib_param('F:\waves\nww3.hs.200801.grb', 'HTSGW');
-% fig = figure;
-% set(fig,'DoubleBuffer','on');
-% set(gca,'xlim',[min(lon(:)) max(lon(:))]);
-% set(gca,'ylim',[min(lat(:)) max(lat(:))]);
-% surface(lon, lat, z(:,:,1), 'EdgeColor', 'none');
-% xlabel(gca,'Longitude [degrees]');
-% ylabel(gca,'Latitude [degrees]');
-% colorbar;

@@ -1,0 +1,473 @@
+#LyX 1.5.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 276
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{hyperref}
+\end_preamble
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+GRIB wave data aggregation
+\end_layout
+
+\begin_layout Author
+Albert Strasheim
+\newline
+
+\begin_inset LatexCommand htmlurl
+target "mailto:albert.strasheim@gmail.com"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Data
+\end_layout
+
+\begin_layout Standard
+Historical data from the NOAA WAVEWATCH III global ocean wave model from
+ January, 1997 to August, 2008 was downloaded from the NOAA FTP server
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+\begin_inset LatexCommand htmlurl
+target "ftp://polar.ncep.noaa.gov/pub/history/waves/"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ The data are packed in GRIB format at three hour intervals.
+\end_layout
+
+\begin_layout Standard
+The following files were obtained:
+\end_layout
+
+\begin_layout Itemize
+nww3.dp.*.grb: Primary wave direction (DIRPW)
+\end_layout
+
+\begin_layout Itemize
+nww3.hs.*.grb: Significant height of wind waves and swell (HTSGW)
+\end_layout
+
+\begin_layout Itemize
+nww3.tp.*.grb: Primary wave mean period (PERPW)
+\end_layout
+
+\begin_layout Itemize
+nww3.wind.*.grb: 
+\begin_inset Formula $u$
+\end_inset
+
+\InsetSpace ~
+wind (UGRD) and 
+\begin_inset Formula $v$
+\end_inset
+
+\InsetSpace ~
+wind (VGRD)
+\end_layout
+
+\begin_layout Standard
+See section\InsetSpace ~
+
+\begin_inset LatexCommand ref
+reference "sec:windparams"
+
+\end_inset
+
+ for more information about the wind parameters.
+\end_layout
+
+\begin_layout Section
+Third party software
+\end_layout
+
+\begin_layout Standard
+This code depends on the read_grib software
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+\begin_inset LatexCommand htmlurl
+target "http://www.opnml.unc.edu/OPNML_Matlab/read_grib/read_grib.html"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ More specifically, read_grib version 1.4.1
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+\begin_inset LatexCommand htmlurl
+target "ftp://polar.ncep.noaa.gov/pub/ofs/reference/read_grib_1.4.1.tar.gz"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ was used.
+ A newer version 1.4.2 is available, but it was found not to work.
+ More information about read_grib is available
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+\begin_inset LatexCommand htmlurl
+target "http://polar.ncep.noaa.gov/ofs/download.shtml"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Some modifications were made to the read_grib software:
+\end_layout
+
+\begin_layout Itemize
+The file read_grib.m was modified to allow for timestamps before and after
+ the year 2000
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+\begin_inset LatexCommand htmlurl
+target "http://code.google.com/p/fullung/source/diff?spec=svn141&old=130&r=139&format=unidiff&path=/trunk/waves/read_grib/read_grib.m"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+The file getgrib.m was modified to return the GRIB metadata in addition to
+ the values.
+ It was also changed to preallocate the data matrix to improve processing
+ speed
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+\begin_inset LatexCommand htmlurl
+target "http://code.google.com/p/fullung/source/diff?spec=svn141&old=130&r=137&format=unidiff&path=/trunk/waves/read_grib/getgrib.m"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+read_grib uses a MEX extension which must be compiled by executing the following
+ MATLAB command inside the read_grib directory: 
+\begin_inset listings
+lstparams "basicstyle={\small\ttfamily},language=Matlab"
+inline false
+status open
+
+\begin_layout Standard
+
+mex BDS_unpack_mex5.c
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Examples
+\end_layout
+
+\begin_layout Standard
+To aggregate wave data, start by defining output files and their corresponding
+ coordinates:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\small\ttfamily},language=Matlab"
+inline false
+status open
+
+\begin_layout Standard
+
+filenames = {'nww3_c1.csv','nww3_c2.csv'};
+\end_layout
+
+\begin_layout Standard
+
+coords = [30.0 -46.3; 30.1 -46.1];
+\end_layout
+
+\begin_layout Standard
+
+lon = coords(:,1);
+\end_layout
+
+\begin_layout Standard
+
+lat = coords(:,2);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Then create the list of GRIB files containing the data for each parameter
+ that must be aggregated:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\small\ttfamily},language=Matlab"
+inline false
+status open
+
+\begin_layout Standard
+
+datadir = 'F:
+\backslash
+waves';
+\end_layout
+
+\begin_layout Standard
+
+params = {'DIRPW', 'HTSGW', 'PERPW', 'UGRD', 'VGRD'};
+\end_layout
+
+\begin_layout Standard
+
+codes = {'dp', 'hs', 'tp', 'wind', 'wind'};
+\end_layout
+
+\begin_layout Standard
+
+grbfiles = struct();
+\end_layout
+
+\begin_layout Standard
+
+for i=1:length(params)
+\end_layout
+
+\begin_layout Standard
+
+    d = dir([datadir,filesep,'nww3.',codes{i},'.*.grb']);
+\end_layout
+
+\begin_layout Standard
+
+    f = @(x)[datadir,filesep,x];
+\end_layout
+
+\begin_layout Standard
+
+    basenames = unique({d.name});
+\end_layout
+
+\begin_layout Standard
+
+    grbfiles.(params{i}) = ...
+\end_layout
+
+\begin_layout Standard
+
+        cellfun(f,basenames,'UniformOutput',0);
+\end_layout
+
+\begin_layout Standard
+
+end
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To plot a specific forecast for one parameter, the following code may be
+ used:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\small\ttfamily},language=Matlab"
+inline false
+status open
+
+\begin_layout Standard
+
+[lon, lat] = nww3_lon_lat;
+\end_layout
+
+\begin_layout Standard
+
+z = read_grib_param('nww3.hs.200801.grb', 'HTSGW');
+\end_layout
+
+\begin_layout Standard
+
+forecast = 13;
+\end_layout
+
+\begin_layout Standard
+
+fig = figure;
+\end_layout
+
+\begin_layout Standard
+
+set(fig,'DoubleBuffer','on');
+\end_layout
+
+\begin_layout Standard
+
+set(gca,'xlim',[min(lon(:)) max(lon(:))]);
+\end_layout
+
+\begin_layout Standard
+
+set(gca,'ylim',[min(lat(:)) max(lat(:))]);
+\end_layout
+
+\begin_layout Standard
+
+surface(lon, lat, z(:,:,forecast), 'EdgeColor', 'none');
+\end_layout
+
+\begin_layout Standard
+
+xlabel(gca,'Longitude [degrees]');
+\end_layout
+
+\begin_layout Standard
+
+ylabel(gca,'Latitude [degrees]');
+\end_layout
+
+\begin_layout Standard
+
+colorbar;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Wind parameters
+\begin_inset LatexCommand label
+name "sec:windparams"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Formula $u$
+\end_inset
+
+\InsetSpace ~
+wind and 
+\begin_inset Formula $v$
+\end_inset
+
+\InsetSpace ~
+wind parameters can be converted to wind direction and power
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+\begin_inset LatexCommand htmlurl
+target "http://code.google.com/p/rubysail/wiki/DataDescription"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ To convert to wind direction, use the uvgrd2dir function.
+ To convert to wind power, use the uvgrd2power function.
+\end_layout
+
+\end_body
+\end_document
