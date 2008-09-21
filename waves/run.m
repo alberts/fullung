@@ -11,7 +11,6 @@ for i=1:length(params)
     d = dir([datadir,filesep,'nww3.',codes{i},'.*.grb']);
     f = @(x)[datadir,filesep,x];
     basenames = unique({d.name});
-    basenames = basenames(1:2);
     grbfiles.(params{i}) = cellfun(f,basenames,'UniformOutput',0);
 end
 
