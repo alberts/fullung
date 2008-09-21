@@ -1,6 +1,6 @@
-function convert_nww3_data(filenames, lon, lat, grbfiles, method)
+function aggregate_nww3_data(filenames, lon, lat, grbfiles, method)
 %
-% CONVERT_NWW3_DATA
+% AGGREGATE_NWW3_DATA
 %
 
 if ~iscell(filenames)

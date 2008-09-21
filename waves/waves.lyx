@@ -244,49 +244,18 @@ mex BDS_unpack_mex5.c
 
 \end_layout
 
+\begin_layout Standard
+The waves directory and its read_grib subdirectory must be added to the
+ MATLAB path.
+\end_layout
+
 \begin_layout Section
 Examples
 \end_layout
 
 \begin_layout Standard
-To aggregate wave data, start by defining output files and their corresponding
- coordinates:
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-lstparams "basicstyle={\small\ttfamily},language=Matlab"
-inline false
-status open
-
-\begin_layout Standard
-
-filenames = {'nww3_c1.csv','nww3_c2.csv'};
-\end_layout
-
-\begin_layout Standard
-
-coords = [30.0 -46.3; 30.1 -46.1];
-\end_layout
-
-\begin_layout Standard
-
-lon = coords(:,1);
-\end_layout
-
-\begin_layout Standard
-
-lat = coords(:,2);
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Then create the list of GRIB files containing the data for each parameter
- that must be aggregated:
+Create the list of GRIB files containing the data for each parameter that
+ must be aggregated:
 \end_layout
 
 \begin_layout Standard
@@ -350,6 +319,44 @@ for i=1:length(params)
 \begin_layout Standard
 
 end
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To aggregate the wave data, define the output files and their associated
+ coordinates and call the aggregate_nww3_data function:
+\begin_inset listings
+lstparams "basicstyle={\small\ttfamily},language=Matlab"
+inline false
+status open
+
+\begin_layout Standard
+
+filenames = {'nww3_c1.csv','nww3_c2.csv'};
+\end_layout
+
+\begin_layout Standard
+
+coords = [30.0 -46.3; 30.1 -46.1];
+\end_layout
+
+\begin_layout Standard
+
+lon = coords(:,1);
+\end_layout
+
+\begin_layout Standard
+
+lat = coords(:,2);
+\end_layout
+
+\begin_layout Standard
+
+aggregate_nww3_data(filenames, lon, lat, grbfiles);
 \end_layout
 
 \end_inset
