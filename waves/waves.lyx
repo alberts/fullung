@@ -43,7 +43,7 @@
 \begin_body
 
 \begin_layout Title
-GRIB wave data aggregation
+GRIB Wave Data Aggregation
 \end_layout
 
 \begin_layout Author
@@ -362,6 +362,12 @@ aggregate_nww3_data(filenames, lon, lat, grbfiles);
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The aggregate_nww3_data function also accepts an optional interpolation
+ method as last argument.
+ Refer to the documentation of MATLAB's interp2 function for more details.
 \end_layout
 
 \begin_layout Standard

@@ -13,4 +13,4 @@ for i=1:length(params)
     grbfiles.(params{i}) = cellfun(f,basenames,'UniformOutput',0);
 end
 
-aggregate_nww3_data(filenames, lon, lat, grbfiles);
+aggregate_nww3_data(filenames, lon, lat, grbfiles, 'spline');
