@@ -302,7 +302,12 @@ while ~isempty(first4octets)
       grib_struct(crec).parameter=pds_struct.parameter;
       grib_struct(crec).layer=temp3;
       grib_struct(crec).units=pds_struct.units;
-      dtime=datenum(1900+pds_struct.year,pds_struct.month,pds_struct.day,pds_struct.hour,pds_struct.min,00);
+      if pds_struct.year>80
+          year = 1900 + pds_struct.year;
+      else
+          year = 2000 + pds_struct.year;
+      end
+      dtime=datenum(year,pds_struct.month,pds_struct.day,pds_struct.hour,pds_struct.min,00);
       grib_struct(crec).stime=datestr(dtime,0);
       % 14 Jun 2002: BOB: added level to output struct
       grib_struct(crec).level=levels(pds_struct.pdsvals(10),pds_struct.pdsvals(11),pds_struct.pdsvals(12));
