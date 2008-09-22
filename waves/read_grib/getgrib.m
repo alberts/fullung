@@ -63,13 +63,11 @@ missing = 1e10;
 values = [];
 
 if ~exist(file,'file')
-  disp([file,' not found'])
-  return
+  error([file,' not found'])
 end
 
 if ~exist('varid','var')
-  disp('usage: getgrib(filename,varid)')
-  return
+  error('usage: getgrib(filename,varid)')
 end
 
 % check corner and end_point dimensions against header data
@@ -77,16 +75,14 @@ end
 if ~exist('corner','var') || isempty(corner)
   corner = [-1 -1 -1];
 elseif length(corner) ~= 3
-  disp('corner length incorrect, must be 3')
-  return
+  error('corner length incorrect, must be 3')
 end
 
 
 if ~exist('end_point','var') || isempty(end_point)
   end_point = [-1 -1 -1];
 elseif length(end_point) ~= 3
-  disp('end_point length incorrect, must be 3')
-  return
+  error('end_point length incorrect, must be 3')
 end
 
 % check stride
@@ -99,8 +95,7 @@ else
   if length(stride) == 1
     stride = [abs(stride) abs(stride) abs(stride)];
   elseif length(stride) < 3
-    disp('end_point length incorrect, must be 3')
-    return
+    error('end_point length incorrect, must be 3')
   end
 end
 
@@ -113,35 +108,32 @@ end
 
 try
   gribrec = read_grib(file,{varid},'HeaderFlag',1,'DataFlag',0,'ScreenDiag',0,'ParamTable',ParamTable);
-catch me
-  disp(['ERROR: Variable ',varid,' not found.'])
-  disp(['Use read_grib(''',file,''',''inv'') to check the grib inventory.'])
-  rethrow(me);
+catch %#ok<CTCH>
+  error(['ERROR: Variable ',varid,' not found.'])
 end
 
 if isempty(gribrec)
-  disp(['ERROR: Variable ',varid,' not found.'])
-  disp(['Use read_grib(''',file,''',''inv'') to check the grib inventory.'])
-  return
+  error(['ERROR: Variable ',varid,' not found.'])
 end
   
 nrecs = size(gribrec,2);
 
 if corner(1) == -1
   if end_point(1) ~= -1 
-    disp('both corner(1) and end_point(1) are not -1')
-    return 
+    error('both corner(1) and end_point(1) are not -1')
   end
   corner(1) = 1;    
   end_point(1) = nrecs;
 end
 
 %now go for the data
+if exist('BDS_unpack_mex5') ~= 3 %#ok<EXIST>
+  error('ERROR: BDS_unpack_mex5 has not been compiled')
+end
 try
   grib = read_grib(file,[gribrec(corner(1):stride(1):end_point(1)).record],'ScreenDiag',0,'ParamTable',ParamTable);
-catch me
-  disp('ERROR: reading data block from grib file.  Check endpoint dimensions.')
-  rethrow(me);
+catch %#ok<CTCH>
+  error('ERROR: reading data block from grib file.  Check endpoint dimensions.')
 end
 
 nrecs = size(grib,2);
@@ -158,8 +150,7 @@ values.date = grib(1).stime;
 
 if corner(2) == -1
   if end_point(2) ~= -1
-    disp('both corner(2) and end_point(2) are not -1')
-    return 
+    error('both corner(2) and end_point(2) are not -1')
   end
   corner(2) = 1;    
   end_point(2) = grib(1).gds.Nj;
@@ -167,8 +158,7 @@ end
 
 if corner(3) == -1
   if end_point(3) ~= -1 
-    disp('both corner(3) and end_point(3) are not -1')
-    return 
+    error('both corner(3) and end_point(3) are not -1')
   end
   corner(3) = 1;    
   end_point(3) = grib(1).gds.Ni;
