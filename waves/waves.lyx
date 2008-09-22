@@ -80,7 +80,7 @@ target "ftp://polar.ncep.noaa.gov/pub/history/waves/"
 \end_inset
 
 .
- Data from the following models are available:
+ Data from the following models are provided:
 \end_layout
 
 \begin_layout Itemize
@@ -317,6 +317,26 @@ mex BDS_unpack_mex5.c
 \end_layout
 
 \begin_layout Standard
+You may have problems compiling this file when using Visual Studio 2008
+ in FIRGA.
+ If this happens, change the MEX compiler to Lcc C version 2.4.1 by executing
+ the command: 
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},language=Matlab"
+inline true
+status open
+
+\begin_layout Standard
+
+mex -setup
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 The 
 \family typewriter
 waves
@@ -326,6 +346,24 @@ waves
 read_grib
 \family default
  subdirectory must be added to the MATLAB path.
+ This can be done by executing the following command: 
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},language=Matlab"
+inline true
+status open
+
+\begin_layout Standard
+
+addpath(genpath('H:
+\backslash
+matlab
+\backslash
+waves'))
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -477,6 +515,25 @@ aggregate_nww3_data
 interp2
 \family default
  function for more details.
+\end_layout
+
+\begin_layout Standard
+If you abort the function, you may need to close the open files in order
+ to edit or delete the generated file.
+ Execute the command: 
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},language=Matlab"
+inline true
+status open
+
+\begin_layout Standard
+
+fclose('all')
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
