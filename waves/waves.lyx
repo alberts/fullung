@@ -64,7 +64,7 @@ Data
 
 \begin_layout Standard
 Historical data from the NOAA WAVEWATCH III global ocean wave model from
- January, 1997 to August, 2008 was downloaded from the NOAA FTP server
+ January, 1997 to August, 2008 is availabe on the NOAA FTP server
 \begin_inset Foot
 status collapsed
 
@@ -80,27 +80,89 @@ target "ftp://polar.ncep.noaa.gov/pub/history/waves/"
 \end_inset
 
 .
- The data are packed in GRIB format at three hour intervals.
+ Data from the following models are available:
+\end_layout
+
+\begin_layout Itemize
+NWW3: Global 
+\begin_inset Formula $1\times1.25$
+\end_inset
+
+ degree model
+\end_layout
+
+\begin_layout Itemize
+AKW: Alaskan Waters 
+\begin_inset Formula $0.25\times0.5$
+\end_inset
+
+ degree model
+\end_layout
+
+\begin_layout Itemize
+WNA: Western North Atlantic
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+ 
+\begin_inset Formula $0.25$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\noun default
+\color inherit
+ degree model
 \end_layout
 
 \begin_layout Standard
-The following files were obtained:
+The data are packed in GRIB format at three hour intervals.
+\end_layout
+
+\begin_layout Standard
+The following files were downloaded:
 \end_layout
 
 \begin_layout Itemize
-nww3.dp.*.grb: Primary wave direction (DIRPW)
+
+\family typewriter
+nww3.dp.*.grb
+\family default
+: Primary wave direction (DIRPW)
 \end_layout
 
 \begin_layout Itemize
-nww3.hs.*.grb: Significant height of wind waves and swell (HTSGW)
+
+\family typewriter
+nww3.hs.*.grb
+\family default
+: Significant height of wind waves and swell (HTSGW)
 \end_layout
 
 \begin_layout Itemize
-nww3.tp.*.grb: Primary wave mean period (PERPW)
+
+\family typewriter
+nww3.tp.*.grb
+\family default
+: Primary wave mean period (PERPW)
 \end_layout
 
 \begin_layout Itemize
-nww3.wind.*.grb: 
+
+\family typewriter
+nww3.wind.*.grb
+\family default
+: 
 \begin_inset Formula $u$
 \end_inset
 
@@ -185,8 +247,11 @@ Some modifications were made to the read_grib software:
 \end_layout
 
 \begin_layout Itemize
-The file read_grib.m was modified to allow for timestamps before and after
- the year 2000
+The file 
+\family typewriter
+read_grib.m
+\family default
+ was modified to allow for timestamps before and after the year 2000
 \begin_inset Foot
 status collapsed
 
@@ -205,8 +270,11 @@ target "http://code.google.com/p/fullung/source/diff?spec=svn141&old=130&r=139&f
 \end_layout
 
 \begin_layout Itemize
-The file getgrib.m was modified to return the GRIB metadata in addition to
- the values.
+The file 
+\family typewriter
+getgrib.m
+\family default
+ was modified to return the GRIB metadata in addition to the values.
  It was also changed to preallocate the data matrix to improve processing
  speed
 \begin_inset Foot
@@ -228,7 +296,11 @@ target "http://code.google.com/p/fullung/source/diff?spec=svn141&old=130&r=137&f
 
 \begin_layout Standard
 read_grib uses a MEX extension which must be compiled by executing the following
- MATLAB command inside the read_grib directory: 
+ MATLAB command inside the 
+\family typewriter
+read_grib
+\family default
+ directory: 
 \begin_inset listings
 lstparams "basicstyle={\small\ttfamily},language=Matlab"
 inline false
@@ -245,8 +317,15 @@ mex BDS_unpack_mex5.c
 \end_layout
 
 \begin_layout Standard
-The waves directory and its read_grib subdirectory must be added to the
- MATLAB path.
+The 
+\family typewriter
+waves
+\family default
+ directory and its 
+\family typewriter
+read_grib
+\family default
+ subdirectory must be added to the MATLAB path.
 \end_layout
 
 \begin_layout Section
@@ -266,7 +345,9 @@ status open
 
 \begin_layout Standard
 
-datadir = 'F:
+datadir = 'C:
+\backslash
+data
 \backslash
 waves';
 \end_layout
@@ -328,7 +409,28 @@ end
 
 \begin_layout Standard
 To aggregate the wave data, define the output files and their associated
- coordinates and call the aggregate_nww3_data function:
+ coordinates and call the 
+\family typewriter
+aggregate_nww3_data
+\family default
+ function.
+ For example, to aggregate at coordinates 
+\begin_inset Formula $C_{1}=(46.3°\mathrm{S},\,30.0°{\normalcolor \mathrm{E}})$
+\end_inset
+
+ and 
+\begin_inset Formula $C_{2}=(46.1°\mathrm{S},\,30.1°{\normalcolor \mathrm{E}})$
+\end_inset
+
+ and save the results to 
+\family typewriter
+waves_c1.csv
+\family default
+ and 
+\family typewriter
+waves_c2.csv
+\family default
+, use the following code: 
 \begin_inset listings
 lstparams "basicstyle={\small\ttfamily},language=Matlab"
 inline false
@@ -336,7 +438,7 @@ status open
 
 \begin_layout Standard
 
-filenames = {'nww3_c1.csv','nww3_c2.csv'};
+filenames = {'waves_c1.csv','waves_c2.csv'};
 \end_layout
 
 \begin_layout Standard
@@ -365,9 +467,16 @@ aggregate_nww3_data(filenames, lon, lat, grbfiles);
 \end_layout
 
 \begin_layout Standard
-The aggregate_nww3_data function also accepts an optional interpolation
- method as last argument.
- Refer to the documentation of MATLAB's interp2 function for more details.
+The 
+\family typewriter
+aggregate_nww3_data
+\family default
+ function also accepts an optional interpolation method as last argument.
+ Refer to the documentation of MATLAB's 
+\family typewriter
+interp2
+\family default
+ function for more details.
 \end_layout
 
 \begin_layout Standard
@@ -478,8 +587,24 @@ target "http://code.google.com/p/rubysail/wiki/DataDescription"
 \end_inset
 
 .
- To convert to wind direction, use the uvgrd2dir function.
- To convert to wind power, use the uvgrd2power function.
+\end_layout
+
+\begin_layout Standard
+To convert to wind direction, use the 
+\family typewriter
+uvgrd2dir
+\family default
+ function.
+ Note that the value that is returned from this function is in radians.
+ A coordinate system transformation may also need to be applied.
+\end_layout
+
+\begin_layout Standard
+To convert to wind power, use the 
+\family typewriter
+uvgrd2power
+\family default
+ function.
 \end_layout
 
 \end_body
