@@ -16,7 +16,10 @@ end
 params = fieldnames(grbfiles);
 filecount = unique(cellfun(@length,struct2cell(grbfiles)));
 if length(filecount(:)) ~= 1
-    error('grbfiles are inconsistent');
+    error('GRIB files are inconsistent');
+end
+if filecount==0
+    error('No GRIB files specified');
 end
 
 if ~exist('method','var') || isempty(method)
@@ -27,7 +30,7 @@ end
 
 fids = cell(1,length(filenames));
 for k=1:length(fids)
-    fid = fopen(filenames{k}    ,'w');
+    fid = fopen(filenames{k},'w');
     fprintf(fid,'Timestamp');
     for j=1:length(params)
         fprintf(fid,',%s',params{j});
